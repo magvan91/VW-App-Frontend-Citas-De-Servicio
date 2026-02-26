@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@volkswagen-onehub/components-core": "69.90.0",
+    "@volkswagen-onehub/icons-core": "69.106.0",
+    "styled-components": "^5.3.9",
     "axios": "^1.13.5",
     "formik": "^2.4.9",
     "react": "^19.2.0",
@@ -21,13 +24,10 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react-swc": "^4.2.2",
-    "@volkswagen-onehub/components-core": "69.90.0",
-    "@volkswagen-onehub/icons-core": "69.106.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
-    "styled-components": "^5.3.9",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
     "vite": "^7.3.1"
