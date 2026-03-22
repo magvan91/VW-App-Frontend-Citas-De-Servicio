@@ -1,0 +1,34 @@
+.label-div-input-fake-calendar {
+  display: block;
+  width: 100%;
+  height: auto;
+  position: relative;
+  color: rgb(27, 34, 54);
+}
+.div-input-fake-calendar {
+  position: relative;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  -webkit-box-pack: end;
+  justify-content: flex-end;
+  height: 50px;
+  box-shadow: rgb(208, 209, 213) 0px 0px 0px 1px;
+  border-radius: 8px;
+}
+
+.input-fake-calendar {
+  width: 100%;
+  height: 100%;
+  padding: 2px 0px;
+  padding-inline: 0px;
+  border: 0px;
+  background: transparent;
+  color: inherit;
+  outline: none;
+  appearance: none;
+  font-size: 1rem;
+  font-family: inherit;
+  text-overflow: ellipsis;
+  transition: padding 0.15s ease-in-out;
+}

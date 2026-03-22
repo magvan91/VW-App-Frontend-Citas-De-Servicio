@@ -8,9 +8,10 @@ import {
   TokenTextAppearance,
 } from "@volkswagen-onehub/components-core";
 import { useFormik } from "formik";
+import { DateRangePicker } from "../components/DateRangePicker";
 
 export const FormCitasDeServicio = () => {
-  const { getFieldProps } = useFormik({
+  const { values, getFieldProps, handleSubmit, setFieldValue } = useFormik({
     initialValues: {
       numeroChasis: "",
       anio: "",
@@ -20,6 +21,7 @@ export const FormCitasDeServicio = () => {
       idConcesionario: "",
       estado: "",
       ciudad: "",
+      dates: undefined,
       fecha: "",
       horario: "",
       nombre: "",
@@ -47,7 +49,7 @@ export const FormCitasDeServicio = () => {
           </Text>
         </div>
         <div className="col-12 pt-5 pb-4">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-12">
                 <TextInput
@@ -127,11 +129,9 @@ export const FormCitasDeServicio = () => {
                 </Select>
               </div>
               <div className="col-12 col-sm-6 col-md-6">
-                <TextInput
-                  {...getFieldProps("fecha")}
-                  label="Fecha"
-                  type={"month"}
-                  required
+                <DateRangePicker
+                  value={values.dates}
+                  onChange={(range) => setFieldValue("dates", range)}
                 />
               </div>
               <div className="col-12 col-sm-6 col-md-6">
