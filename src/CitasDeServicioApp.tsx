@@ -1,16 +1,12 @@
-import {
-  Container,
-  ThemeProvider,
-} from "@volkswagen-onehub/components-core";
+import { ThemeProvider } from "@volkswagen-onehub/components-core";
+import { PageMultiStepForm } from "./pages/PageMultiStepForm";
 
 export const CitasDeServicioApp = () => {
   return (
     <>
-      <h1>App Servicio de Citas VW</h1>
-      <Container>
-        <ThemeProvider variant="v26" theme="main">
-        </ThemeProvider>
-      </Container>
+      <ThemeProvider variant="v26" theme="main">
+        <PageMultiStepForm />
+      </ThemeProvider>
     </>
   );
 };
