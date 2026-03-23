@@ -7,7 +7,7 @@ import {
 } from "@volkswagen-onehub/components-core";
 import { FormCitasDeServicio } from "../forms/FormCitasDeServicio";
 
-export const PageMultiStepForm = () => {
+export const PageFormCitasDeServicio = () => {
   return (
     <div className="container">
       <div className="row">
