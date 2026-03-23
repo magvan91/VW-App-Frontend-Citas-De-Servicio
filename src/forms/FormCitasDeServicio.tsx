@@ -10,6 +10,10 @@ import {
 import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { validationFormCitasDeServicio } from "./schemas/validationFormCitasDeServicio";
+import {
+  onlyLettersWithAcents,
+  onlyLettersAndNumbers,
+} from "../utils/fieldFormsUtils";
 
 export const FormCitasDeServicio = () => {
   const {
@@ -44,6 +48,24 @@ export const FormCitasDeServicio = () => {
       console.log(values);
     },
   });
+
+  //* Función que llama al fieldFormsUtils onlyLetters
+  const handleOnlyLettersWithAccentsChange = (
+    e: React.SyntheticEvent<HTMLInputElement>,
+  ) => {
+    const target = e.target as HTMLInputElement;
+    const { name, value } = target;
+    const cleanValue = onlyLettersWithAcents(value);
+    setFieldValue(name, cleanValue);
+  };
+  const handleOnlyLettersAndNumbers = (
+    e: React.SyntheticEvent<HTMLInputElement>,
+  ) => {
+    const target = e.target as HTMLInputElement;
+    const { name, value } = target;
+    const cleanValue = onlyLettersAndNumbers(value);
+    setFieldValue(name, cleanValue);
+  };
   return (
     <div className="container">
       <div className="row">
@@ -75,6 +97,7 @@ export const FormCitasDeServicio = () => {
                         : "success"
                       : "default"
                   }
+                  onChange={handleOnlyLettersAndNumbers}
                 />
                 {touched.numeroChasis && errors.numeroChasis && (
                   <div className="text-danger small">{errors.numeroChasis}</div>
@@ -265,6 +288,7 @@ export const FormCitasDeServicio = () => {
                     isFloating={true}
                     type="text"
                     required
+                    onChange={handleOnlyLettersWithAccentsChange}
                     appearance={
                       touched.nombre
                         ? errors.nombre
@@ -284,6 +308,7 @@ export const FormCitasDeServicio = () => {
                     isFloating={true}
                     type="text"
                     required
+                    onChange={handleOnlyLettersWithAccentsChange}
                     appearance={
                       touched.apePat
                         ? errors.apePat
@@ -303,6 +328,7 @@ export const FormCitasDeServicio = () => {
                     isFloating={true}
                     type="text"
                     required
+                    onChange={handleOnlyLettersWithAccentsChange}
                     appearance={
                       touched.apeMat
                         ? errors.apeMat
@@ -318,9 +344,10 @@ export const FormCitasDeServicio = () => {
                 <div className="col-12 col-sm-6">
                   <TextInput
                     {...getFieldProps("telefonoMovil")}
+                    type="text"
                     label="Teléfono"
                     isFloating={true}
-                    type="number"
+                    maxLength={10}
                     required
                     appearance={
                       touched.telefonoMovil
@@ -329,6 +356,12 @@ export const FormCitasDeServicio = () => {
                           : "success"
                         : "default"
                     }
+                    onChange={(e) => {
+                      const soloNumeros = (e.target as HTMLInputElement).value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
+                      setFieldValue("telefonoMovil", soloNumeros);
+                    }}
                   />
                   {touched.telefonoMovil && errors.telefonoMovil && (
                     <div className="text-danger small">
@@ -341,7 +374,7 @@ export const FormCitasDeServicio = () => {
                     {...getFieldProps("email")}
                     label="Correo"
                     isFloating={true}
-                    type="text"
+                    type="email"
                     required
                     appearance={
                       touched.email
