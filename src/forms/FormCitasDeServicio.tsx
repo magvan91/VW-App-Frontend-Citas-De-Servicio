@@ -9,9 +9,17 @@ import {
 } from "@volkswagen-onehub/components-core";
 import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
+import { validationFormCitasDeServicio } from "./schemas/validationFormCitasDeServicio";
 
 export const FormCitasDeServicio = () => {
-  const { values, getFieldProps, handleSubmit, setFieldValue } = useFormik({
+  const {
+    values,
+    touched,
+    errors,
+    getFieldProps,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
     initialValues: {
       numeroChasis: "",
       anio: "",
@@ -31,6 +39,7 @@ export const FormCitasDeServicio = () => {
       email: "",
       comentarios: "",
     },
+    validationSchema: validationFormCitasDeServicio,
     onSubmit: (values) => {
       console.log(values);
     },
@@ -58,11 +67,22 @@ export const FormCitasDeServicio = () => {
                   isFloating={true}
                   required
                   type="text"
+                  maxLength={17}
+                  appearance={
+                    touched.numeroChasis
+                      ? errors.numeroChasis
+                        ? "error"
+                        : "success"
+                      : "default"
+                  }
                 />
+                {touched.numeroChasis && errors.numeroChasis && (
+                  <div className="text-danger small">{errors.numeroChasis}</div>
+                )}
               </div>
             </div>
-            <div className="row g-3">
-              <div className="col-12 col-sm-12 col-md-6 pt-3">
+            <div className="row g-3 py-3">
+              <div className="col-12 col-sm-12 col-md-6">
                 <Select {...getFieldProps("anio")}>
                   <option value="">Selecciona el año de tu vehículo</option>
                   <option value="2026">2026</option>
@@ -71,7 +91,7 @@ export const FormCitasDeServicio = () => {
                   <option value="2023">2023</option>
                 </Select>
               </div>
-              <div className="col-12 col-sm-12 col-md-6 pt-3">
+              <div className="col-12 col-sm-12 col-md-6">
                 <Select {...getFieldProps("modelo")}>
                   <option value="">Selecciona tu vehículo</option>
                   <option value="Polo">Polo</option>
@@ -81,8 +101,8 @@ export const FormCitasDeServicio = () => {
                 </Select>
               </div>
             </div>
-            <div className="row py-3">
-              <div className="col-12 col-sm-12 col-md-6 pt-sm-0 pt-3">
+            <div className="row g-3 py-3">
+              <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
                 <TextInput
                   {...getFieldProps("kilometrajeAuto")}
                   label="Kilometraje actual del vehículo"
@@ -90,7 +110,7 @@ export const FormCitasDeServicio = () => {
                   type="number"
                 />
               </div>
-              <div className="col-12 col-sm-12 col-md-6 pt-sm-0 pt-3">
+              <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
                 <Select {...getFieldProps("kilometrajeServicio")}>
                   <option value="">Seleccione su servicio que necesite</option>
                   <option value="15,000 km / 1 año">15,000 km ó 1 año</option>
@@ -109,13 +129,51 @@ export const FormCitasDeServicio = () => {
                 </Text>
               </div>
               <div className="col-12 col-sm-4 col-md-4">
-                <Select required>
+                <Select
+                  {...getFieldProps("estado")}
+                  required
+                  isFloating={true}
+                  label="Selecciona un estado"
+                  message={
+                    touched.estado && !values.estado
+                      ? "Selecciona un estado"
+                      : ""
+                  }
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
+                  appearance={
+                    touched.estado
+                      ? errors.estado
+                        ? "error"
+                        : "success"
+                      : "default"
+                  }
+                >
                   <option value="">Estado</option>
                   <option value="CDMX">CDMX</option>
                 </Select>
               </div>
               <div className="col-12 col-sm-4 col-md-4">
-                <Select required>
+                <Select
+                  {...getFieldProps("ciudad")}
+                  required
+                  isFloating={true}
+                  label="Selecciona una ciudad"
+                  message={
+                    touched.ciudad && !values.ciudad
+                      ? "Selecciona una ciudad"
+                      : ""
+                  }
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
+                  appearance={
+                    touched.ciudad
+                      ? errors.ciudad
+                        ? "error"
+                        : "success"
+                      : "default"
+                  }
+                >
                   <option value="">Ciudad</option>
                   <option value="Iztapalapa">Iztapalapa</option>
                   <option value="Polanco">Polanco</option>
@@ -123,7 +181,26 @@ export const FormCitasDeServicio = () => {
                 </Select>
               </div>
               <div className="col-12 col-sm-4 col-md-4">
-                <Select required {...getFieldProps("idConcesionario")}>
+                <Select
+                  {...getFieldProps("idConcesionario")}
+                  required
+                  isFloating={true}
+                  label="Selecciona un distribuidor"
+                  message={
+                    touched.idConcesionario && !values.idConcesionario
+                      ? "Selecciona un distribuidor"
+                      : ""
+                  }
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
+                  appearance={
+                    touched.idConcesionario
+                      ? errors.idConcesionario
+                        ? "error"
+                        : "success"
+                      : "default"
+                  }
+                >
                   <option value="">Distribuidor*</option>
                   <option value="VW Ola Polanco">VW Ola Polanco</option>
                 </Select>
@@ -135,7 +212,26 @@ export const FormCitasDeServicio = () => {
                 />
               </div>
               <div className="col-12 col-sm-6 col-md-6">
-                <Select required {...getFieldProps("horario")}>
+                <Select
+                  required
+                  {...getFieldProps("horario")}
+                  isFloating={true}
+                  label="Selecciona un horario"
+                  message={
+                    touched.horario && !values.horario
+                      ? "Selecciona un distribuidor"
+                      : ""
+                  }
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
+                  appearance={
+                    touched.horario
+                      ? errors.horario
+                        ? "error"
+                        : "success"
+                      : "default"
+                  }
+                >
                   <option value="">Selecciona un horario</option>
                   <optgroup label="2026-06-01">
                     <option value="09:00">09:00</option>
@@ -169,7 +265,17 @@ export const FormCitasDeServicio = () => {
                     isFloating={true}
                     type="text"
                     required
+                    appearance={
+                      touched.nombre
+                        ? errors.nombre
+                          ? "error"
+                          : "success"
+                        : "default"
+                    }
                   />
+                  {touched.nombre && errors.nombre && (
+                    <div className="text-danger small">{errors.nombre}</div>
+                  )}
                 </div>
                 <div className="col-12 col-sm-4">
                   <TextInput
@@ -178,7 +284,17 @@ export const FormCitasDeServicio = () => {
                     isFloating={true}
                     type="text"
                     required
+                    appearance={
+                      touched.apePat
+                        ? errors.apePat
+                          ? "error"
+                          : "success"
+                        : "default"
+                    }
                   />
+                  {touched.apePat && errors.apePat && (
+                    <div className="text-danger small">{errors.apePat}</div>
+                  )}
                 </div>
                 <div className="col-12 col-sm-4">
                   <TextInput
@@ -187,7 +303,17 @@ export const FormCitasDeServicio = () => {
                     isFloating={true}
                     type="text"
                     required
+                    appearance={
+                      touched.apeMat
+                        ? errors.apeMat
+                          ? "error"
+                          : "success"
+                        : "default"
+                    }
                   />
+                  {touched.apeMat && errors.apeMat && (
+                    <div className="text-danger small">{errors.apeMat}</div>
+                  )}
                 </div>
                 <div className="col-12 col-sm-6">
                   <TextInput
@@ -196,7 +322,19 @@ export const FormCitasDeServicio = () => {
                     isFloating={true}
                     type="number"
                     required
+                    appearance={
+                      touched.telefonoMovil
+                        ? errors.telefonoMovil
+                          ? "error"
+                          : "success"
+                        : "default"
+                    }
                   />
+                  {touched.telefonoMovil && errors.telefonoMovil && (
+                    <div className="text-danger small">
+                      {errors.telefonoMovil}
+                    </div>
+                  )}
                 </div>
                 <div className="col-12 col-sm-6">
                   <TextInput
@@ -205,7 +343,17 @@ export const FormCitasDeServicio = () => {
                     isFloating={true}
                     type="text"
                     required
+                    appearance={
+                      touched.email
+                        ? errors.email
+                          ? "error"
+                          : "success"
+                        : "default"
+                    }
                   />
+                  {touched.email && errors.email && (
+                    <div className="text-danger small">{errors.email}</div>
+                  )}
                 </div>
               </div>
               <div className="row g-3">
