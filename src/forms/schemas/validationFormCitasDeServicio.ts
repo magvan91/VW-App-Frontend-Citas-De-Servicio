@@ -35,6 +35,18 @@ export const validationFormCitasDeServicio = Yup.object({
     .matches(/^\d{10}$/, "Sólo números (10 digitos)"),
   estado: Yup.string().required("Selecciona un estado"),
   ciudad: Yup.string().required("Selecciona una ciudad"),
-  idConcesionario: Yup.number().required("Selecciona un distribuidor"),
+  idConcesionario: Yup.string().required("Selecciona un distribuidor"),
   horario: Yup.string().required("Selecciona un horario"),
+  aceptaAviso: Yup.boolean().oneOf(
+    [true],
+    "Debes aceptar el Aviso de Privacidad",
+  ),
+  opt_in_transferencia_datos: Yup.boolean().oneOf(
+    [true],
+    "Debes aceptar la transferencia de datos al concesionario",
+  ),
+  tyco: Yup.boolean().oneOf(
+    [true],
+    "Debes aceptar los términos y condiciones del Apartado",
+  ),
 });

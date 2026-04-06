@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   CTA,
   Select,
@@ -6,10 +7,12 @@ import {
   TextInput,
   TextTag,
   TokenTextAppearance,
+  Checkbox,
 } from "@volkswagen-onehub/components-core";
 import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { validationFormCitasDeServicio } from "./schemas/validationFormCitasDeServicio";
+import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
 import {
   onlyLettersWithAcents,
   onlyLettersAndNumbers,
@@ -42,6 +45,9 @@ export const FormCitasDeServicio = () => {
       telefonoMovil: "",
       email: "",
       comentarios: "",
+      aceptaAviso: false,
+      opt_in_transferencia_datos: false,
+      tyco: false,
     },
     validationSchema: validationFormCitasDeServicio,
     onSubmit: (values) => {
@@ -65,6 +71,11 @@ export const FormCitasDeServicio = () => {
     const { name, value } = target;
     const cleanValue = onlyLettersAndNumbers(value);
     setFieldValue(name, cleanValue);
+  };
+
+  const [showTyco, setShowTyco] = useState(false);
+  const handleShowTyco = (visibleTyco: boolean): void => {
+    setShowTyco(visibleTyco);
   };
   return (
     <div className="container">
@@ -196,6 +207,7 @@ export const FormCitasDeServicio = () => {
                         : "success"
                       : "default"
                   }
+                  disabled={!values.estado}
                 >
                   <option value="">Ciudad</option>
                   <option value="Iztapalapa">Iztapalapa</option>
@@ -223,6 +235,7 @@ export const FormCitasDeServicio = () => {
                         : "success"
                       : "default"
                   }
+                  disabled={!values.ciudad}
                 >
                   <option value="">Distribuidor*</option>
                   <option value="VW Ola Polanco">VW Ola Polanco</option>
@@ -254,6 +267,7 @@ export const FormCitasDeServicio = () => {
                         : "success"
                       : "default"
                   }
+                  disabled={!values.dates}
                 >
                   <option value="">Selecciona un horario</option>
                   <optgroup label="2026-06-01">
@@ -413,6 +427,80 @@ export const FormCitasDeServicio = () => {
                     Agendar Cita
                   </CTA>
                 </div>
+              </div>
+              <div className="row">
+                <div className="col-12">
+                  <Checkbox
+                    {...getFieldProps("aceptaAviso")}
+                    appearance={
+                      touched.aceptaAviso
+                        ? errors.aceptaAviso
+                          ? "error"
+                          : "success"
+                        : "default"
+                    }
+                  />
+                  He leído y acepto los términos y condiciones contenidos en el{" "}
+                  <CTA
+                    tag="a"
+                    emphasis="tertiary"
+                    title="Aviso de Privacidad"
+                    target="_blank"
+                    href="https://www.vw.com.mx/es/legal/aviso-de-privacidad.html"
+                  >
+                    {" "}
+                    Aviso de Privacidad
+                  </CTA>
+                  .
+                </div>
+                {touched.aceptaAviso && errors.aceptaAviso && (
+                  <div className="text-danger small">{errors.aceptaAviso}</div>
+                )}
+                <div className="col-12 pb-2">
+                  <Checkbox
+                    {...getFieldProps("opt_in_transferencia_datos")}
+                    appearance={
+                      touched.opt_in_transferencia_datos
+                        ? errors.opt_in_transferencia_datos
+                          ? "error"
+                          : "success"
+                        : "default"
+                    }
+                  />
+                  Acepto que mis datos personales aquí proporcionados sean
+                  transferidos al Concesionario marca Volkswagen que he elegido,
+                  a efecto de que le den seguimiento a mi solicitud.
+                </div>
+                {touched.opt_in_transferencia_datos &&
+                  errors.opt_in_transferencia_datos && (
+                    <div className="text-danger small">
+                      {errors.opt_in_transferencia_datos}
+                    </div>
+                  )}
+                <div className="col-12">
+                  <Checkbox
+                    {...getFieldProps("tyco")}
+                    appearance={
+                      touched.tyco
+                        ? errors.tyco
+                          ? "error"
+                          : "success"
+                        : "default"
+                    }
+                  />
+                  He leído y acepto los términos y condiciones{" "}
+                  <CTA
+                    tag="a"
+                    emphasis="tertiary"
+                    title="Términos y condiciones"
+                    onClick={() => handleShowTyco(true)}
+                  >
+                    Apartado.
+                  </CTA>
+                </div>
+                {touched.tyco && errors.tyco && (
+                  <div className="text-danger small">{errors.tyco}</div>
+                )}
               </div>
             </div>
           </form>
