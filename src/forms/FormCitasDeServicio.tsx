@@ -74,7 +74,9 @@ export const FormCitasDeServicio = () => {
   };
 
   const [showTyco, setShowTyco] = useState(false);
+
   const handleShowTyco = (visibleTyco: boolean): void => {
+    // Usa la nueva función del estado
     setShowTyco(visibleTyco);
   };
   return (
@@ -422,14 +424,10 @@ export const FormCitasDeServicio = () => {
                     type="text"
                   />
                 </div>
-                <div className="col-12 text-center">
-                  <CTA tag="button" type="submit" emphasis="primary">
-                    Agendar Cita
-                  </CTA>
-                </div>
               </div>
-              <div className="row">
-                <div className="col-12">
+
+              <div className="row my-4">
+                <div className="col-12 mb-3">
                   <Checkbox
                     {...getFieldProps("aceptaAviso")}
                     appearance={
@@ -446,17 +444,21 @@ export const FormCitasDeServicio = () => {
                     emphasis="tertiary"
                     title="Aviso de Privacidad"
                     target="_blank"
+                    rel="noreferrer"
                     href="https://www.vw.com.mx/es/legal/aviso-de-privacidad.html"
                   >
                     {" "}
                     Aviso de Privacidad
                   </CTA>
-                  .
+                  .{/* Agrupamos el mensaje de error junto a su checkbox */}
+                  {touched.aceptaAviso && errors.aceptaAviso && (
+                    <div className="text-danger small mt-1">
+                      {errors.aceptaAviso}
+                    </div>
+                  )}
                 </div>
-                {touched.aceptaAviso && errors.aceptaAviso && (
-                  <div className="text-danger small">{errors.aceptaAviso}</div>
-                )}
-                <div className="col-12 pb-2">
+
+                <div className="col-12 mb-3">
                   <Checkbox
                     {...getFieldProps("opt_in_transferencia_datos")}
                     appearance={
@@ -470,14 +472,15 @@ export const FormCitasDeServicio = () => {
                   Acepto que mis datos personales aquí proporcionados sean
                   transferidos al Concesionario marca Volkswagen que he elegido,
                   a efecto de que le den seguimiento a mi solicitud.
+                  {touched.opt_in_transferencia_datos &&
+                    errors.opt_in_transferencia_datos && (
+                      <div className="text-danger small mt-1">
+                        {errors.opt_in_transferencia_datos}
+                      </div>
+                    )}
                 </div>
-                {touched.opt_in_transferencia_datos &&
-                  errors.opt_in_transferencia_datos && (
-                    <div className="text-danger small">
-                      {errors.opt_in_transferencia_datos}
-                    </div>
-                  )}
-                <div className="col-12">
+
+                <div className="col-12 mb-3">
                   <Checkbox
                     {...getFieldProps("tyco")}
                     appearance={
@@ -490,22 +493,36 @@ export const FormCitasDeServicio = () => {
                   />
                   He leído y acepto los términos y condiciones{" "}
                   <CTA
-                    tag="a"
+                    tag="button"
+                    type="button"
                     emphasis="tertiary"
                     title="Términos y condiciones"
                     onClick={() => handleShowTyco(true)}
                   >
                     Apartado.
                   </CTA>
+                  {touched.tyco && errors.tyco && (
+                    <div className="text-danger small mt-1">{errors.tyco}</div>
+                  )}
                 </div>
-                {touched.tyco && errors.tyco && (
-                  <div className="text-danger small">{errors.tyco}</div>
-                )}
+              </div>
+
+              <div className="row">
+                <div className="col-12 text-center pb-4">
+                  <CTA tag="button" type="submit" emphasis="primary">
+                    Agendar Cita
+                  </CTA>
+                </div>
               </div>
             </div>
           </form>
         </div>
       </div>
+
+      <TycCitasDeServicio
+        showModal={showTyco}
+        handleShowTyco={handleShowTyco}
+      />
     </div>
   );
 };
