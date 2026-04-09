@@ -20,9 +20,11 @@ import {
 } from "../utils/fieldFormsUtils";
 
 export const FormCitasDeServicio = () => {
+  const [index, setIndex] = useState(0);
   const [completedTabs, setCompletedTabs] = useState<number[]>([0]);
   const handleActionComplete = (tabIndex: number) => {
     setCompletedTabs((prev) => [...prev, tabIndex + 1]);
+    setIndex(tabIndex + 1);
   };
   const {
     values,
@@ -81,9 +83,9 @@ export const FormCitasDeServicio = () => {
   const [showTyco, setShowTyco] = useState(false);
 
   const handleShowTyco = (visibleTyco: boolean): void => {
-    // Usa la nueva función del estado
     setShowTyco(visibleTyco);
   };
+
   return (
     <div className="container">
       <div className="row">
@@ -99,8 +101,9 @@ export const FormCitasDeServicio = () => {
         </div>
         <div className="col-12">
           <Tabs
+            defaultIndex={index}
             variant="step navigation"
-            idPrefix="bla"
+            idPrefix="TabsCitasDeServicio"
             onChange={(index) => {
               console.log("onChange", index);
             }}
@@ -203,15 +206,131 @@ export const FormCitasDeServicio = () => {
               role: "step-1",
             }}
             {{
-              title: <Text tag={TextTag.span}>Seleccionar distribuidor</Text>,
+              title: <Text tag={TextTag.span}>Búsqueda de Distribuidores</Text>,
               content: (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  Press the button to proceed to the next step.
+                <div className="row g-3">
+                  <div className="col-12 col-sm-4 col-md-4">
+                    <Select
+                      {...getFieldProps("estado")}
+                      required
+                      isFloating={true}
+                      label="Selecciona un estado"
+                      message={
+                        touched.estado && !values.estado
+                          ? "Selecciona un estado"
+                          : ""
+                      }
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-expect-error
+                      appearance={
+                        touched.estado
+                          ? errors.estado
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                    >
+                      <option value="">Estado</option>
+                      <option value="CDMX">CDMX</option>
+                    </Select>
+                  </div>
+                  <div className="col-12 col-sm-4 col-md-4">
+                    <Select
+                      {...getFieldProps("ciudad")}
+                      required
+                      isFloating={true}
+                      label="Selecciona una ciudad"
+                      message={
+                        touched.ciudad && !values.ciudad
+                          ? "Selecciona una ciudad"
+                          : ""
+                      }
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-expect-error
+                      appearance={
+                        touched.ciudad
+                          ? errors.ciudad
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                      disabled={!values.estado}
+                    >
+                      <option value="">Ciudad</option>
+                      <option value="Iztapalapa">Iztapalapa</option>
+                      <option value="Polanco">Polanco</option>
+                      <option value="Coyoacán">Coyoacán</option>
+                    </Select>
+                  </div>
+                  <div className="col-12 col-sm-4 col-md-4">
+                    <Select
+                      {...getFieldProps("idConcesionario")}
+                      required
+                      isFloating={true}
+                      label="Selecciona un distribuidor"
+                      message={
+                        touched.idConcesionario && !values.idConcesionario
+                          ? "Selecciona un distribuidor"
+                          : ""
+                      }
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-expect-error
+                      appearance={
+                        touched.idConcesionario
+                          ? errors.idConcesionario
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                      disabled={!values.ciudad}
+                    >
+                      <option value="">Distribuidor*</option>
+                      <option value="VW Ola Polanco">VW Ola Polanco</option>
+                    </Select>
+                  </div>
+                  <div className="col-12 col-sm-6 col-md-6">
+                    <DateRangePicker
+                      value={values.dates}
+                      onChange={(range) => setFieldValue("dates", range)}
+                    />
+                  </div>
+                  <div className="col-12 col-sm-6 col-md-6">
+                    <Select
+                      required
+                      {...getFieldProps("horario")}
+                      isFloating={true}
+                      label="Selecciona un horario"
+                      message={
+                        touched.horario && !values.horario
+                          ? "Selecciona un distribuidor"
+                          : ""
+                      }
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-expect-error
+                      appearance={
+                        touched.horario
+                          ? errors.horario
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                      disabled={!values.dates}
+                    >
+                      <option value="">Selecciona un horario</option>
+                      <optgroup label="2026-06-01">
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                      </optgroup>
+                      <optgroup label="2026-06-02">
+                        <option value="11:00">11:00</option>
+                        <option value="12:00">12:00</option>
+                      </optgroup>
+                      <optgroup label="2026-06-03">
+                        <option value="09:00">09:00</option>
+                        <option value="12:00">12:00</option>
+                      </optgroup>
+                    </Select>
+                  </div>
                   {!completedTabs.includes(2) && (
                     <CTA
                       onClick={() => handleActionComplete(1)}
@@ -228,15 +347,116 @@ export const FormCitasDeServicio = () => {
               role: "step-2",
             }}
             {{
-              title: "Title 3",
+              title: <Text tag={TextTag.span}>Tus datos de contacto</Text>,
               content: (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  Press the button to proceed to the next step.
+                <div className="row g-3">
+                  <div className="col-12 col-sm-4">
+                    <TextInput
+                      {...getFieldProps("nombre")}
+                      label="Nombre"
+                      isFloating={true}
+                      type="text"
+                      required
+                      onChange={handleOnlyLettersWithAccentsChange}
+                      appearance={
+                        touched.nombre
+                          ? errors.nombre
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                    />
+                    {touched.nombre && errors.nombre && (
+                      <div className="text-danger small">{errors.nombre}</div>
+                    )}
+                  </div>
+                  <div className="col-12 col-sm-4">
+                    <TextInput
+                      {...getFieldProps("apePat")}
+                      label="Apellido Paterno"
+                      isFloating={true}
+                      type="text"
+                      required
+                      onChange={handleOnlyLettersWithAccentsChange}
+                      appearance={
+                        touched.apePat
+                          ? errors.apePat
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                    />
+                    {touched.apePat && errors.apePat && (
+                      <div className="text-danger small">{errors.apePat}</div>
+                    )}
+                  </div>
+                  <div className="col-12 col-sm-4">
+                    <TextInput
+                      {...getFieldProps("apeMat")}
+                      label="Apellido Materno"
+                      isFloating={true}
+                      type="text"
+                      required
+                      onChange={handleOnlyLettersWithAccentsChange}
+                      appearance={
+                        touched.apeMat
+                          ? errors.apeMat
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                    />
+                    {touched.apeMat && errors.apeMat && (
+                      <div className="text-danger small">{errors.apeMat}</div>
+                    )}
+                  </div>
+                  <div className="col-12 col-sm-6">
+                    <TextInput
+                      {...getFieldProps("telefonoMovil")}
+                      type="text"
+                      label="Teléfono"
+                      isFloating={true}
+                      maxLength={10}
+                      required
+                      appearance={
+                        touched.telefonoMovil
+                          ? errors.telefonoMovil
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                      onChange={(e) => {
+                        const soloNumeros = (e.target as HTMLInputElement).value
+                          .replace(/\D/g, "")
+                          .slice(0, 10);
+                        setFieldValue("telefonoMovil", soloNumeros);
+                      }}
+                    />
+                    {touched.telefonoMovil && errors.telefonoMovil && (
+                      <div className="text-danger small">
+                        {errors.telefonoMovil}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-12 col-sm-6">
+                    <TextInput
+                      {...getFieldProps("email")}
+                      label="Correo"
+                      isFloating={true}
+                      type="email"
+                      required
+                      appearance={
+                        touched.email
+                          ? errors.email
+                            ? "error"
+                            : "success"
+                          : "default"
+                      }
+                    />
+                    {touched.email && errors.email && (
+                      <div className="text-danger small">{errors.email}</div>
+                    )}
+                  </div>
                   {!completedTabs.includes(3) && (
                     <CTA
                       onClick={() => handleActionComplete(2)}
@@ -252,13 +472,112 @@ export const FormCitasDeServicio = () => {
               disabled: !completedTabs.includes(2),
               role: "step-3",
             }}
+            {{
+              title: <Text tag={TextTag.span}>Información adicional</Text>,
+              content: (
+                <div className="row g-3">
+                  <div className="col-12">
+                    <TextInput
+                      {...getFieldProps("comentarios")}
+                      label="¿Hay algo más que quieras compartirnos? Escribelo aquí"
+                      isFloating={true}
+                      type="text"
+                    />
+                  </div>
+                  <div className="row my-4">
+                    <div className="col-12 mb-3">
+                      <Checkbox
+                        {...getFieldProps("aceptaAviso")}
+                        appearance={
+                          touched.aceptaAviso
+                            ? errors.aceptaAviso
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                      />
+                      He leído y acepto los términos y condiciones contenidos en
+                      el{" "}
+                      <CTA
+                        tag="a"
+                        emphasis="tertiary"
+                        title="Aviso de Privacidad"
+                        target="_blank"
+                        rel="noreferrer"
+                        href="https://www.vw.com.mx/es/legal/aviso-de-privacidad.html"
+                      >
+                        {" "}
+                        Aviso de Privacidad
+                      </CTA>
+                      {touched.aceptaAviso && errors.aceptaAviso && (
+                        <div className="text-danger small mt-1">
+                          {errors.aceptaAviso}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="col-12 mb-3">
+                      <Checkbox
+                        {...getFieldProps("opt_in_transferencia_datos")}
+                        appearance={
+                          touched.opt_in_transferencia_datos
+                            ? errors.opt_in_transferencia_datos
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                      />
+                      Acepto que mis datos personales aquí proporcionados sean
+                      transferidos al Concesionario marca Volkswagen que he
+                      elegido, a efecto de que le den seguimiento a mi
+                      solicitud.
+                      {touched.opt_in_transferencia_datos &&
+                        errors.opt_in_transferencia_datos && (
+                          <div className="text-danger small mt-1">
+                            {errors.opt_in_transferencia_datos}
+                          </div>
+                        )}
+                    </div>
+                    <div className="col-12 mb-3">
+                      <Checkbox
+                        {...getFieldProps("tyco")}
+                        appearance={
+                          touched.tyco
+                            ? errors.tyco
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                      />
+                      He leído y acepto los términos y condiciones{" "}
+                      <CTA
+                        tag="button"
+                        type="button"
+                        emphasis="tertiary"
+                        title="Términos y condiciones"
+                        onClick={() => handleShowTyco(true)}
+                      >
+                        Apartado.
+                      </CTA>
+                      {touched.tyco && errors.tyco && (
+                        <div className="text-danger small mt-1">
+                          {errors.tyco}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ),
+              key: "d",
+              disabled: !completedTabs.includes(3),
+              role: "step-4",
+            }}
           </Tabs>
         </div>
-        <br />
-        <hr />
+
         <div className="col-12 pt-5 pb-4">
           <form onSubmit={handleSubmit}>
-            <div className="row g-3">
+            {/* <div className="row g-3">
               <div className="col-12">
                 <TextInput
                   {...getFieldProps("numeroChasis")}
@@ -280,8 +599,8 @@ export const FormCitasDeServicio = () => {
                   <div className="text-danger small">{errors.numeroChasis}</div>
                 )}
               </div>
-            </div>
-            <div className="row g-3 py-3">
+            </div> */}
+            {/* <div className="row g-3 py-3">
               <div className="col-12 col-sm-12 col-md-6">
                 <Select {...getFieldProps("anio")}>
                   <option value="">Selecciona el año de tu vehículo</option>
@@ -300,8 +619,8 @@ export const FormCitasDeServicio = () => {
                   <option value="Tiguan">Tiguan</option>
                 </Select>
               </div>
-            </div>
-            <div className="row g-3 py-3">
+            </div> */}
+            {/* <div className="row g-3 py-3">
               <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
                 <TextInput
                   {...getFieldProps("kilometrajeAuto")}
@@ -316,9 +635,9 @@ export const FormCitasDeServicio = () => {
                   <option value="15,000 km / 1 año">15,000 km ó 1 año</option>
                 </Select>
               </div>
-            </div>
+            </div> */}
             <div className="row g-3">
-              <div className="col-12">
+              {/* <div className="col-12">
                 <Text
                   appearance={TokenTextAppearance.headline200}
                   textAlign={TextAlignment.start}
@@ -327,8 +646,8 @@ export const FormCitasDeServicio = () => {
                 >
                   Búsqueda de Distribuidores
                 </Text>
-              </div>
-              <div className="col-12 col-sm-4 col-md-4">
+              </div> */}
+              {/* <div className="col-12 col-sm-4 col-md-4">
                 <Select
                   {...getFieldProps("estado")}
                   required
@@ -449,9 +768,9 @@ export const FormCitasDeServicio = () => {
                     <option value="12:00">12:00</option>
                   </optgroup>
                 </Select>
-              </div>
+              </div> */}
               <div className="row g-3">
-                <div className="col-12">
+                {/* <div className="col-12">
                   <Text
                     appearance={TokenTextAppearance.headline200}
                     textAlign={TextAlignment.start}
@@ -460,8 +779,8 @@ export const FormCitasDeServicio = () => {
                   >
                     Tus datos de contacto
                   </Text>
-                </div>
-                <div className="col-12 col-sm-4">
+                </div> */}
+                {/* <div className="col-12 col-sm-4">
                   <TextInput
                     {...getFieldProps("nombre")}
                     label="Nombre"
@@ -567,10 +886,10 @@ export const FormCitasDeServicio = () => {
                   {touched.email && errors.email && (
                     <div className="text-danger small">{errors.email}</div>
                   )}
-                </div>
+                </div> */}
               </div>
               <div className="row g-3">
-                <div className="col-12">
+                {/* <div className="col-12">
                   <Text
                     appearance={TokenTextAppearance.headline200}
                     textAlign={TextAlignment.start}
@@ -579,18 +898,17 @@ export const FormCitasDeServicio = () => {
                   >
                     Información adicional
                   </Text>
-                </div>
-                <div className="col-12">
+                </div> */}
+                {/* <div className="col-12">
                   <TextInput
                     {...getFieldProps("comentarios")}
                     label="¿Hay algo más que quieras compartirnos? Escribelo aquí"
                     isFloating={true}
                     type="text"
                   />
-                </div>
+                </div> */}
               </div>
-
-              <div className="row my-4">
+              {/* <div className="row my-4">
                 <div className="col-12 mb-3">
                   <Checkbox
                     {...getFieldProps("aceptaAviso")}
@@ -614,7 +932,6 @@ export const FormCitasDeServicio = () => {
                     {" "}
                     Aviso de Privacidad
                   </CTA>
-                  .{/* Agrupamos el mensaje de error junto a su checkbox */}
                   {touched.aceptaAviso && errors.aceptaAviso && (
                     <div className="text-danger small mt-1">
                       {errors.aceptaAviso}
@@ -643,7 +960,6 @@ export const FormCitasDeServicio = () => {
                       </div>
                     )}
                 </div>
-
                 <div className="col-12 mb-3">
                   <Checkbox
                     {...getFieldProps("tyco")}
@@ -669,15 +985,14 @@ export const FormCitasDeServicio = () => {
                     <div className="text-danger small mt-1">{errors.tyco}</div>
                   )}
                 </div>
-              </div>
-
-              <div className="row">
+              </div> */}
+              {/* <div className="row">
                 <div className="col-12 text-center pb-4">
                   <CTA tag="button" type="submit" emphasis="primary">
                     Agendar Cita
                   </CTA>
                 </div>
-              </div>
+              </div> */}
             </div>
           </form>
         </div>
