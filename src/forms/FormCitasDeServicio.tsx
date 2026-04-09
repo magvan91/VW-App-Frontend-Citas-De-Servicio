@@ -8,6 +8,7 @@ import {
   TextTag,
   TokenTextAppearance,
   Checkbox,
+  Tabs,
 } from "@volkswagen-onehub/components-core";
 import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
@@ -19,6 +20,10 @@ import {
 } from "../utils/fieldFormsUtils";
 
 export const FormCitasDeServicio = () => {
+  const [completedTabs, setCompletedTabs] = useState<number[]>([0]);
+  const handleActionComplete = (tabIndex: number) => {
+    setCompletedTabs((prev) => [...prev, tabIndex + 1]);
+  };
   const {
     values,
     touched,
@@ -92,6 +97,165 @@ export const FormCitasDeServicio = () => {
             En que tipo de servicio estás interesado
           </Text>
         </div>
+        <div className="col-12">
+          <Tabs
+            variant="step navigation"
+            idPrefix="bla"
+            onChange={(index) => {
+              console.log("onChange", index);
+            }}
+            onBeforeChange={(index) => {
+              if (completedTabs.includes(index)) {
+                return true;
+              }
+              return false;
+            }}
+          >
+            {{
+              title: "Datos del vehículo",
+              content: (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <div className="row g-3">
+                    <div className="col-12">
+                      <TextInput
+                        {...getFieldProps("numeroChasis")}
+                        label="Número VIN"
+                        isFloating={true}
+                        required
+                        type="text"
+                        maxLength={17}
+                        appearance={
+                          touched.numeroChasis
+                            ? errors.numeroChasis
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                        onChange={handleOnlyLettersAndNumbers}
+                      />
+                      {touched.numeroChasis && errors.numeroChasis && (
+                        <div className="text-danger small">
+                          {errors.numeroChasis}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="row g-3 py-3">
+                    <div className="col-12 col-sm-12 col-md-6">
+                      <Select {...getFieldProps("anio")}>
+                        <option value="">
+                          Selecciona el año de tu vehículo
+                        </option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                      </Select>
+                    </div>
+                    <div className="col-12 col-sm-12 col-md-6">
+                      <Select {...getFieldProps("modelo")}>
+                        <option value="">Selecciona tu vehículo</option>
+                        <option value="Polo">Polo</option>
+                        <option value="Jetta">Jetta</option>
+                        <option value="Virtus">Virtus</option>
+                        <option value="Tiguan">Tiguan</option>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="row g-3 py-3">
+                    <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
+                      <TextInput
+                        {...getFieldProps("kilometrajeAuto")}
+                        label="Kilometraje actual del vehículo"
+                        isFloating={true}
+                        type="number"
+                      />
+                    </div>
+                    <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
+                      <Select {...getFieldProps("kilometrajeServicio")}>
+                        <option value="">
+                          Seleccione su servicio que necesite
+                        </option>
+                        <option value="15,000 km / 1 año">
+                          15,000 km ó 1 año
+                        </option>
+                      </Select>
+                    </div>
+                  </div>
+                  {!completedTabs.includes(1) && (
+                    <CTA
+                      onClick={() => handleActionComplete(0)}
+                      tag="button"
+                      emphasis="secondary"
+                    >
+                      Siguiente paso
+                    </CTA>
+                  )}
+                </div>
+              ),
+              key: "a",
+              disabled: !completedTabs.includes(0),
+              role: "step-1",
+            }}
+            {{
+              title: <Text tag={TextTag.span}>Seleccionar distribuidor</Text>,
+              content: (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  Press the button to proceed to the next step.
+                  {!completedTabs.includes(2) && (
+                    <CTA
+                      onClick={() => handleActionComplete(1)}
+                      tag="button"
+                      emphasis="secondary"
+                    >
+                      Paso siguiente
+                    </CTA>
+                  )}
+                </div>
+              ),
+              key: "b",
+              disabled: !completedTabs.includes(1),
+              role: "step-2",
+            }}
+            {{
+              title: "Title 3",
+              content: (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  Press the button to proceed to the next step.
+                  {!completedTabs.includes(3) && (
+                    <CTA
+                      onClick={() => handleActionComplete(2)}
+                      tag="button"
+                      emphasis="secondary"
+                    >
+                      Handle complete step 3
+                    </CTA>
+                  )}
+                </div>
+              ),
+              key: "c",
+              disabled: !completedTabs.includes(2),
+              role: "step-3",
+            }}
+          </Tabs>
+        </div>
+        <br />
+        <hr />
         <div className="col-12 pt-5 pb-4">
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
