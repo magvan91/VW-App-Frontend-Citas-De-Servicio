@@ -20,6 +20,7 @@ import {
   onlyLettersAndNumbers,
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
+import { CheckmarkCircleFilled } from "@volkswagen-onehub/icons-core";
 
 export const FormCitasDeServicio = () => {
   const [index, setIndex] = useState(0);
@@ -142,7 +143,16 @@ export const FormCitasDeServicio = () => {
             }}
           >
             {{
-              title: "Datos del vehículo",
+              title: (
+                <Text>
+                  Datos de Vehículo{" "}
+                  {completedTabs.includes(1) && (
+                    <i>
+                      <CheckmarkCircleFilled variant="default" />
+                    </i>
+                  )}
+                </Text>
+              ),
               content: (
                 <div
                   style={{
@@ -236,7 +246,16 @@ export const FormCitasDeServicio = () => {
               role: "step-1",
             }}
             {{
-              title: <Text tag={TextTag.span}>Búsqueda de Distribuidores</Text>,
+              title: (
+                <Text>
+                  Búsqueda de Distribuidores{" "}
+                  {completedTabs.includes(2) && (
+                    <i>
+                      <CheckmarkCircleFilled variant="default" />
+                    </i>
+                  )}
+                </Text>
+              ),
               content: (
                 <div className="row g-3">
                   <div className="col-12 col-sm-4 col-md-4">
@@ -388,7 +407,16 @@ export const FormCitasDeServicio = () => {
               role: "step-2",
             }}
             {{
-              title: <Text tag={TextTag.span}>Tus datos de contacto</Text>,
+              title: (
+                <Text>
+                  Tus datos de contacto{" "}
+                  {completedTabs.includes(3) && (
+                    <i>
+                      <CheckmarkCircleFilled variant="default" />
+                    </i>
+                  )}
+                </Text>
+              ),
               content: (
                 <div className="row g-3">
                   <div className="col-12 col-sm-4">
@@ -516,7 +544,16 @@ export const FormCitasDeServicio = () => {
               role: "step-3",
             }}
             {{
-              title: <Text tag={TextTag.span}>Información adicional</Text>,
+              title: (
+                <Text>
+                  Información adicional{" "}
+                  {completedTabs.includes(4) && (
+                    <i>
+                      <CheckmarkCircleFilled variant="default" />
+                    </i>
+                  )}
+                </Text>
+              ),
               content: (
                 <div className="row g-3">
                   <div className="col-12">
