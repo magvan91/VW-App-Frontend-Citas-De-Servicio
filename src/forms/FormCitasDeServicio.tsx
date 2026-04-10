@@ -375,16 +375,16 @@ export const FormCitasDeServicio = () => {
                     >
                       <option value="">Selecciona un horario</option>
                       <optgroup label="2026-06-01">
-                        <option value="09:00">09:00</option>
-                        <option value="10:00">10:00</option>
+                        <option value="2026-06-01/09:00">09:00</option>
+                        <option value="2026-06-01/10:00">10:00</option>
                       </optgroup>
                       <optgroup label="2026-06-02">
-                        <option value="11:00">11:00</option>
-                        <option value="12:00">12:00</option>
+                        <option value="2026-06-02/11:00">11:00</option>
+                        <option value="2026-06-02/12:00">12:00</option>
                       </optgroup>
                       <optgroup label="2026-06-03">
-                        <option value="09:00">09:00</option>
-                        <option value="12:00">12:00</option>
+                        <option value="2026-06-03/09:00">09:00</option>
+                        <option value="2026-06-03/12:00">12:00</option>
                       </optgroup>
                     </Select>
                   </div>
