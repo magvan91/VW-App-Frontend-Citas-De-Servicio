@@ -9,6 +9,7 @@ import {
   TokenTextAppearance,
   Checkbox,
   Tabs,
+  ButtonNext,
 } from "@volkswagen-onehub/components-core";
 import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
@@ -18,14 +19,12 @@ import {
   onlyLettersWithAcents,
   onlyLettersAndNumbers,
 } from "../utils/fieldFormsUtils";
+import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
 
 export const FormCitasDeServicio = () => {
   const [index, setIndex] = useState(0);
   const [completedTabs, setCompletedTabs] = useState<number[]>([0]);
-  const handleActionComplete = (tabIndex: number) => {
-    setCompletedTabs((prev) => [...prev, tabIndex + 1]);
-    setIndex(tabIndex + 1);
-  };
+
   const {
     values,
     touched,
@@ -33,7 +32,9 @@ export const FormCitasDeServicio = () => {
     getFieldProps,
     handleSubmit,
     setFieldValue,
-  } = useFormik({
+    validateForm,
+    setTouched,
+  } = useFormik<CitasServicioValues>({
     initialValues: {
       numeroChasis: "",
       anio: "",
@@ -43,7 +44,7 @@ export const FormCitasDeServicio = () => {
       idConcesionario: "",
       estado: "",
       ciudad: "",
-      dates: undefined,
+      dates: null,
       fecha: "",
       horario: "",
       nombre: "",
@@ -56,11 +57,37 @@ export const FormCitasDeServicio = () => {
       opt_in_transferencia_datos: false,
       tyco: false,
     },
-    validationSchema: validationFormCitasDeServicio,
+    validationSchema: validationFormCitasDeServicio[index],
     onSubmit: (values) => {
       console.log(values);
     },
   });
+
+  const handleActionComplete = async (tabIndex: number) => {
+    //* 1. Forzamos la validación del esquema actual
+    const currentErrors = await validateForm();
+
+    //* 2. Si hay errores, tocamos los campos para que se muestren en rojo en la UI
+    if (Object.keys(currentErrors).length > 0) {
+      const touchedFields = Object.keys(currentErrors).reduce(
+        (acc, curr) => {
+          acc[curr as keyof CitasServicioValues] = true;
+          return acc;
+        },
+        {} as Record<keyof CitasServicioValues, boolean>,
+      );
+
+      setTouched(touchedFields);
+      return; //! Detenemos la función para no avanzar de Tab
+    }
+
+    //* 3. Si no hay errores, avanzamos al siguiente Tab de forma segura
+    const nextIndex = tabIndex + 1;
+    if (!completedTabs.includes(nextIndex)) {
+      setCompletedTabs((prev) => [...prev, nextIndex]);
+    }
+    setIndex(nextIndex);
+  };
 
   //* Función que llama al fieldFormsUtils onlyLetters
   const handleOnlyLettersWithAccentsChange = (
@@ -191,13 +218,16 @@ export const FormCitasDeServicio = () => {
                     </div>
                   </div>
                   {!completedTabs.includes(1) && (
-                    <CTA
-                      onClick={() => handleActionComplete(0)}
-                      tag="button"
-                      emphasis="secondary"
-                    >
-                      Siguiente paso
-                    </CTA>
+                    <div className="col-12 text-center pt-2">
+                      <ButtonNext
+                        onClick={() => handleActionComplete(0)}
+                        tag="button"
+                        emphasis="primary"
+                        size="large"
+                      >
+                        Siguiente paso
+                      </ButtonNext>
+                    </div>
                   )}
                 </div>
               ),
@@ -290,8 +320,17 @@ export const FormCitasDeServicio = () => {
                   </div>
                   <div className="col-12 col-sm-6 col-md-6">
                     <DateRangePicker
-                      value={values.dates}
-                      onChange={(range) => setFieldValue("dates", range)}
+                      value={
+                        values.dates
+                          ? { from: values.dates[0], to: values.dates[1] }
+                          : undefined
+                      }
+                      onChange={(range) =>
+                        setFieldValue(
+                          "dates",
+                          range ? [range.from, range.to] : null,
+                        )
+                      }
                     />
                   </div>
                   <div className="col-12 col-sm-6 col-md-6">
@@ -332,13 +371,15 @@ export const FormCitasDeServicio = () => {
                     </Select>
                   </div>
                   {!completedTabs.includes(2) && (
-                    <CTA
-                      onClick={() => handleActionComplete(1)}
-                      tag="button"
-                      emphasis="secondary"
-                    >
-                      Paso siguiente
-                    </CTA>
+                    <div className="col-12 text-center">
+                      <ButtonNext
+                        onClick={() => handleActionComplete(1)}
+                        tag="button"
+                        emphasis="primary"
+                      >
+                        Paso siguiente
+                      </ButtonNext>
+                    </div>
                   )}
                 </div>
               ),
@@ -458,13 +499,15 @@ export const FormCitasDeServicio = () => {
                     )}
                   </div>
                   {!completedTabs.includes(3) && (
-                    <CTA
-                      onClick={() => handleActionComplete(2)}
-                      tag="button"
-                      emphasis="secondary"
-                    >
-                      Handle complete step 3
-                    </CTA>
+                    <div className="col-12 text-center">
+                      <ButtonNext
+                        onClick={() => handleActionComplete(2)}
+                        tag="button"
+                        emphasis="primary"
+                      >
+                        Paso siguiente
+                      </ButtonNext>
+                    </div>
                   )}
                 </div>
               ),
