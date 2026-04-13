@@ -62,7 +62,7 @@ export const FormCitasDeServicio = () => {
       tyco: false,
     },
     validationSchema: validationFormCitasDeServicio[index],
-    onSubmit: (values) => {
+    onSubmit: () => {
       setShowSummary(true); // DISPARADOR DE VISTA
     },
   });
