@@ -15,6 +15,7 @@ import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { validationFormCitasDeServicio } from "./schemas/validationFormCitasDeServicio";
 import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
+import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
 import {
   onlyLettersWithAcents,
   onlyLettersAndNumbers,
@@ -25,6 +26,8 @@ import { CheckmarkCircleFilled } from "@volkswagen-onehub/icons-core";
 export const FormCitasDeServicio = () => {
   const [index, setIndex] = useState(0);
   const [completedTabs, setCompletedTabs] = useState<number[]>([0]);
+  const [showTyco, setShowTyco] = useState(false);
+  const [showSummary, setShowSummary] = useState(false); // ESTADO REQUERIDO
 
   const {
     values,
@@ -60,7 +63,7 @@ export const FormCitasDeServicio = () => {
     },
     validationSchema: validationFormCitasDeServicio[index],
     onSubmit: (values) => {
-      alert(JSON.stringify(values));
+      setShowSummary(true); // DISPARADOR DE VISTA
     },
   });
 
@@ -107,11 +110,16 @@ export const FormCitasDeServicio = () => {
     setFieldValue(name, cleanValue);
   };
 
-  const [showTyco, setShowTyco] = useState(false);
-
   const handleShowTyco = (visibleTyco: boolean): void => {
     setShowTyco(visibleTyco);
   };
+
+  // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
+  if (showSummary) {
+    return (
+      <SummaryCitasDeServicio showSummary={showSummary} data={values as any} />
+    );
+  }
 
   return (
     <div className="container">
