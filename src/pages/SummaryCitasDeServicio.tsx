@@ -21,7 +21,7 @@ export const SummaryCitasDeServicio = ({
     <div className="container pt-5 pb-5">
       <div className="row">
         {/* COLUMNA IZQUIERDA: Saludo y Confirmación */}
-        <div className="col-12 col-md-4 mb-5 mb-md-0">
+        <div className="col-12 col-md-6">
           <div className="mb-4">
             <Text
               appearance={TokenTextAppearance.headline200}
@@ -30,7 +30,7 @@ export const SummaryCitasDeServicio = ({
               Apreciable
             </Text>
             <Text
-              appearance={TokenTextAppearance.headline600}
+              appearance={TokenTextAppearance.headline200}
               tag={TextTag.h1}
               bold
               className="d-block"
@@ -41,18 +41,12 @@ export const SummaryCitasDeServicio = ({
 
           <div className="mb-4">
             <Text
-              appearance={TokenTextAppearance.bigcopy200}
-              bold
-              className="d-block mb-2"
-            >
-              Agradecemos tu preferencia.
-            </Text>
-            <Text
               appearance={TokenTextAppearance.bigcopy100}
               className="d-block"
             >
-              Muy pronto uno de nuestros asesores se pondrá en contacto contigo
-              para la confirmación del horario solicitado.
+              Agradecemos tu preferencia. <br></br> Muy pronto uno de nuestros
+              asesores se pondrá en contacto contigo para la confirmación del
+              horario solicitado.
             </Text>
           </div>
 
@@ -74,54 +68,35 @@ export const SummaryCitasDeServicio = ({
         </div>
 
         {/* COLUMNA DERECHA: Detalles Técnicos y Comentarios */}
-        <div className="col-12 col-md-8">
+        <div className="col-6 col-md-6">
           {/* Row para las dos columnas internas */}
           <div className="row">
+            <div className="col-12 ">
+              <Text
+                appearance={TokenTextAppearance.headline400}
+                bold
+                color={TokenTextColor.primary}
+              >
+                Servicio de mantenimiento
+              </Text>
+            </div>
+          </div>
+
+          <div className="row mt-3">
             {/* Columna Interna 1 */}
             <div className="col-12 col-sm-6 mb-4">
               <div className="d-flex flex-column gap-3">
-                <Text
-                  appearance={TokenTextAppearance.headline200}
-                  bold
-                  color={TokenTextColor.primary}
-                >
-                  Servicio de mantenimiento
-                </Text>
                 <div>
-                  <Text
-                    appearance={TokenTextAppearance.bigcopy100}
-                    color={TokenTextColor.tertiary}
-                    bold
-                    className="d-block"
-                  >
-                    Nombre de modelo
-                  </Text>
                   <Text appearance={TokenTextAppearance.bigcopy100}>
                     {data.modelo}
                   </Text>
                 </div>
                 <div>
-                  <Text
-                    appearance={TokenTextAppearance.bigcopy100}
-                    color={TokenTextColor.tertiary}
-                    bold
-                    className="d-block"
-                  >
-                    Año
-                  </Text>
                   <Text appearance={TokenTextAppearance.bigcopy100}>
                     {data.anio}
                   </Text>
                 </div>
                 <div>
-                  <Text
-                    appearance={TokenTextAppearance.bigcopy100}
-                    color={TokenTextColor.tertiary}
-                    bold
-                    className="d-block"
-                  >
-                    Kilometraje de servicio
-                  </Text>
                   <Text appearance={TokenTextAppearance.bigcopy100}>
                     {data.kilometrajeServicio}
                   </Text>
@@ -132,45 +107,20 @@ export const SummaryCitasDeServicio = ({
             {/* Columna Interna 2 */}
             <div className="col-12 col-sm-6 mb-4">
               <div className="d-flex flex-column gap-3">
-                <div style={{ height: "32px" }}></div>{" "}
                 {/* Espaciador para alinear con el título de la col 1 */}
                 <div>
-                  <Text
-                    appearance={TokenTextAppearance.bigcopy100}
-                    color={TokenTextColor.tertiary}
-                    bold
-                    className="d-block"
-                  >
-                    Número VIN
-                  </Text>
                   <Text appearance={TokenTextAppearance.bigcopy100}>
-                    {data.numeroChasis}
+                    VIN {data.numeroChasis}
                   </Text>
                 </div>
                 <div>
-                  <Text
-                    appearance={TokenTextAppearance.bigcopy100}
-                    color={TokenTextColor.tertiary}
-                    bold
-                    className="d-block"
-                  >
-                    Kilometraje del auto
-                  </Text>
                   <Text appearance={TokenTextAppearance.bigcopy100}>
                     {data.kilometrajeAuto} km
                   </Text>
                 </div>
                 <div>
-                  <Text
-                    appearance={TokenTextAppearance.bigcopy100}
-                    color={TokenTextColor.tertiary}
-                    bold
-                    className="d-block"
-                  >
-                    Fecha y horario de la cita
-                  </Text>
                   <Text appearance={TokenTextAppearance.bigcopy100}>
-                    {data.fecha} <br />
+                    {data.fecha}
                     {data.horario} hrs
                   </Text>
                 </div>
