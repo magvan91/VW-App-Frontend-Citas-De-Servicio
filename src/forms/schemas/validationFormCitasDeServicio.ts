@@ -21,7 +21,12 @@ export const validationFormCitasDeServicio = [
     estado: Yup.string().required("Selecciona un estado"),
     ciudad: Yup.string().required("Selecciona una ciudad"),
     idConcesionario: Yup.string().required("Selecciona un distribuidor"),
-    horario: Yup.string().required("Selecciona un horario"),
+    horario: Yup.string()
+      .required("Selecciona un horario")
+      .matches(
+        /^\d{4}-\d{2}-\d{2}\/\d{2}:\d{2}$/,
+        "El formato de selección es inválido",
+      ),
   }),
 
   //* Paso 2: Tus datos de contacto

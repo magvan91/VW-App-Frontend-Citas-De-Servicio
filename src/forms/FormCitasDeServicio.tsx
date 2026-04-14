@@ -28,6 +28,7 @@ export const FormCitasDeServicio = () => {
   const [completedTabs, setCompletedTabs] = useState<number[]>([0]);
   const [showTyco, setShowTyco] = useState(false);
   const [showSummary, setShowSummary] = useState(false); // ESTADO REQUERIDO
+  const [summaryData, setSummaryData] = useState<any>(null);
 
   const {
     values,
@@ -62,8 +63,21 @@ export const FormCitasDeServicio = () => {
       tyco: false,
     },
     validationSchema: validationFormCitasDeServicio[index],
-    onSubmit: () => {
-      setShowSummary(true); // DISPARADOR DE VISTA
+    onSubmit: (values) => {
+      // 1. Extraer los componentes mediante desestructuración de arreglos
+      const [fechaExtraida, horaExtraida] = values.horario.split("/");
+
+      // 2. Crear un objeto de envío con los campos normalizados
+      const payload = {
+        ...values,
+        fecha: fechaExtraida, // Asigna '2026-06-01'
+        horario: horaExtraida, // Asigna '09:00'
+      };
+
+      // 3. Proceder con el renderizado del resumen o el envío al backend
+      console.log("Datos procesados para el backend:", payload);
+      setSummaryData(payload); // Guardamos los datos procesados para pasarlos al resumen
+      setShowSummary(true);
     },
   });
 
@@ -115,9 +129,13 @@ export const FormCitasDeServicio = () => {
   };
 
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
-  if (showSummary) {
+  if (showSummary && summaryData) {
+    // Asegúrate de que summaryData exista
     return (
-      <SummaryCitasDeServicio showSummary={showSummary} data={values as any} />
+      <SummaryCitasDeServicio
+        showSummary={showSummary}
+        data={summaryData} // <--- AHORA PASAS LOS DATOS PROCESADOS
+      />
     );
   }
 
