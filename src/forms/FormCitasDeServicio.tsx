@@ -23,7 +23,6 @@ import {
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
 import {
   CheckmarkCircleFilled,
-  Accessories,
   BusinessCustomersPrivate,
 } from "@volkswagen-onehub/icons-core";
 
