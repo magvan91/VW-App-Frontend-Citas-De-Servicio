@@ -21,7 +21,11 @@ import {
   onlyLettersAndNumbers,
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
-import { CheckmarkCircleFilled } from "@volkswagen-onehub/icons-core";
+import {
+  CheckmarkCircleFilled,
+  Accessories,
+  BusinessCustomersPrivate,
+} from "@volkswagen-onehub/icons-core";
 
 export const FormCitasDeServicio = () => {
   const [index, setIndex] = useState(0);
@@ -128,9 +132,24 @@ export const FormCitasDeServicio = () => {
     setShowTyco(visibleTyco);
   };
 
+  const [selectedService, setSelectedService] = useState<number>(0);
+  const serviceOptions = [
+    {
+      id: 0,
+      title: "Servicio de mantenimiento",
+      icon: <BusinessCustomersPrivate />,
+    },
+    { id: 1, title: "Diagnostico" /*, icon: <IconDiagnostic /> */ },
+    {
+      id: 2,
+      title: "Reparación eléctrica o mecánica" /*, icon: <IconRepair /> */,
+    },
+    { id: 3, title: "Hojalatería y pintura" /*, icon: <IconPaint /> */ },
+  ];
+
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
   if (showSummary && summaryData) {
-    // Asegúrate de que summaryData exista
+    // Se asegura de que summaryData exista
     return (
       <SummaryCitasDeServicio
         showSummary={showSummary}
@@ -152,6 +171,44 @@ export const FormCitasDeServicio = () => {
             En que tipo de servicio estás interesado
           </Text>
         </div>
+
+        {serviceOptions.map((option) => (
+          // col-6 para mostrar 2 columnas en celular, col-md-3 para 4 columnas en escritorio
+          <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
+            <div
+              onClick={() => setSelectedService(option.id)}
+              className="d-flex flex-column align-items-center justify-content-center p-3 rounded h-100 text-center"
+              style={{
+                cursor: "pointer",
+                // Estilos condicionales basados en la selección
+                backgroundColor:
+                  selectedService === option.id ? "#f5f3ed" : "#ffffff",
+                borderColor:
+                  selectedService === option.id ? "#8b7b65" : "#f2f2f2",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                minHeight: "160px",
+                transition: "all 0.2s ease-in-out",
+              }}
+            >
+              <div className="mb-3" style={{ color: "#001e50" }}>
+                <span
+                  style={{ display: "inline-flex", transform: "scale(2.5)" }}
+                >
+                  {option.icon}
+                </span>
+              </div>
+              <Text
+                appearance={TokenTextAppearance.bigcopy100}
+                textAlign={TextAlignment.center}
+              >
+                {option.title}
+              </Text>
+            </div>
+          </div>
+        ))}
+        {/* <BusinessCustomersPrivate /> */}
+        <div></div>
         <div className="col-12">
           <Tabs
             defaultIndex={index}
