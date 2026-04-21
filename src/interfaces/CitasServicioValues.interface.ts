@@ -19,4 +19,5 @@ export interface CitasServicioValues {
   aceptaAviso: boolean;
   opt_in_transferencia_datos: boolean;
   tyco: boolean;
+  tipoServicio: number;
 }

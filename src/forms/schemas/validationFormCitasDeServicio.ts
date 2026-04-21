@@ -14,6 +14,11 @@ export const validationFormCitasDeServicio = [
     // modelo: Yup.string().required("Selecciona el modelo"),
     // kilometrajeAuto: Yup.number().required("Ingresa el kilometraje"),
     // kilometrajeServicio: Yup.string().required("Selecciona el servicio"),
+    // kilometrajeServicio: Yup.string().when("tipoServicio", {
+    //   is: 0,
+    //   then: (schema) => schema.required("Selecciona el servicio que necesitas"),
+    //   otherwise: (schema) => schema.notRequired(),
+    // }),
   }),
 
   //* Paso 1: Búsqueda de Distribuidores

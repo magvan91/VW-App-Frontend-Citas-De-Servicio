@@ -24,6 +24,9 @@ import type { CitasServicioValues } from "../interfaces/CitasServicioValues.inte
 import {
   CheckmarkCircleFilled,
   BusinessCustomersPrivate,
+  FindCar,
+  ElectricCarsService,
+  PaintShop,
 } from "@volkswagen-onehub/icons-core";
 
 export const FormCitasDeServicio = () => {
@@ -64,6 +67,7 @@ export const FormCitasDeServicio = () => {
       aceptaAviso: false,
       opt_in_transferencia_datos: false,
       tyco: false,
+      tipoServicio: 0,
     },
     validationSchema: validationFormCitasDeServicio[index],
     onSubmit: (values) => {
@@ -138,12 +142,13 @@ export const FormCitasDeServicio = () => {
       title: "Servicio de mantenimiento",
       icon: <BusinessCustomersPrivate />,
     },
-    { id: 1, title: "Diagnostico" /*, icon: <IconDiagnostic /> */ },
+    { id: 1, title: "Diagnostico", icon: <FindCar /> },
     {
       id: 2,
-      title: "Reparación eléctrica o mecánica" /*, icon: <IconRepair /> */,
+      title: "Reparación eléctrica o mecánica",
+      icon: <ElectricCarsService />,
     },
-    { id: 3, title: "Hojalatería y pintura" /*, icon: <IconPaint /> */ },
+    { id: 3, title: "Hojalatería y pintura", icon: <PaintShop /> },
   ];
 
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
@@ -167,7 +172,7 @@ export const FormCitasDeServicio = () => {
             tag={TextTag.h3}
             bold
           >
-            En que tipo de servicio estás interesado
+            ¿En que tipo de servicio estás interesado?
           </Text>
         </div>
 
@@ -175,7 +180,13 @@ export const FormCitasDeServicio = () => {
           // col-6 para mostrar 2 columnas en celular, col-md-3 para 4 columnas en escritorio
           <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
             <div
-              onClick={() => setSelectedService(option.id)}
+              onClick={() => {
+                setSelectedService(option.id);
+                setFieldValue("tipoServicio", option.id);
+                if (option.id !== 0) {
+                  setFieldValue("kilometrajeServicio", "");
+                }
+              }}
               className="d-flex flex-column align-items-center justify-content-center p-3 rounded h-100 text-center"
               style={{
                 cursor: "pointer",
@@ -198,7 +209,7 @@ export const FormCitasDeServicio = () => {
                 </span>
               </div>
               <Text
-                appearance={TokenTextAppearance.bigcopy100}
+                appearance={TokenTextAppearance.copy200}
                 textAlign={TextAlignment.center}
               >
                 {option.title}
@@ -242,7 +253,9 @@ export const FormCitasDeServicio = () => {
                   }}
                 >
                   <div className="row g-3">
-                    <div className="col-12">
+                    <div
+                      className={`col-12 ${selectedService === 0 ? "col-md-12" : "col-md-6"}`}
+                    >
                       <TextInput
                         {...getFieldProps("numeroChasis")}
                         label="Número VIN"
@@ -265,8 +278,7 @@ export const FormCitasDeServicio = () => {
                         </div>
                       )}
                     </div>
-                  </div>
-                  <div className="row g-3 py-3">
+
                     <div className="col-12 col-sm-12 col-md-6">
                       <Select {...getFieldProps("anio")}>
                         <option value="">
@@ -287,8 +299,7 @@ export const FormCitasDeServicio = () => {
                         <option value="Tiguan">Tiguan</option>
                       </Select>
                     </div>
-                  </div>
-                  <div className="row g-3 py-3">
+
                     <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
                       <TextInput
                         {...getFieldProps("kilometrajeAuto")}
@@ -297,16 +308,18 @@ export const FormCitasDeServicio = () => {
                         type="number"
                       />
                     </div>
-                    <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
-                      <Select {...getFieldProps("kilometrajeServicio")}>
-                        <option value="">
-                          Seleccione su servicio que necesite
-                        </option>
-                        <option value="15,000 km / 1 año">
-                          15,000 km ó 1 año
-                        </option>
-                      </Select>
-                    </div>
+                    {selectedService === 0 && (
+                      <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
+                        <Select {...getFieldProps("kilometrajeServicio")}>
+                          <option value="">
+                            Selecciona el servicio que necesitas
+                          </option>
+                          <option value="15,000 km / 1 año">
+                            15,000 km ó 1 año
+                          </option>
+                        </Select>
+                      </div>
+                    )}
                   </div>
                   {!completedTabs.includes(1) && (
                     <div className="col-12 text-center pt-2">
