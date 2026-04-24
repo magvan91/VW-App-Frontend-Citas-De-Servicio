@@ -23,13 +23,7 @@ import {
   formatNumberWithCommas,
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
-import {
-  CheckmarkCircleFilled,
-  BusinessCustomersPrivate,
-  FindCar,
-  ElectricCarsService,
-  PaintShop,
-} from "@volkswagen-onehub/icons-core";
+import { CheckmarkCircleFilled } from "@volkswagen-onehub/icons-core";
 
 import type { ServiceOption } from "../interfaces/ServiceOption.interface";
 
