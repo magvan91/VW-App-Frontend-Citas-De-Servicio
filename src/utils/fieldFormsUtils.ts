@@ -13,3 +13,9 @@ export const onlyNumbers = (digit: string): string => {
   const filteredValue = digit.replace(/\D/g, "");
   return filteredValue;
 };
+
+export const formatNumberWithCommas = (value: string | number): string => {
+  if (!value) return "";
+  const cleanValue = value.toString().replace(/\D/g, "");
+  return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};

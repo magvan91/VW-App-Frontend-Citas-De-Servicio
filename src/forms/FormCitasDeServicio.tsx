@@ -11,6 +11,7 @@ import {
   Tabs,
   ButtonNext,
 } from "@volkswagen-onehub/components-core";
+
 import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { validationFormCitasDeServicio } from "./schemas/validationFormCitasDeServicio";
@@ -19,6 +20,7 @@ import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMP
 import {
   onlyLettersWithAcents,
   onlyLettersAndNumbers,
+  formatNumberWithCommas,
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
 import {
@@ -28,6 +30,8 @@ import {
   ElectricCarsService,
   PaintShop,
 } from "@volkswagen-onehub/icons-core";
+
+import type { ServiceOption } from "../interfaces/ServiceOption.interface";
 
 export const FormCitasDeServicio = () => {
   const [index, setIndex] = useState(0);
@@ -134,21 +138,29 @@ export const FormCitasDeServicio = () => {
   const handleShowTyco = (visibleTyco: boolean): void => {
     setShowTyco(visibleTyco);
   };
-
+  const { name, value, onBlur } = getFieldProps("kilometrajeAuto");
   const [selectedService, setSelectedService] = useState<number>(0);
-  const serviceOptions = [
+  const serviceOptions: ServiceOption[] = [
     {
       id: 0,
       title: "Servicio de mantenimiento",
-      icon: <BusinessCustomersPrivate />,
+      icon: "public/images/servicioMantenimiento.svg",
     },
-    { id: 1, title: "Diagnostico", icon: <FindCar /> },
+    {
+      id: 1,
+      title: "Diagnostico",
+      icon: "public/images/diagnosticoReparacion.svg",
+    },
     {
       id: 2,
-      title: "Reparación eléctrica o mecánica",
-      icon: <ElectricCarsService />,
+      title: "Hojalatería y pintura",
+      icon: "public/images/ojalateriaPintura.svg",
     },
-    { id: 3, title: "Hojalatería y pintura", icon: <PaintShop /> },
+    {
+      id: 3,
+      title: "Cotización e instalación de accesorios",
+      icon: "public/images/cotizacionAccesorios.svg",
+    },
   ];
 
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
@@ -205,7 +217,21 @@ export const FormCitasDeServicio = () => {
                 <span
                   style={{ display: "inline-flex", transform: "scale(2.5)" }}
                 >
-                  {option.icon}
+                  {/* Verificación de tipo para TSX */}
+                  {typeof option.icon === "string" ? (
+                    <img
+                      src={option.icon}
+                      alt={option.title}
+                      style={{
+                        width: "2.5em", // Mantiene proporción con el texto
+                        height: "2.em",
+                        display: "block",
+                      }}
+                    />
+                  ) : (
+                    // Si no es string, TS sabe que es ReactNode/JSX.Element
+                    option.icon
+                  )}
                 </span>
               </div>
               <Text
@@ -280,7 +306,12 @@ export const FormCitasDeServicio = () => {
                     </div>
 
                     <div className="col-12 col-sm-12 col-md-6">
-                      <Select {...getFieldProps("anio")}>
+                      <Select
+                        {...getFieldProps("anio")}
+                        required
+                        isFloating={true}
+                        label="Año del vehículo"
+                      >
                         <option value="">
                           Selecciona el año de tu vehículo
                         </option>
@@ -291,7 +322,12 @@ export const FormCitasDeServicio = () => {
                       </Select>
                     </div>
                     <div className="col-12 col-sm-12 col-md-6">
-                      <Select {...getFieldProps("modelo")}>
+                      <Select
+                        {...getFieldProps("modelo")}
+                        required
+                        isFloating={true}
+                        label="Vehículo"
+                      >
                         <option value="">Selecciona tu vehículo</option>
                         <option value="Polo">Polo</option>
                         <option value="Jetta">Jetta</option>
@@ -302,15 +338,31 @@ export const FormCitasDeServicio = () => {
 
                     <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
                       <TextInput
-                        {...getFieldProps("kilometrajeAuto")}
-                        label="Kilometraje actual del vehículo"
+                        // 1. Pasa nombre y blur nativos de Formik
+                        name={name}
+                        onBlur={onBlur}
+                        // 2. Intercepta el cambio para guardar el valor crudo en Formik
+                        onChange={(e: any) => {
+                          // Extrae el valor dependiendo de cómo el componente nativo emita el evento
+                          const rawInput = e.target ? e.target.value : e;
+                          const cleanValue = rawInput.replace(/\D/g, "");
+                          setFieldValue("kilometrajeAuto", cleanValue);
+                        }}
+                        // 3. Formatea el valor "al vuelo" solo para la vista
+                        value={formatNumberWithCommas(value)}
+                        label="Kilometraje actual del vehículo*"
                         isFloating={true}
-                        type="number"
+                        // 4. Debe ser "text", no "number", para que acepte comas
+                        type="text"
                       />
                     </div>
                     {selectedService === 0 && (
                       <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
-                        <Select {...getFieldProps("kilometrajeServicio")}>
+                        <Select
+                          {...getFieldProps("kilometrajeServicio")}
+                          label="Servicio que necesitas"
+                          isFloating={true}
+                        >
                           <option value="">
                             Selecciona el servicio que necesitas
                           </option>
@@ -382,7 +434,11 @@ export const FormCitasDeServicio = () => {
                       {...getFieldProps("ciudad")}
                       required
                       isFloating={true}
-                      label="Selecciona una ciudad"
+                      label={
+                        values.estado === "CDMX"
+                          ? "Selecciona una alcaldía"
+                          : "Selecciona una ciudad"
+                      }
                       message={
                         touched.ciudad && !values.ciudad
                           ? "Selecciona una ciudad"
@@ -469,7 +525,7 @@ export const FormCitasDeServicio = () => {
                       disabled={!values.dates}
                     >
                       <option value="">Selecciona un horario</option>
-                      <optgroup label="2026-06-01">
+                      <optgroup label="01-septiembre-26">
                         <option value="2026-06-01/09:00">09:00</option>
                         <option value="2026-06-01/10:00">10:00</option>
                       </optgroup>
@@ -620,143 +676,115 @@ export const FormCitasDeServicio = () => {
                       <div className="text-danger small">{errors.email}</div>
                     )}
                   </div>
-                  {!completedTabs.includes(3) && (
-                    <div className="col-12 text-center">
-                      <ButtonNext
-                        onClick={() => handleActionComplete(2)}
-                        tag="button"
-                        emphasis="primary"
-                      >
-                        Paso siguiente
-                      </ButtonNext>
+                  <div className="row g-3">
+                    <div className="col-12">
+                      <TextInput
+                        {...getFieldProps("comentarios")}
+                        label="¿Hay algo más que quieras compartirnos? Escribelo aquí"
+                        isFloating={true}
+                        type="text"
+                      />
                     </div>
-                  )}
+                    <div className="row my-4">
+                      <div className="col-12 mb-3">
+                        <Checkbox
+                          {...getFieldProps("aceptaAviso")}
+                          appearance={
+                            touched.aceptaAviso
+                              ? errors.aceptaAviso
+                                ? "error"
+                                : "success"
+                              : "default"
+                          }
+                        />
+                        He leído y acepto los términos y condiciones contenidos
+                        en el{" "}
+                        <CTA
+                          tag="a"
+                          emphasis="tertiary"
+                          title="Aviso de Privacidad"
+                          target="_blank"
+                          rel="noreferrer"
+                          href="https://www.vw.com.mx/es/legal/aviso-de-privacidad.html"
+                        >
+                          {" "}
+                          Aviso de Privacidad.
+                        </CTA>
+                        {touched.aceptaAviso && errors.aceptaAviso && (
+                          <div className="text-danger small mt-1">
+                            {errors.aceptaAviso}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="col-12 mb-3">
+                        <Checkbox
+                          {...getFieldProps("opt_in_transferencia_datos")}
+                          appearance={
+                            touched.opt_in_transferencia_datos
+                              ? errors.opt_in_transferencia_datos
+                                ? "error"
+                                : "success"
+                              : "default"
+                          }
+                        />
+                        Acepto que mis datos personales aquí proporcionados sean
+                        transferidos al Concesionario marca Volkswagen que he
+                        elegido, a efecto de que le den seguimiento a mi
+                        solicitud.
+                        {touched.opt_in_transferencia_datos &&
+                          errors.opt_in_transferencia_datos && (
+                            <div className="text-danger small mt-1">
+                              {errors.opt_in_transferencia_datos}
+                            </div>
+                          )}
+                      </div>
+                      <div className="col-12 mb-3">
+                        <Checkbox
+                          {...getFieldProps("tyco")}
+                          appearance={
+                            touched.tyco
+                              ? errors.tyco
+                                ? "error"
+                                : "success"
+                              : "default"
+                          }
+                        />
+                        He leído y acepto los términos y condiciones{" "}
+                        <CTA
+                          tag="button"
+                          type="button"
+                          emphasis="tertiary"
+                          title="Términos y condiciones"
+                          onClick={() => handleShowTyco(true)}
+                        >
+                          Apartado.
+                        </CTA>
+                        {touched.tyco && errors.tyco && (
+                          <div className="text-danger small mt-1">
+                            {errors.tyco}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-12 text-center pb-4">
+                        <CTA
+                          tag="button"
+                          type="button"
+                          emphasis="primary"
+                          onClick={submitForm}
+                        >
+                          Agendar Cita
+                        </CTA>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ),
               key: "c",
               disabled: !completedTabs.includes(2),
               role: "step-3",
-            }}
-            {{
-              title: (
-                <Text>
-                  Información adicional{" "}
-                  {completedTabs.includes(4) && (
-                    <i>
-                      <CheckmarkCircleFilled variant="default" />
-                    </i>
-                  )}
-                </Text>
-              ),
-              content: (
-                <div className="row g-3">
-                  <div className="col-12">
-                    <TextInput
-                      {...getFieldProps("comentarios")}
-                      label="¿Hay algo más que quieras compartirnos? Escribelo aquí"
-                      isFloating={true}
-                      type="text"
-                    />
-                  </div>
-                  <div className="row my-4">
-                    <div className="col-12 mb-3">
-                      <Checkbox
-                        {...getFieldProps("aceptaAviso")}
-                        appearance={
-                          touched.aceptaAviso
-                            ? errors.aceptaAviso
-                              ? "error"
-                              : "success"
-                            : "default"
-                        }
-                      />
-                      He leído y acepto los términos y condiciones contenidos en
-                      el{" "}
-                      <CTA
-                        tag="a"
-                        emphasis="tertiary"
-                        title="Aviso de Privacidad"
-                        target="_blank"
-                        rel="noreferrer"
-                        href="https://www.vw.com.mx/es/legal/aviso-de-privacidad.html"
-                      >
-                        {" "}
-                        Aviso de Privacidad
-                      </CTA>
-                      {touched.aceptaAviso && errors.aceptaAviso && (
-                        <div className="text-danger small mt-1">
-                          {errors.aceptaAviso}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="col-12 mb-3">
-                      <Checkbox
-                        {...getFieldProps("opt_in_transferencia_datos")}
-                        appearance={
-                          touched.opt_in_transferencia_datos
-                            ? errors.opt_in_transferencia_datos
-                              ? "error"
-                              : "success"
-                            : "default"
-                        }
-                      />
-                      Acepto que mis datos personales aquí proporcionados sean
-                      transferidos al Concesionario marca Volkswagen que he
-                      elegido, a efecto de que le den seguimiento a mi
-                      solicitud.
-                      {touched.opt_in_transferencia_datos &&
-                        errors.opt_in_transferencia_datos && (
-                          <div className="text-danger small mt-1">
-                            {errors.opt_in_transferencia_datos}
-                          </div>
-                        )}
-                    </div>
-                    <div className="col-12 mb-3">
-                      <Checkbox
-                        {...getFieldProps("tyco")}
-                        appearance={
-                          touched.tyco
-                            ? errors.tyco
-                              ? "error"
-                              : "success"
-                            : "default"
-                        }
-                      />
-                      He leído y acepto los términos y condiciones{" "}
-                      <CTA
-                        tag="button"
-                        type="button"
-                        emphasis="tertiary"
-                        title="Términos y condiciones"
-                        onClick={() => handleShowTyco(true)}
-                      >
-                        Apartado.
-                      </CTA>
-                      {touched.tyco && errors.tyco && (
-                        <div className="text-danger small mt-1">
-                          {errors.tyco}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-12 text-center pb-4">
-                      <CTA
-                        tag="button"
-                        type="button"
-                        emphasis="primary"
-                        onClick={submitForm}
-                      >
-                        Agendar Cita
-                      </CTA>
-                    </div>
-                  </div>
-                </div>
-              ),
-              key: "d",
-              disabled: !completedTabs.includes(3),
-              role: "step-4",
             }}
           </Tabs>
         </div>

@@ -63,10 +63,6 @@ export const validationFormCitasDeServicio = [
     email: Yup.string()
       .email("Proporciona una dirección de correo valida")
       .required("El correo es obligatorio"),
-  }),
-
-  //* Paso 3 Comentarios y TyCos
-  Yup.object().shape({
     aceptaAviso: Yup.boolean().oneOf(
       [true],
       "Debes aceptar el aviso de privacidad",

@@ -45,7 +45,7 @@ export const DateRangePicker = ({ value, onChange }: Props) => {
               ? `${formatDate(value.from)} - ${formatDate(value.to)}`
               : ""
           }
-          placeholder="Selecciona un rango de fechas."
+          placeholder="Selecciona un rango de fechas.*"
         />
 
         {open && (
