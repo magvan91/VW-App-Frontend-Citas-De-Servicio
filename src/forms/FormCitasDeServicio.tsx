@@ -26,6 +26,12 @@ import type { CitasServicioValues } from "../interfaces/CitasServicioValues.inte
 import { CheckmarkCircleFilled } from "@volkswagen-onehub/icons-core";
 
 import type { ServiceOption } from "../interfaces/ServiceOption.interface";
+import MantenimientoIcon from "../assets/images/servicioMantenimiento.svg";
+import ReparacionIcon from "../assets/images/diagnosticoReparacion.svg";
+
+import PinturaIcon from "../assets/images/ojalateriaPintura.svg";
+
+import AccesoriosIcon from "../assets/images/cotizacionAccesorios.svg";
 
 export const FormCitasDeServicio = () => {
   const [index, setIndex] = useState(0);
@@ -137,22 +143,22 @@ export const FormCitasDeServicio = () => {
     {
       id: 0,
       title: "Servicio de mantenimiento",
-      icon: "public/images/servicioMantenimiento.svg",
+      icon: MantenimientoIcon,
     },
     {
       id: 1,
       title: "Diagnostico",
-      icon: "public/images/diagnosticoReparacion.svg",
+      icon: ReparacionIcon,
     },
     {
       id: 2,
       title: "Hojalatería y pintura",
-      icon: "public/images/ojalateriaPintura.svg",
+      icon: PinturaIcon,
     },
     {
       id: 3,
       title: "Cotización e instalación de accesorios",
-      icon: "public/images/cotizacionAccesorios.svg",
+      icon: AccesoriosIcon,
     },
   ];
 
