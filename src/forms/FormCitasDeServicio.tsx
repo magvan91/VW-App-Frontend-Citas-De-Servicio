@@ -20,7 +20,7 @@ import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMP
 import {
   onlyLettersWithAcents,
   onlyLettersAndNumbers,
-  formatNumberWithCommas,
+  formatKilometraje,
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
 import { CheckmarkCircleFilled } from "@volkswagen-onehub/icons-core";
@@ -132,7 +132,6 @@ export const FormCitasDeServicio = () => {
   const handleShowTyco = (visibleTyco: boolean): void => {
     setShowTyco(visibleTyco);
   };
-  const { name, value, onBlur } = getFieldProps("kilometrajeAuto");
   const [selectedService, setSelectedService] = useState<number>(0);
   const serviceOptions: ServiceOption[] = [
     {
@@ -330,25 +329,37 @@ export const FormCitasDeServicio = () => {
                       </Select>
                     </div>
 
-                    <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
+                    <div className="col-12 col-md-6 position-relative">
                       <TextInput
-                        // 1. Pasa nombre y blur nativos de Formik
-                        name={name}
-                        onBlur={onBlur}
-                        // 2. Intercepta el cambio para guardar el valor crudo en Formik
+                        {...getFieldProps("kilometrajeAuto")}
                         onChange={(e: any) => {
-                          // Extrae el valor dependiendo de cómo el componente nativo emita el evento
                           const rawInput = e.target ? e.target.value : e;
-                          const cleanValue = rawInput.replace(/\D/g, "");
-                          setFieldValue("kilometrajeAuto", cleanValue);
+                          const numericValue = rawInput.replace(/\D/g, "");
+                          setFieldValue("kilometrajeAuto", numericValue);
                         }}
-                        // 3. Formatea el valor "al vuelo" solo para la vista
-                        value={formatNumberWithCommas(value)}
+                        value={formatKilometraje(values.kilometrajeAuto)}
                         label="Kilometraje actual del vehículo*"
                         isFloating={true}
-                        // 4. Debe ser "text", no "number", para que acepte comas
                         type="text"
+                        inputMode="numeric"
                       />
+
+                      {/* Nodo DOM inyectado dinámicamente solo si existe un valor */}
+                      {values.kilometrajeAuto && (
+                        <span
+                          className="position-absolute"
+                          style={{
+                            right: "30px", // Ajustar según el padding nativo del componente VW
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            color: "#666666",
+                            pointerEvents: "none",
+                            zIndex: 5,
+                          }}
+                        >
+                          km
+                        </span>
+                      )}
                     </div>
                     {selectedService === 0 && (
                       <div className="col-12 col-sm-12 col-md-6 pt-sm-0">

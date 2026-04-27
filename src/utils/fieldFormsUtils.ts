@@ -19,3 +19,9 @@ export const formatNumberWithCommas = (value: string | number): string => {
   const cleanValue = value.toString().replace(/\D/g, "");
   return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
+
+export const formatKilometraje = (value: string | number): string => {
+  if (!value) return "";
+  const cleanValue = value.toString().replace(/\D/g, "");
+  return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
