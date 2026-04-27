@@ -368,7 +368,7 @@ export const FormCitasDeServicio = () => {
                     )}
                   </div>
                   {!completedTabs.includes(1) && (
-                    <div className="col-12 text-center pt-2">
+                    <div className="col-12 text-center pt-5">
                       <ButtonNext
                         onClick={() => handleActionComplete(0)}
                         tag="button"
