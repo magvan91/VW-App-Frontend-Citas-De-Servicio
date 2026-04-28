@@ -140,7 +140,7 @@ export const FormCitasDeServicio = () => {
   const handleShowTyco = (visibleTyco: boolean): void => {
     setShowTyco(visibleTyco);
   };
-  const [selectedService, setSelectedService] = useState<number>(0);
+  const [selectedService, setSelectedService] = useState<number | null>(null);
   const serviceOptions: ServiceOption[] = [
     {
       id: 0,
@@ -197,7 +197,7 @@ export const FormCitasDeServicio = () => {
                 setSelectedService(option.id);
                 setFieldValue("tipoServicio", option.id);
                 if (option.id !== 0) {
-                  setFieldValue("kilometrajeServicio", "");
+                  setFieldValue("", "");
                 }
 
                 // 👇 scroll SOLO en móvil
