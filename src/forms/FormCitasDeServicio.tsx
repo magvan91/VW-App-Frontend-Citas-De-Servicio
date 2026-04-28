@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   CTA,
   Select,
@@ -34,6 +34,8 @@ import PinturaIcon from "../assets/images/ojalateriaPintura.svg";
 import AccesoriosIcon from "../assets/images/cotizacionAccesorios.svg";
 
 export const FormCitasDeServicio = () => {
+  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+
   const [index, setIndex] = useState(0);
   const [completedTabs, setCompletedTabs] = useState<number[]>([0]);
   const [showTyco, setShowTyco] = useState(false);
@@ -91,7 +93,7 @@ export const FormCitasDeServicio = () => {
       setShowSummary(true);
     },
   });
-
+  const targetRef = useRef<HTMLDivElement | null>(null);
   const handleActionComplete = async (tabIndex: number) => {
     //* 1. Forzamos la validación del esquema actual
     const currentErrors = await validateForm();
@@ -197,6 +199,14 @@ export const FormCitasDeServicio = () => {
                 if (option.id !== 0) {
                   setFieldValue("kilometrajeServicio", "");
                 }
+
+                // 👇 scroll SOLO en móvil
+                if (isMobile() && targetRef.current) {
+                  targetRef.current.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }
               }}
               className="d-flex flex-column align-items-center justify-content-center p-3 rounded h-100 text-center"
               style={{
@@ -276,6 +286,7 @@ export const FormCitasDeServicio = () => {
                     display: "flex",
                     flexDirection: "column",
                   }}
+                  ref={targetRef}
                 >
                   <div className="row g-3">
                     <div
