@@ -25,3 +25,9 @@ export const formatKilometraje = (value: string | number): string => {
   const cleanValue = value.toString().replace(/\D/g, "");
   return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
+
+//Para el scroll automático en mobile al cambiar de tab
+export const isMobile = () => {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(max-width: 768px)").matches;
+};

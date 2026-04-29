@@ -1291,3 +1291,6 @@ data-styled.g239[id="StyledSkipLinkTargetWrapper-TTkYZ"] {
   text-overflow: ellipsis;
   transition: padding 0.15s ease-in-out;
 }
+.contenedor-target {
+  scroll-margin-bottom: 20px; /* Da aire al final del scroll */
+}

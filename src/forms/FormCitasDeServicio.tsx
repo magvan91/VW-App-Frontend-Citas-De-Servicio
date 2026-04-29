@@ -32,10 +32,9 @@ import ReparacionIcon from "../assets/images/diagnosticoReparacion.svg";
 import PinturaIcon from "../assets/images/ojalateriaPintura.svg";
 
 import AccesoriosIcon from "../assets/images/cotizacionAccesorios.svg";
+import { isMobile } from "../utils/fieldFormsUtils";
 
 export const FormCitasDeServicio = () => {
-  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
-
   const [index, setIndex] = useState(0);
   const [completedTabs, setCompletedTabs] = useState<number[]>([0]);
   const [showTyco, setShowTyco] = useState(false);
@@ -194,17 +193,22 @@ export const FormCitasDeServicio = () => {
           <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
             <div
               onClick={() => {
+                const isKilometraje = option.id === 0;
                 setSelectedService(option.id);
                 setFieldValue("tipoServicio", option.id);
-                if (option.id !== 0) {
-                  setFieldValue("", "");
-                }
 
-                // 👇 scroll SOLO en móvil
                 if (isMobile() && targetRef.current) {
-                  targetRef.current.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
+                  // Si es la opción que expande el formulario, esperamos al siguiente frame
+                  window.requestAnimationFrame(() => {
+                    setTimeout(
+                      () => {
+                        targetRef.current?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "end",
+                        });
+                      },
+                      isKilometraje ? 150 : 0,
+                    );
                   });
                 }
               }}
