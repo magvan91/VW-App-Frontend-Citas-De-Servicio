@@ -6,6 +6,7 @@ import {
   TextAlignment,
 } from "@volkswagen-onehub/components-core";
 import type { SummaryData } from "../interfaces/SummaryData.interface";
+import checkProfesional from "../assets/images/check-profesional.png";
 
 interface SummaryCitasDeServicioProps {
   showSummary: boolean;
@@ -145,7 +146,7 @@ export const SummaryCitasDeServicio = ({
           Se eliminan los márgenes negativos.
         */}
         <img
-          src="check-profesional.png"
+          src={checkProfesional}
           alt="Confirmación"
           className="w-100"
           style={{
