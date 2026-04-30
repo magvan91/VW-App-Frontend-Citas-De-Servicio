@@ -148,7 +148,7 @@ export const FormCitasDeServicio = () => {
     },
     {
       id: 1,
-      title: "Diagnostico",
+      title: "Diagnóstico y reparación",
       icon: ReparacionIcon,
     },
     {
@@ -276,7 +276,7 @@ export const FormCitasDeServicio = () => {
             {{
               title: (
                 <Text>
-                  Datos de Vehículo{" "}
+                  Datos del vehículo{" "}
                   {completedTabs.includes(1) && (
                     <i>
                       <CheckmarkCircleFilled variant="default" />
@@ -395,6 +395,18 @@ export const FormCitasDeServicio = () => {
                           <option value="15,000 km / 1 año">
                             15,000 km ó 1 año
                           </option>
+                          <option value="15,000 km / 1 año">
+                            30,000 km o 2 años{" "}
+                          </option>
+                          <option value="15,000 km / 1 año">
+                            45,000 km o 3 años
+                          </option>
+                          <option value="15,000 km / 1 año">
+                            60,000 km o 4 años
+                          </option>
+                          <option value="15,000 km / 1 año">
+                            Superior a 60,000 km o 4 años{" "}
+                          </option>
                         </Select>
                       </div>
                     )}
@@ -509,7 +521,7 @@ export const FormCitasDeServicio = () => {
                       }
                       disabled={!values.ciudad}
                     >
-                      <option value="">Distribuidor*</option>
+                      <option value="">distribuidor*</option>
                       <option value="VW Ola Polanco">VW Ola Polanco</option>
                     </Select>
                   </div>
