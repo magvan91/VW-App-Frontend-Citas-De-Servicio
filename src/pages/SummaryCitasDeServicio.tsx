@@ -106,7 +106,7 @@ export const SummaryCitasDeServicio = ({
                 <div className="col-12 col-sm-6 mb-4">
                   <div className="d-flex flex-column gap-3">
                     <Text appearance={TokenTextAppearance.copy100}>
-                      VIN:{data.numeroChasis}
+                      VIN: {data.numeroChasis}
                     </Text>
                     <Text appearance={TokenTextAppearance.copy100}>
                       {data.kilometrajeAuto} km
