@@ -94,8 +94,7 @@ export const FormCitasDeServicio = () => {
     },
   });
 
-
-  // TODO 1. Terminar de agregar el resto de los campos que van a ser obligatorios para cada Tab en el array que esta en el archivo fieldFormUtils. 2. Obtener el de manera dinamica el numero actual del tab donde se encuentra el usuario, ya que de momento esta hardcodeado en el indice 0 y una vez que se obtenga realizar los ajustes correspondientes. 3. Crear un useState de tipo array o de tipo objetos (me parece que este tipo es la mejor opción) para saber si algun tab tiene errores ya que el usuario se pudo haber regresado a un Tab y cambiar algun valor a uno no valido en ese caso se debe cambiar el ico del tab por uno de error.
+  // TODO 1. Terminar de agregar el resto de los campos que van a ser obligatorios para cada Tab en el array que esta en el archivo fieldFormUtils. 2. Obtener de manera dinamica el numero actual del tab donde se encuentra el usuario, ya que de momento esta hardcodeado en el indice 0 y una vez que se obtenga realizar los ajustes correspondientes. 3. Crear un useState de tipo array o de tipo objetos (me parece que este tipo es la mejor opción) para saber si algun tab tiene errores ya que el usuario se pudo haber regresado a un Tab y cambiar algun valor a uno no valido en ese caso se debe cambiar el ico del tab por uno de error.
 
   useEffect(() => {
     const totalFields = nameFieldsRequired[0].length;
