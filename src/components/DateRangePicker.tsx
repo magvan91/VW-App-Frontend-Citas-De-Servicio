@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { DayPicker, type DateRange } from "react-day-picker";
 import { es } from "date-fns/locale";
-import { addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 import "react-day-picker/dist/style.css";
 import "./../styles.css";
 
@@ -25,8 +25,16 @@ export const DateRangePicker = ({ value, onChange }: Props) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const formatDate = (date?: Date) =>
-    date ? date.toLocaleDateString("es-MX") : "";
+  const formatDate = (date?: Date) => {
+    console.log(date);
+    return date
+      ? date.toLocaleDateString("es-MX", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        })
+      : "";
+  };
 
   return (
     <label className="label-div-input-fake-calendar">
@@ -60,7 +68,11 @@ export const DateRangePicker = ({ value, onChange }: Props) => {
             <DayPicker
               mode="range"
               selected={value}
-              onSelect={onChange} // 👈 ahora viene de Formik
+              formatters={{
+                formatCaption: (date, options) =>
+                  format(date, "LLLL yyyy", options),
+              }}
+              onSelect={onChange}
               locale={es}
               startMonth={minDate}
               endMonth={addDays(new Date(), 60)}
