@@ -31,3 +31,6 @@ export const isMobile = () => {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(max-width: 768px)").matches;
 };
+
+// TODO Agregar los campos validos para cada Tab según el indice que le corresponda
+export const nameFieldsRequired = [["numeroChasis", "anio"], ["estado"]];
