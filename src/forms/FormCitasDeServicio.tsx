@@ -96,31 +96,31 @@ export const FormCitasDeServicio = () => {
 
   // TODO 1. Terminar de agregar el resto de los campos que van a ser obligatorios para cada Tab en el array que esta en el archivo fieldFormUtils. 2. Obtener de manera dinamica el numero actual del tab donde se encuentra el usuario, ya que de momento esta hardcodeado en el indice 0 y una vez que se obtenga realizar los ajustes correspondientes. 3. Crear un useState de tipo array o de tipo objetos (me parece que este tipo es la mejor opción) para saber si algun tab tiene errores ya que el usuario se pudo haber regresado a un Tab y cambiar algun valor a uno no valido en ese caso se debe cambiar el ico del tab por uno de error.
 
-  useEffect(() => {
-    const totalFields = nameFieldsRequired[0].length;
-    let totalSuccess = 0;
-    Object.keys(touched).forEach((field) => {
-      //* Primero buscamos que el campo exista en el actual arreglo de campos a validar
-      if (nameFieldsRequired[0].includes(field)) {
-        //* Si existe el campo procedemos a validar si no tiene error para contar los campos correctos
-        if (!errors[field as keyof CitasServicioValues]) {
-          totalSuccess += 1;
-        }
-      }
-    });
-    //* Si el total de campos correctos es igual al total de campos validados, entonces marcamos el Tab como completado
-    if (totalFields === totalSuccess) {
-      setTimeout(() => {
-        setCompletedTabs((prev) => {
-          if (!prev.includes(1)) {
-            // TODO obtener el indie actual del Tab y sumarle un 1
-            return [...prev, 1];
-          }
-          return prev;
-        });
-      }, 0);
-    }
-  }, [touched, errors]);
+   useEffect(() => {
+     const currentField = nameFieldsRequired[index] || [];
+     const totalFields = currentField.length;
+     if (totalFields === 0) return;
+     let totalSuccess = 0;
+     Object.keys(touched).forEach((field) => {
+       if (!currentField.includes(field)) {
+         if (!errors[field as keyof CitasServicioValues]) {
+           totalSuccess += 1;
+         }
+       }
+     });
+     //* Si el total de campos correctos es igual al total de campos validados, entonces marcamos el Tab como completado
+     if (totalFields === totalSuccess) {
+       setTimeout(() => {
+         setCompletedTabs((prev) => {
+           const nextIndex = index + 1; // 2. Cálculo dinámico del siguiente índice
+           if (!prev.includes(nextIndex)) {
+             return [...prev, nextIndex];
+           }
+           return prev;
+         });
+       }, 0);
+     }
+   }, [touched, errors, index]);
 
   const targetRef = useRef<HTMLDivElement | null>(null);
   const handleActionComplete = async (tabIndex: number) => {
