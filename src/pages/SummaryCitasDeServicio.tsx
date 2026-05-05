@@ -91,13 +91,13 @@ export const SummaryCitasDeServicio = ({
                 <div className="col-12 col-sm-6 mb-4">
                   <div className="d-flex flex-column gap-3">
                     <Text appearance={TokenTextAppearance.copy100}>
-                      {data.modelo}
+                      Modelo: {data.modelo}
                     </Text>
                     <Text appearance={TokenTextAppearance.copy100}>
-                      {data.anio}
+                      Año: {data.anio}
                     </Text>
                     <Text appearance={TokenTextAppearance.copy100}>
-                      {data.kilometrajeServicio}
+                      Servicio por kilometraje: {data.kilometrajeServicio}
                     </Text>
                   </div>
                 </div>
@@ -109,9 +109,12 @@ export const SummaryCitasDeServicio = ({
                       VIN: {data.numeroChasis}
                     </Text>
                     <Text appearance={TokenTextAppearance.copy100}>
-                      {data.kilometrajeAuto} km
+                      Kilometraje actual del vehículo:{" "}
+                      {Number(data.kilometrajeAuto).toLocaleString("en-US")} km
                     </Text>
                     <Text appearance={TokenTextAppearance.copy100}>
+                      Fecha y hora de tu cita: <br />
+                      {""}
                       {data.fecha} <br /> {data.horario}
                     </Text>
                   </div>

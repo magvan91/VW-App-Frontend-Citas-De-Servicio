@@ -355,6 +355,20 @@ export const FormCitasDeServicio = () => {
                         required
                         isFloating={true}
                         label="Año del vehículo"
+                        message={
+                          touched.anio && !values.anio
+                            ? "Selecciona el año del vehículo"
+                            : ""
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        appearance={
+                          touched.anio
+                            ? errors.anio
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
                       >
                         <option value="">
                           Selecciona el año de tu vehículo
@@ -371,6 +385,20 @@ export const FormCitasDeServicio = () => {
                         required
                         isFloating={true}
                         label="Vehículo"
+                        message={
+                          touched.modelo && !values.modelo
+                            ? "Selecciona el módelo de tu vehículo"
+                            : ""
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        appearance={
+                          touched.modelo
+                            ? errors.modelo
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
                       >
                         <option value="">Selecciona tu vehículo</option>
                         <option value="Polo">Polo</option>
@@ -389,10 +417,18 @@ export const FormCitasDeServicio = () => {
                           setFieldValue("kilometrajeAuto", numericValue);
                         }}
                         value={formatKilometraje(values.kilometrajeAuto)}
-                        label="Kilometraje actual del vehículo*"
+                        label="Kilometraje actual del vehículo"
                         isFloating={true}
                         type="text"
                         inputMode="numeric"
+                        required
+                        appearance={
+                          touched.kilometrajeAuto
+                            ? errors.kilometrajeAuto
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
                       />
 
                       {/* Nodo DOM inyectado dinámicamente solo si existe un valor */}
@@ -400,7 +436,7 @@ export const FormCitasDeServicio = () => {
                         <span
                           className="position-absolute"
                           style={{
-                            right: "30px", // Ajustar según el padding nativo del componente VW
+                            right: "50px", // Ajustar según el padding nativo del componente VW
                             top: "50%",
                             transform: "translateY(-50%)",
                             color: "#666666",

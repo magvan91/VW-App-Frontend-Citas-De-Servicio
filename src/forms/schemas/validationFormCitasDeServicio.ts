@@ -10,15 +10,15 @@ export const validationFormCitasDeServicio = [
       .length(17, "El VIN debe tener 17 caracteres")
       .matches(/^[A-HJ-NPR-Z0-9]{17}$/, "VIN inválido")
       .min(3, "Deben ser mínimo 3 caracteres"),
-    // anio: Yup.string().required("Selecciona el año"),
-    // modelo: Yup.string().required("Selecciona el modelo"),
-    // kilometrajeAuto: Yup.number().required("Ingresa el kilometraje"),
+    anio: Yup.string().required("Selecciona el año"),
+    modelo: Yup.string().required("Selecciona el modelo"),
+    kilometrajeAuto: Yup.number().required("Ingresa el kilometraje"),
     // kilometrajeServicio: Yup.string().required("Selecciona el servicio"),
-    // kilometrajeServicio: Yup.string().when("tipoServicio", {
-    //   is: 0,
-    //   then: (schema) => schema.required("Selecciona el servicio que necesitas"),
-    //   otherwise: (schema) => schema.notRequired(),
-    // }),
+    kilometrajeServicio: Yup.string().when("tipoServicio", {
+      is: 0,
+      then: (schema) => schema.required("Selecciona el servicio que necesitas"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   }),
 
   //* Paso 1: Búsqueda de Distribuidores
