@@ -77,3 +77,8 @@ export const validationFormCitasDeServicio = [
     ),
   }),
 ];
+
+export const globalValidationSchema = validationFormCitasDeServicio.reduce(
+  (acc, currentSchema) => acc.concat(currentSchema),
+  Yup.object(), // Valor inicial seguro
+);

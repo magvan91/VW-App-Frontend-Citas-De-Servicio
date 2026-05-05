@@ -14,7 +14,10 @@ import {
 
 import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
-import { validationFormCitasDeServicio } from "./schemas/validationFormCitasDeServicio";
+import {
+  validationFormCitasDeServicio,
+  globalValidationSchema,
+} from "./schemas/validationFormCitasDeServicio";
 import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
 import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
 import {
@@ -41,6 +44,7 @@ export const FormCitasDeServicio = () => {
   const [showTyco, setShowTyco] = useState(false);
   const [showSummary, setShowSummary] = useState(false); // ESTADO REQUERIDO
   const [summaryData, setSummaryData] = useState<any>(null);
+  const [tabErrors, setTabErrors] = useState<Record<number, boolean>>({});
 
   const {
     values,
@@ -75,7 +79,8 @@ export const FormCitasDeServicio = () => {
       tyco: false,
       tipoServicio: 0,
     },
-    validationSchema: validationFormCitasDeServicio[index],
+    validationSchema: globalValidationSchema, // Asignación directa y limpia
+
     onSubmit: (values) => {
       // 1. Extraer los componentes mediante desestructuración de arreglos
       const [fechaExtraida, horaExtraida] = values.horario.split("/");
@@ -96,31 +101,53 @@ export const FormCitasDeServicio = () => {
 
   // TODO 1. Terminar de agregar el resto de los campos que van a ser obligatorios para cada Tab en el array que esta en el archivo fieldFormUtils. 2. Obtener de manera dinamica el numero actual del tab donde se encuentra el usuario, ya que de momento esta hardcodeado en el indice 0 y una vez que se obtenga realizar los ajustes correspondientes. 3. Crear un useState de tipo array o de tipo objetos (me parece que este tipo es la mejor opción) para saber si algun tab tiene errores ya que el usuario se pudo haber regresado a un Tab y cambiar algun valor a uno no valido en ese caso se debe cambiar el ico del tab por uno de error.
 
-   useEffect(() => {
-     const currentField = nameFieldsRequired[index] || [];
-     const totalFields = currentField.length;
-     if (totalFields === 0) return;
-     let totalSuccess = 0;
-     Object.keys(touched).forEach((field) => {
-       if (!currentField.includes(field)) {
-         if (!errors[field as keyof CitasServicioValues]) {
-           totalSuccess += 1;
-         }
-       }
-     });
-     //* Si el total de campos correctos es igual al total de campos validados, entonces marcamos el Tab como completado
-     if (totalFields === totalSuccess) {
-       setTimeout(() => {
-         setCompletedTabs((prev) => {
-           const nextIndex = index + 1; // 2. Cálculo dinámico del siguiente índice
-           if (!prev.includes(nextIndex)) {
-             return [...prev, nextIndex];
-           }
-           return prev;
-         });
-       }, 0);
-     }
-   }, [touched, errors, index]);
+  useEffect(() => {
+    const currentField = nameFieldsRequired[index] || [];
+    const totalFields = currentField.length;
+    if (totalFields === 0) return;
+    let totalSuccess = 0;
+    Object.keys(touched).forEach((field) => {
+      if (!currentField.includes(field)) {
+        if (!errors[field as keyof CitasServicioValues]) {
+          totalSuccess += 1;
+        }
+      }
+    });
+    //* Si el total de campos correctos es igual al total de campos validados, entonces marcamos el Tab como completado
+    if (totalFields === totalSuccess) {
+      setTimeout(() => {
+        setCompletedTabs((prev) => {
+          const nextIndex = index + 1; // 2. Cálculo dinámico del siguiente índice
+          if (!prev.includes(nextIndex)) {
+            return [...prev, nextIndex];
+          }
+          return prev;
+        });
+      }, 0);
+    }
+  }, [touched, errors, index]);
+
+  useEffect(() => {
+    const currentErrorsState: Record<number, boolean> = {};
+
+    completedTabs.forEach((tab) => {
+      const fields = nameFieldsRequired[tab] || [];
+
+      // Verifica si existe al menos un error en los campos correspondientes a la pestaña iterada
+      const hasError = fields.some(
+        (field) => !!errors[field as keyof CitasServicioValues],
+      );
+
+      if (hasError) {
+        currentErrorsState[tab] = true;
+      }
+    });
+
+    // Prevención de re-renders infinitos: actualiza el estado solo si el mapa de errores cambió
+    if (JSON.stringify(currentErrorsState) !== JSON.stringify(tabErrors)) {
+      setTabErrors(currentErrorsState);
+    }
+  }, [errors, completedTabs, tabErrors]);
 
   const targetRef = useRef<HTMLDivElement | null>(null);
   const handleActionComplete = async (tabIndex: number) => {
@@ -307,11 +334,15 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Datos del vehículo{" "}
-                  {completedTabs.includes(1) && (
+                  {tabErrors[0] ? (
+                    <span style={{ color: "red", fontWeight: "bold" }}>
+                      ERROR
+                    </span>
+                  ) : completedTabs.includes(1) ? (
                     <i>
                       <CheckmarkCircleFilled variant="default" />
                     </i>
-                  )}
+                  ) : null}
                 </Text>
               ),
               content: (
@@ -499,11 +530,15 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Búsqueda de Distribuidores{" "}
-                  {completedTabs.includes(2) && (
+                  {tabErrors[1] ? (
+                    <span style={{ color: "red", fontWeight: "bold" }}>
+                      ERROR
+                    </span>
+                  ) : completedTabs.includes(2) ? (
                     <i>
                       <CheckmarkCircleFilled variant="default" />
                     </i>
-                  )}
+                  ) : null}
                 </Text>
               ),
               content: (
@@ -664,10 +699,10 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Tus datos de contacto{" "}
-                  {completedTabs.includes(3) && (
-                    <i>
-                      <CheckmarkCircleFilled variant="default" />
-                    </i>
+                  {tabErrors[2] && (
+                    <span style={{ color: "red", fontWeight: "bold" }}>
+                      ERROR
+                    </span>
                   )}
                 </Text>
               ),
