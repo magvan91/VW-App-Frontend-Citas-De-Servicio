@@ -14,10 +14,7 @@ import {
 
 import { useFormik } from "formik";
 import { DateRangePicker } from "../components/DateRangePicker";
-import {
-  validationFormCitasDeServicio,
-  globalValidationSchema,
-} from "./schemas/validationFormCitasDeServicio";
+import { globalValidationSchema } from "./schemas/validationFormCitasDeServicio";
 import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
 import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
 import {
@@ -27,7 +24,10 @@ import {
   nameFieldsRequired,
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
-import { CheckmarkCircleFilled } from "@volkswagen-onehub/icons-core";
+import {
+  CheckmarkCircleFilled,
+  CloseCircle,
+} from "@volkswagen-onehub/icons-core";
 
 import type { ServiceOption } from "../interfaces/ServiceOption.interface";
 import MantenimientoIcon from "../assets/images/servicioMantenimiento.svg";
@@ -101,31 +101,69 @@ export const FormCitasDeServicio = () => {
 
   // TODO 1. Terminar de agregar el resto de los campos que van a ser obligatorios para cada Tab en el array que esta en el archivo fieldFormUtils. 2. Obtener de manera dinamica el numero actual del tab donde se encuentra el usuario, ya que de momento esta hardcodeado en el indice 0 y una vez que se obtenga realizar los ajustes correspondientes. 3. Crear un useState de tipo array o de tipo objetos (me parece que este tipo es la mejor opción) para saber si algun tab tiene errores ya que el usuario se pudo haber regresado a un Tab y cambiar algun valor a uno no valido en ese caso se debe cambiar el ico del tab por uno de error.
 
-  useEffect(() => {
-    const currentField = nameFieldsRequired[index] || [];
-    const totalFields = currentField.length;
-    if (totalFields === 0) return;
-    let totalSuccess = 0;
-    Object.keys(touched).forEach((field) => {
-      if (!currentField.includes(field)) {
-        if (!errors[field as keyof CitasServicioValues]) {
-          totalSuccess += 1;
-        }
-      }
-    });
-    //* Si el total de campos correctos es igual al total de campos validados, entonces marcamos el Tab como completado
-    if (totalFields === totalSuccess) {
-      setTimeout(() => {
-        setCompletedTabs((prev) => {
-          const nextIndex = index + 1; // 2. Cálculo dinámico del siguiente índice
-          if (!prev.includes(nextIndex)) {
-            return [...prev, nextIndex];
+  // useEffect(() => {
+  //   const currentField = nameFieldsRequired[index] || [];
+  //   const totalFields = currentField.length;
+  //   if (totalFields === 0) return;
+  //   let totalSuccess = 0;
+  //   Object.keys(touched).forEach((field) => {
+  //     if (!currentField.includes(field)) {
+  //       if (!errors[field as keyof CitasServicioValues]) {
+  //         totalSuccess += 1;
+  //       }
+  //     }
+  //   });
+  //   //* Si el total de campos correctos es igual al total de campos validados, entonces marcamos el Tab como completado
+  //   if (totalFields === totalSuccess) {
+  //     setTimeout(() => {
+  //       setCompletedTabs((prev) => {
+  //         const nextIndex = index + 1; // 2. Cálculo dinámico del siguiente índice
+  //         if (!prev.includes(nextIndex)) {
+  //           return [...prev, nextIndex];
+  //         }
+  //         return prev;
+  //       });
+  //     }, 0);
+  //   }
+  // }, [touched, errors, index]);
+  // Centraliza la validación secuencial compartida entre botón y cabezal
+  const validateAndUnlockStep = async (
+    currentTab: number,
+  ): Promise<boolean> => {
+    //* 1. Forzamos la validación global (con el esquema global unificado)
+    const currentErrors = await validateForm();
+
+    //* 2. Obtenemos los campos específicos del paso actual (requisito previo)
+    const fieldsInCurrentTab = nameFieldsRequired[currentTab] || [];
+
+    //* 3. Verificamos si existe al menos un error en el paso actual
+    const hasErrorsInTab = fieldsInCurrentTab.some(
+      (field) => !!currentErrors[field as keyof CitasServicioValues],
+    );
+
+    //* 4. Si hay errores en el tab actual, detenemos
+    if (hasErrorsInTab) {
+      const touchedFields = fieldsInCurrentTab.reduce(
+        (acc, curr) => {
+          if (currentErrors[curr as keyof CitasServicioValues]) {
+            acc[curr as keyof CitasServicioValues] = true;
           }
-          return prev;
-        });
-      }, 0);
+          return acc;
+        },
+        {} as Record<keyof CitasServicioValues, boolean>,
+      );
+
+      setTouched({ ...touched, ...touchedFields });
+      return false; // Validación falló en el paso actual
     }
-  }, [touched, errors, index]);
+
+    //* 5. Si no hay errores, desbloqueamos el siguiente paso secuencial
+    const nextIndex = currentTab + 1;
+    if (!completedTabs.includes(nextIndex)) {
+      setCompletedTabs((prev) => [...prev, nextIndex]);
+    }
+    return true; // Validación exitosa, paso desbloqueado
+  };
 
   useEffect(() => {
     const currentErrorsState: Record<number, boolean> = {};
@@ -151,28 +189,46 @@ export const FormCitasDeServicio = () => {
 
   const targetRef = useRef<HTMLDivElement | null>(null);
   const handleActionComplete = async (tabIndex: number) => {
-    //* 1. Forzamos la validación del esquema actual
+    //* 1. Forzamos la validación global
     const currentErrors = await validateForm();
 
-    //* 2. Si hay errores, tocamos los campos para que se muestren en rojo en la UI
-    if (Object.keys(currentErrors).length > 0) {
-      const touchedFields = Object.keys(currentErrors).reduce(
+    //* 2. Obtenemos los campos específicos de la pestaña actual
+    const fieldsInCurrentTab = nameFieldsRequired[tabIndex] || [];
+
+    //* 3. Verificamos si existe al menos un error que pertenezca a los campos de esta pestaña
+    const hasErrorsInTab = fieldsInCurrentTab.some(
+      (field) => !!currentErrors[field as keyof CitasServicioValues],
+    );
+
+    //* 4. Si hay errores en el tab actual, los mostramos y bloqueamos avance
+    if (hasErrorsInTab) {
+      const touchedFields = fieldsInCurrentTab.reduce(
         (acc, curr) => {
-          acc[curr as keyof CitasServicioValues] = true;
+          if (currentErrors[curr as keyof CitasServicioValues]) {
+            acc[curr as keyof CitasServicioValues] = true;
+          }
           return acc;
         },
         {} as Record<keyof CitasServicioValues, boolean>,
       );
 
-      setTouched(touchedFields);
-      return; //! Detenemos la función para no avanzar de Tab
+      // Mezclamos los campos tocados previos con los nuevos para no borrar el estado
+      setTouched({ ...touched, ...touchedFields });
+      return;
     }
-    //* 3. Si no hay errores, avanzamos al siguiente Tab de forma segura
+
+    //* 5. Si no hay errores en el tab actual, avanzamos de forma segura
     const nextIndex = tabIndex + 1;
     if (!completedTabs.includes(nextIndex)) {
       setCompletedTabs((prev) => [...prev, nextIndex]);
     }
-    setIndex(nextIndex);
+    // Llama a la lógica centralizada
+    const success = await validateAndUnlockStep(tabIndex);
+
+    // Si fue exitoso, avanzamos visualmente al siguiente tab
+    if (success) {
+      setIndex(tabIndex + 1);
+    }
   };
 
   //* Función que llama al fieldFormsUtils onlyLetters
@@ -320,13 +376,29 @@ export const FormCitasDeServicio = () => {
             defaultIndex={index}
             variant="step navigation"
             idPrefix="TabsCitasDeServicio"
-            onChange={(index) => {
-              console.log("onChange", index);
+            // 1. Sincronizar el estado interno de la UI con tu estado de React
+            onChange={(newIndex) => {
+              setIndex(newIndex);
             }}
-            onBeforeChange={(index) => {
-              if (completedTabs.includes(index)) {
+            // 2. Interceptar el salto nativo
+            onBeforeChange={(proposedIndex) => {
+              // Permitir salto libre hacia atrás si el tab ya fue validado
+              if (completedTabs.includes(proposedIndex)) {
                 return true;
               }
+
+              // Si el usuario da clic al siguiente paso secuencial (el naranja)
+              if (proposedIndex === index + 1) {
+                // Ejecutamos tu función de validación (la misma del botón)
+                handleActionComplete(index);
+
+                // Retornamos false para bloquear el salto nativo síncrono.
+                // Si la validación pasa, handleActionComplete actualizará el estado
+                // y forzará el avance.
+                return false;
+              }
+
+              // Bloquea cualquier otro intento de saltar múltiples pasos
               return false;
             }}
           >
@@ -336,7 +408,7 @@ export const FormCitasDeServicio = () => {
                   Datos del vehículo{" "}
                   {tabErrors[0] ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
-                      ERROR
+                      <CloseCircle variant="default" />
                     </span>
                   ) : completedTabs.includes(1) ? (
                     <i>
@@ -532,7 +604,7 @@ export const FormCitasDeServicio = () => {
                   Búsqueda de Distribuidores{" "}
                   {tabErrors[1] ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
-                      ERROR
+                      <CloseCircle variant="default" />
                     </span>
                   ) : completedTabs.includes(2) ? (
                     <i>
@@ -692,7 +764,7 @@ export const FormCitasDeServicio = () => {
                 </div>
               ),
               key: "b",
-              disabled: !completedTabs.includes(1),
+              disabled: !completedTabs.includes(0),
               role: "step-2",
             }}
             {{
@@ -701,7 +773,7 @@ export const FormCitasDeServicio = () => {
                   Tus datos de contacto{" "}
                   {tabErrors[2] && (
                     <span style={{ color: "red", fontWeight: "bold" }}>
-                      ERROR
+                      <CloseCircle variant="default" />
                     </span>
                   )}
                 </Text>
@@ -922,7 +994,7 @@ export const FormCitasDeServicio = () => {
                 </div>
               ),
               key: "c",
-              disabled: !completedTabs.includes(2),
+              disabled: !completedTabs.includes(1),
               role: "step-3",
             }}
           </Tabs>
