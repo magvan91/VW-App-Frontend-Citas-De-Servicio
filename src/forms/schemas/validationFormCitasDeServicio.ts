@@ -7,9 +7,22 @@ export const validationFormCitasDeServicio = [
   Yup.object().shape({
     numeroChasis: Yup.string()
       .required("Número VIN es obligatorio")
-      .length(17, "El VIN debe tener 17 caracteres")
-      .matches(/^[A-HJ-NPR-Z0-9]{17}$/, "VIN inválido")
-      .min(3, "Deben ser mínimo 3 caracteres"),
+      .length(17, "El VIN debe tener exactamente 17 caracteres")
+      .matches(
+        /^[A-HJ-NPR-Z0-9]{17}$/,
+        "El VIN contiene caracteres inválidos (I, O, Q no permitidos)",
+      )
+      .test(
+        "valida-prefijo-vin",
+        "El VIN no pertenece a una planta de manufactura válida de la marca",
+        (value) => {
+          if (!value) return false;
+          const validVinPrefixes = ["9BW", "1V2", "WVW", "3VV", "3VW"];
+          return validVinPrefixes.some((prefix) =>
+            value.toUpperCase().startsWith(prefix),
+          );
+        },
+      ),
     anio: Yup.string().required("Selecciona el año"),
     modelo: Yup.string().required("Selecciona el modelo"),
     kilometrajeAuto: Yup.number().required("Ingresa el kilometraje"),
