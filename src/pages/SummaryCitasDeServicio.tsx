@@ -74,12 +74,13 @@ export const SummaryCitasDeServicio = ({
             {/* COLUMNA DERECHA: Detalles Técnicos */}
             <div className="col-12 col-md-6 border-start">
               <div className="row mb-3">
-                <div className="col-12">
+                {/* Las clases text-start y text-md-center manejan el responsive por CSS */}
+                <div className="col-12 text-start text-md-center">
                   <Text
                     appearance={TokenTextAppearance.headline200}
                     bold
                     color={TokenTextColor.primary}
-                    textAlign={TextAlignment.center}
+                    // textAlign={TextAlignment.center} <-- Eliminar esta línea
                   >
                     Servicio de mantenimiento
                   </Text>
@@ -88,7 +89,7 @@ export const SummaryCitasDeServicio = ({
 
               <div className="row">
                 {/* Columna Interna 1 */}
-                <div className="col-12 col-sm-6 mb-4">
+                <div className="col-12 col-sm-12 mb-4">
                   <div className="d-flex flex-column gap-3">
                     <Text appearance={TokenTextAppearance.copy100}>
                       Modelo: {data.modelo}
@@ -103,7 +104,7 @@ export const SummaryCitasDeServicio = ({
                 </div>
 
                 {/* Columna Interna 2 */}
-                <div className="col-12 col-sm-6 mb-4">
+                <div className="col-12 col-sm-12 mb-4">
                   <div className="d-flex flex-column gap-3">
                     <Text appearance={TokenTextAppearance.copy100}>
                       VIN: {data.numeroChasis}
