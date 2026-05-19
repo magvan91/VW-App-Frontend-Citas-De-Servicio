@@ -2,7 +2,7 @@ export interface CitasServicioValues {
   numeroChasis: string;
   anio: string;
   modelo: string;
-  kilometrajeAuto: string | number;
+  kilometrajeAuto: string;
   kilometrajeServicio: string;
   idConcesionario: string;
   estado: string;
@@ -19,5 +19,5 @@ export interface CitasServicioValues {
   aceptaAviso: boolean;
   opt_in_transferencia_datos: boolean;
   tyco: boolean;
-  tipoServicio: number;
+  tipoServicio: string;
 }

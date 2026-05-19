@@ -1,0 +1,24 @@
+/* Borde superior por defecto (móvil) */
+.custom-divider {
+  border-top: 2px solid #dee2e6; 
+}
+
+/* Borde izquierdo en resoluciones md o superiores (>=768px) */
+@media (min-width: 768px) {
+  .custom-divider {
+    border-top: none;
+    border-left: 2px solid #dee2e6;
+  }
+}
+
+/* Inyección para trazabilidad visual de media queries */
+/* .debug-elemento {
+  outline: 2px solid red !important; 
+}
+Resolución base (Móvil) */
+@media (min-width: 768px) {
+  .debug-elemento {
+    /* outline: 2px solid blue !important; Resolución MD y superior */
+    padding-left: 0 !important; /* Elimina el padding izquierdo para MD y superior */
+  }
+}

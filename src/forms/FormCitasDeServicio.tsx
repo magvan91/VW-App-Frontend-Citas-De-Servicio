@@ -77,7 +77,7 @@ export const FormCitasDeServicio = () => {
       aceptaAviso: false,
       opt_in_transferencia_datos: false,
       tyco: false,
-      tipoServicio: 0,
+      tipoServicio: "0",
     },
     validationSchema: globalValidationSchema, // Asignación directa y limpia
 

@@ -3,10 +3,11 @@ import {
   TokenTextAppearance,
   TokenTextColor,
   TextTag,
-  TextAlignment,
+  //TextAlignment,
 } from "@volkswagen-onehub/components-core";
 import type { SummaryData } from "../interfaces/SummaryData.interface";
 import checkProfesional from "../assets/images/check-profesional.png";
+import "./SummaryCitasDeServicio.css"; // Importa el archivo CSS para estilos personalizados
 
 interface SummaryCitasDeServicioProps {
   showSummary: boolean;
@@ -35,7 +36,7 @@ export const SummaryCitasDeServicio = ({
         <div className="p-4 p-md-5">
           <div className="row">
             {/* COLUMNA IZQUIERDA: Saludo y Confirmación */}
-            <div className="col-12 col-md-6 mb-5 mb-md-0">
+            <div className="col-12 col-md-6 mb-md-0 debug-elemento">
               <div className="mb-4">
                 <Text
                   appearance={TokenTextAppearance.headline200}
@@ -72,7 +73,8 @@ export const SummaryCitasDeServicio = ({
             </div>
 
             {/* COLUMNA DERECHA: Detalles Técnicos */}
-            <div className="col-12 col-md-6 border-start">
+            <div className="col-12 col-md-6 custom-divider pt-4 pt-md-0 mt-4 mt-md-0">
+              {" "}
               <div className="row mb-3">
                 {/* Las clases text-start y text-md-center manejan el responsive por CSS */}
                 <div className="col-12 text-start text-md-center">
@@ -86,7 +88,6 @@ export const SummaryCitasDeServicio = ({
                   </Text>
                 </div>
               </div>
-
               <div className="row">
                 {/* Columna Interna 1 */}
                 <div className="col-12 col-sm-12 mb-4">
@@ -121,12 +122,11 @@ export const SummaryCitasDeServicio = ({
                   </div>
                 </div>
               </div>
-
               {/* Row para Información Adicional */}
               {data.comentarios && (
-                <div className="row mt-2">
+                <div className="row">
                   <div className="col-12">
-                    <div className="pt-3">
+                    <div className="">
                       <Text
                         appearance={TokenTextAppearance.headline200}
                         bold
