@@ -15,6 +15,7 @@ export interface SummaryData {
   telefonoMovil: string;
   email: string;
   comentarios: string;
+  tipoServicio: string;
 }
 
 export interface SummarySection {

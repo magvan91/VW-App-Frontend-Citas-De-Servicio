@@ -77,7 +77,7 @@ export const FormCitasDeServicio = () => {
       aceptaAviso: false,
       opt_in_transferencia_datos: false,
       tyco: false,
-      tipoServicio: "0",
+      tipoServicio: "",
     },
     validationSchema: globalValidationSchema, // Asignación directa y limpia
 
@@ -85,14 +85,24 @@ export const FormCitasDeServicio = () => {
       // 1. Extraer los componentes mediante desestructuración de arreglos
       const [fechaExtraida, horaExtraida] = values.horario.split("/");
 
-      // 2. Crear un objeto de envío con los campos normalizados
+      // 2. Mapear el tipo de servicio numérico a su representación en string
+      const servicioMap = {
+        0: "Maintenance Service",
+        1: "General Repair",
+        2: "Tinsmithing and Painting",
+        3: "Accessory Installation"
+      };
+      const tipoServicioString = servicioMap[values.tipoServicio] || "";
+
+      // 3. Crear un objeto de envío con los campos normalizados
       const payload = {
         ...values,
+        tipoServicio: tipoServicioString, // Convertir a string aquí
         fecha: fechaExtraida, // Asigna '2026-06-01'
         horario: horaExtraida, // Asigna '09:00'
       };
 
-      // 3. Proceder con el renderizado del resumen o el envío al backend
+      // 4. Proceder con el renderizado del resumen o el envío al backend
       console.log("Datos procesados para el backend:", payload);
       setSummaryData(payload); // Guardamos los datos procesados para pasarlos al resumen
       setShowSummary(true);

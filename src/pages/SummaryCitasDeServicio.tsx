@@ -77,16 +77,16 @@ export const SummaryCitasDeServicio = ({
               {" "}
               <div className="row mb-3">
                 {/* Las clases text-start y text-md-center manejan el responsive por CSS */}
-                <div className="col-12 text-start text-md-center">
-                  <Text
-                    appearance={TokenTextAppearance.headline200}
-                    bold
-                    color={TokenTextColor.primary}
-                    // textAlign={TextAlignment.center} <-- Eliminar esta línea
-                  >
-                    Servicio de mantenimiento
-                  </Text>
-                </div>
+                 <div className="col-12 text-start text-md-center">
+                   <Text
+                     appearance={TokenTextAppearance.headline200}
+                     bold
+                     color={TokenTextColor.primary}
+                     // textAlign={TextAlignment.center} <-- Eliminar esta línea
+                   >
+                     {data.tipoServicio}
+                   </Text>
+                 </div>
               </div>
               <div className="row">
                 {/* Columna Interna 1 */}
