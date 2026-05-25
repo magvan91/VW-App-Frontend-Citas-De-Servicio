@@ -86,13 +86,14 @@ export const FormCitasDeServicio = () => {
       const [fechaExtraida, horaExtraida] = values.horario.split("/");
 
       // 2. Mapear el tipo de servicio numérico a su representación en string
-      const servicioMap = {
+      const servicioMap: { [key: number]: string } = {
         0: "Maintenance Service",
         1: "General Repair",
         2: "Tinsmithing and Painting",
         3: "Accessory Installation"
       };
-      const tipoServicioString = servicioMap[values.tipoServicio] || "";
+      const tipoServicioKey = typeof values.tipoServicio === "string" ? parseInt(values.tipoServicio, 10) : values.tipoServicio;
+      const tipoServicioString = servicioMap[tipoServicioKey];
 
       // 3. Crear un objeto de envío con los campos normalizados
       const payload = {
