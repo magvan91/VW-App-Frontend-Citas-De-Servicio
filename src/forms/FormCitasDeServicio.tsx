@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import type { SyntheticEvent } from "react";
 import {
   CTA,
   Select,
@@ -24,6 +25,7 @@ import {
   nameFieldsRequired,
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
+import type { SummaryData } from "../interfaces/SummaryData.interface";
 import {
   CheckmarkCircleFilled,
   CloseCircle,
@@ -43,7 +45,7 @@ export const FormCitasDeServicio = () => {
   const [completedTabs, setCompletedTabs] = useState<number[]>([0]);
   const [showTyco, setShowTyco] = useState(false);
   const [showSummary, setShowSummary] = useState(false); // ESTADO REQUERIDO
-  const [summaryData, setSummaryData] = useState<any>(null);
+  const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const [tabErrors, setTabErrors] = useState<Record<number, boolean>>({});
 
   const {
@@ -90,9 +92,12 @@ export const FormCitasDeServicio = () => {
         0: "Maintenance Service",
         1: "General Repair",
         2: "Tinsmithing and Painting",
-        3: "Accessory Installation"
+        3: "Accessory Installation",
       };
-      const tipoServicioKey = typeof values.tipoServicio === "string" ? parseInt(values.tipoServicio, 10) : values.tipoServicio;
+      const tipoServicioKey =
+        typeof values.tipoServicio === "string"
+          ? parseInt(values.tipoServicio, 10)
+          : values.tipoServicio;
       const tipoServicioString = servicioMap[tipoServicioKey];
 
       // 3. Crear un objeto de envío con los campos normalizados
@@ -525,8 +530,8 @@ export const FormCitasDeServicio = () => {
                     <div className="col-12 col-md-6 position-relative">
                       <TextInput
                         {...getFieldProps("kilometrajeAuto")}
-                        onChange={(e: any) => {
-                          const rawInput = e.target ? e.target.value : e;
+                        onChange={(e: SyntheticEvent<HTMLInputElement>) => {
+                          const rawInput = (e.target as HTMLInputElement).value;
                           const numericValue = rawInput.replace(/\D/g, "");
                           setFieldValue("kilometrajeAuto", numericValue);
                         }}
