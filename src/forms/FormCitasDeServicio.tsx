@@ -26,6 +26,7 @@ import {
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
 import type { SummaryData } from "../interfaces/SummaryData.interface";
+import api from "../services/api";
 import {
   CheckmarkCircleFilled,
   CloseCircle,
@@ -36,8 +37,6 @@ import MantenimientoIcon from "../assets/images/servicioMantenimiento.svg";
 import ReparacionIcon from "../assets/images/diagnosticoReparacion.svg";
 
 import PinturaIcon from "../assets/images/ojalateriaPintura.svg";
-
-import AccesoriosIcon from "../assets/images/cotizacionAccesorios.svg";
 import { isMobile } from "../utils/fieldFormsUtils";
 
 export const FormCitasDeServicio = () => {
@@ -60,10 +59,10 @@ export const FormCitasDeServicio = () => {
   } = useFormik<CitasServicioValues>({
     initialValues: {
       numeroChasis: "",
-      anio: "",
+      anio: 0,
       modelo: "",
-      kilometrajeAuto: "",
-      kilometrajeServicio: "",
+      kilometrajeAuto: 0,
+      kilometrajeServicio: 0,
       idConcesionario: "",
       estado: "",
       ciudad: "",
@@ -80,19 +79,19 @@ export const FormCitasDeServicio = () => {
       opt_in_transferencia_datos: false,
       tyco: false,
       tipoServicio: "",
+      marca: "Volkswagen",
     },
     validationSchema: globalValidationSchema, // Asignación directa y limpia
 
-    onSubmit: (values) => {
-      // 1. Extraer los componentes mediante desestructuración de arreglos
-      const [fechaExtraida, horaExtraida] = values.horario.split("/");
+    onSubmit: async (values) => {
+      const fechaExtraida = values.horario.split("/")[0];
+      const horaExtraida = values.horario.split("/")[1];
+      const horaConFormato = `${horaExtraida}:00.000Z`;
 
-      // 2. Mapear el tipo de servicio numérico a su representación en string
       const servicioMap: { [key: number]: string } = {
         0: "Maintenance Service",
         1: "General Repair",
         2: "Tinsmithing and Painting",
-        3: "Accessory Installation",
       };
       const tipoServicioKey =
         typeof values.tipoServicio === "string"
@@ -100,17 +99,26 @@ export const FormCitasDeServicio = () => {
           : values.tipoServicio;
       const tipoServicioString = servicioMap[tipoServicioKey];
 
-      // 3. Crear un objeto de envío con los campos normalizados
       const payload = {
         ...values,
-        tipoServicio: tipoServicioString, // Convertir a string aquí
-        fecha: fechaExtraida, // Asigna '2026-06-01'
-        horario: horaExtraida, // Asigna '09:00'
+        tipoServicio: tipoServicioString,
+        fecha: fechaExtraida,
+        horario: horaConFormato,
       };
 
-      // 4. Proceder con el renderizado del resumen o el envío al backend
-      console.log("Datos procesados para el backend:", payload);
-      setSummaryData(payload); // Guardamos los datos procesados para pasarlos al resumen
+      try {
+        const response = await api.post("/api/v1/appointments", payload);
+        console.log("Cita agendada exitosamente:", response.data);
+      } catch (error) {
+        if (error && typeof error === "object" && "response" in error) {
+          const axiosError = error as { response: { data: unknown } };
+          console.error("Error al agendar cita:", axiosError.response?.data);
+        } else {
+          console.error("Error al agendar cita:", error);
+        }
+      }
+
+      setSummaryData(payload);
       setShowSummary(true);
     },
   });
@@ -284,11 +292,6 @@ export const FormCitasDeServicio = () => {
       id: 2,
       title: "Hojalatería y pintura",
       icon: PinturaIcon,
-    },
-    {
-      id: 3,
-      title: "Cotización e instalación de accesorios",
-      icon: AccesoriosIcon,
     },
   ];
 
@@ -469,34 +472,38 @@ export const FormCitasDeServicio = () => {
                     </div>
 
                     <div className="col-12 col-sm-12 col-md-6">
-                      <Select
-                        {...getFieldProps("anio")}
-                        required
-                        isFloating={true}
-                        label="Año del vehículo"
-                        message={
-                          touched.anio && !values.anio
-                            ? "Selecciona el año del vehículo"
-                            : ""
-                        }
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        appearance={
-                          touched.anio
-                            ? errors.anio
-                              ? "error"
-                              : "success"
-                            : "default"
-                        }
-                      >
-                        <option value="">
-                          Selecciona el año de tu vehículo
-                        </option>
-                        <option value="2026">2026</option>
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                      </Select>
+<Select
+                       {...getFieldProps("anio")}
+                       required
+                       isFloating={true}
+                       label="Año del vehículo"
+                       message={
+                         touched.anio && !values.anio
+                           ? "Selecciona el año del vehículo"
+                           : ""
+                       }
+                       onChange={(e: SyntheticEvent<HTMLSelectElement>) => {
+                         const value = parseInt((e.target as HTMLSelectElement).value, 10);
+                         setFieldValue("anio", value);
+                       }}
+                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                       // @ts-expect-error
+                       appearance={
+                         touched.anio
+                           ? errors.anio
+                             ? "error"
+                             : "success"
+                           : "default"
+                       }
+                     >
+                       <option value="">
+                         Selecciona el año de tu vehículo
+                       </option>
+                       <option value="2026">2026</option>
+                       <option value="2025">2025</option>
+                       <option value="2024">2024</option>
+                       <option value="2023">2023</option>
+                     </Select>
                     </div>
                     <div className="col-12 col-sm-12 col-md-6">
                       <Select
@@ -532,7 +539,7 @@ export const FormCitasDeServicio = () => {
                         {...getFieldProps("kilometrajeAuto")}
                         onChange={(e: SyntheticEvent<HTMLInputElement>) => {
                           const rawInput = (e.target as HTMLInputElement).value;
-                          const numericValue = rawInput.replace(/\D/g, "");
+                          const numericValue = parseInt(rawInput.replace(/\D/g, "") || "0", 10);
                           setFieldValue("kilometrajeAuto", numericValue);
                         }}
                         value={formatKilometraje(values.kilometrajeAuto)}
@@ -567,34 +574,28 @@ export const FormCitasDeServicio = () => {
                         </span>
                       )}
                     </div>
-                    {selectedService === 0 && (
-                      <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
-                        <Select
-                          {...getFieldProps("kilometrajeServicio")}
-                          label="Servicio que necesitas"
-                          isFloating={true}
-                        >
-                          <option value="">
-                            Selecciona el servicio que necesitas
-                          </option>
-                          <option value="15,000 km / 1 año">
-                            15,000 km ó 1 año
-                          </option>
-                          <option value="15,000 km / 1 año">
-                            30,000 km o 2 años{" "}
-                          </option>
-                          <option value="15,000 km / 1 año">
-                            45,000 km o 3 años
-                          </option>
-                          <option value="15,000 km / 1 año">
-                            60,000 km o 4 años
-                          </option>
-                          <option value="15,000 km / 1 año">
-                            Superior a 60,000 km o 4 años{" "}
-                          </option>
-                        </Select>
-                      </div>
-                    )}
+{selectedService === 0 && (
+                       <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
+                         <Select
+                           {...getFieldProps("kilometrajeServicio")}
+                           label="Servicio que necesitas"
+                           isFloating={true}
+                           onChange={(e: SyntheticEvent<HTMLSelectElement>) => {
+                             const value = parseInt((e.target as HTMLSelectElement).value, 10);
+                             setFieldValue("kilometrajeServicio", value || 0);
+                           }}
+                         >
+                           <option value="">
+                             Selecciona el servicio que necesitas
+                           </option>
+                           <option value="15000">15,000 km ó 1 año</option>
+                           <option value="30000">30,000 km o 2 años</option>
+                           <option value="45000">45,000 km o 3 años</option>
+                           <option value="60000">60,000 km o 4 años</option>
+                           <option value="75000">Superior a 60,000 km o 4 años</option>
+                         </Select>
+                       </div>
+                     )}
                   </div>
                   {!completedTabs.includes(1) && (
                     <div className="col-12 text-center pt-5">
@@ -653,6 +654,7 @@ export const FormCitasDeServicio = () => {
                       }
                     >
                       <option value="">Estado</option>
+                      <option value="Ciudad de México">Ciudad de México</option>
                       <option value="CDMX">CDMX</option>
                     </Select>
                   </div>
@@ -711,6 +713,7 @@ export const FormCitasDeServicio = () => {
                       disabled={!values.ciudad}
                     >
                       <option value="">distribuidor*</option>
+                      <option value="VW-COY-001">VW-COY-001</option>
                       <option value="VW Ola Polanco">VW Ola Polanco</option>
                     </Select>
                   </div>

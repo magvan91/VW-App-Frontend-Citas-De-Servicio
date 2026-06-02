@@ -1,21 +1,22 @@
 export interface SummaryData {
-  numeroChasis: string;
-  anio: string;
-  modelo: string;
-  kilometrajeAuto: string | number;
-  kilometrajeServicio: string;
-  idConcesionario: string;
-  estado: string;
-  ciudad: string;
-  fecha: string;
-  horario: string;
   nombre: string;
   apePat: string;
   apeMat: string;
+  numeroChasis: string;
+  fecha: string;
+  horario: string;
   telefonoMovil: string;
   email: string;
-  comentarios: string;
+  estado: string;
+  ciudad: string;
+  idConcesionario: string;
+  marca: string;
+  modelo: string;
+  anio: number;
+  kilometrajeAuto: number;
+  kilometrajeServicio: number;
   tipoServicio: string;
+  comentarios: string;
 }
 
 export interface SummarySection {
@@ -25,9 +26,21 @@ export interface SummarySection {
 
 export const summarySections: SummarySection[] = [
   {
+    title: "Datos del Cliente",
+    data: [
+      { label: "Nombre", value: "nombre" },
+      { label: "Apellido Paterno", value: "apePat" },
+      { label: "Apellido Materno", value: "apeMat" },
+      { label: "Teléfono Móvil", value: "telefonoMovil" },
+      { label: "Email", value: "email" },
+      { label: "Comentarios", value: "comentarios" },
+    ],
+  },
+  {
     title: "Datos del Vehículo",
     data: [
       { label: "Número de Chasis", value: "numeroChasis" },
+      { label: "Marca", value: "marca" },
       { label: "Año", value: "anio" },
       { label: "Modelo", value: "modelo" },
       { label: "Kilometraje", value: "kilometrajeAuto" },
@@ -47,17 +60,7 @@ export const summarySections: SummarySection[] = [
     data: [
       { label: "Fecha", value: "fecha" },
       { label: "Horario", value: "horario" },
-    ],
-  },
-  {
-    title: "Datos del Cliente",
-    data: [
-      { label: "Nombre", value: "nombre" },
-      { label: "Apellido Paterno", value: "apePat" },
-      { label: "Apellido Materno", value: "apeMat" },
-      { label: "Teléfono Móvil", value: "telefonoMovil" },
-      { label: "Email", value: "email" },
-      { label: "Comentarios", value: "comentarios" },
+      { label: "Tipo de Servicio", value: "tipoServicio" },
     ],
   },
 ];

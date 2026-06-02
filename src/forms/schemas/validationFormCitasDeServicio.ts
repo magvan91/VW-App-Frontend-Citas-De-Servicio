@@ -23,9 +23,11 @@ export const validationFormCitasDeServicio = [
           );
         },
       ),
-    anio: Yup.string().required("Selecciona el año"),
-    modelo: Yup.string().required("Selecciona el modelo"),
-    kilometrajeAuto: Yup.number().required("Ingresa el kilometraje"),
+anio: Yup.number().required("Selecciona el año"),
+     modelo: Yup.string().required("Selecciona el modelo"),
+     kilometrajeAuto: Yup.number()
+       .required("Ingresa el kilometraje")
+       .min(0, "El kilometraje no puede ser negativo"),
     // kilometrajeServicio: Yup.string().required("Selecciona el servicio"),
     kilometrajeServicio: Yup.string().when("tipoServicio", {
       is: 0,
