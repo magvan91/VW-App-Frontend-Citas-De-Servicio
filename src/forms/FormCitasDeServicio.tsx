@@ -37,6 +37,8 @@ import MantenimientoIcon from "../assets/images/servicioMantenimiento.svg";
 import ReparacionIcon from "../assets/images/diagnosticoReparacion.svg";
 
 import PinturaIcon from "../assets/images/ojalateriaPintura.svg";
+import AccesoriosIcon from "../assets/images/cotizacionAccesorios.svg";
+
 import { isMobile } from "../utils/fieldFormsUtils";
 
 export const FormCitasDeServicio = () => {
@@ -92,6 +94,7 @@ export const FormCitasDeServicio = () => {
         0: "Maintenance Service",
         1: "General Repair",
         2: "Tinsmithing and Painting",
+        3: "Accessory Installation",
       };
       const tipoServicioKey =
         typeof values.tipoServicio === "string"
@@ -293,6 +296,11 @@ export const FormCitasDeServicio = () => {
       title: "Hojalatería y pintura",
       icon: PinturaIcon,
     },
+    {
+      id: 3,
+      title: "Cotización e instalación de accesorios",
+      icon: AccesoriosIcon,
+    },
   ];
 
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
@@ -472,38 +480,41 @@ export const FormCitasDeServicio = () => {
                     </div>
 
                     <div className="col-12 col-sm-12 col-md-6">
-<Select
-                       {...getFieldProps("anio")}
-                       required
-                       isFloating={true}
-                       label="Año del vehículo"
-                       message={
-                         touched.anio && !values.anio
-                           ? "Selecciona el año del vehículo"
-                           : ""
-                       }
-                       onChange={(e: SyntheticEvent<HTMLSelectElement>) => {
-                         const value = parseInt((e.target as HTMLSelectElement).value, 10);
-                         setFieldValue("anio", value);
-                       }}
-                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                       // @ts-expect-error
-                       appearance={
-                         touched.anio
-                           ? errors.anio
-                             ? "error"
-                             : "success"
-                           : "default"
-                       }
-                     >
-                       <option value="">
-                         Selecciona el año de tu vehículo
-                       </option>
-                       <option value="2026">2026</option>
-                       <option value="2025">2025</option>
-                       <option value="2024">2024</option>
-                       <option value="2023">2023</option>
-                     </Select>
+                      <Select
+                        {...getFieldProps("anio")}
+                        required
+                        isFloating={true}
+                        label="Año del vehículo"
+                        message={
+                          touched.anio && !values.anio
+                            ? "Selecciona el año del vehículo"
+                            : ""
+                        }
+                        onChange={(e: SyntheticEvent<HTMLSelectElement>) => {
+                          const value = parseInt(
+                            (e.target as HTMLSelectElement).value,
+                            10,
+                          );
+                          setFieldValue("anio", value);
+                        }}
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        appearance={
+                          touched.anio
+                            ? errors.anio
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                      >
+                        <option value="">
+                          Selecciona el año de tu vehículo
+                        </option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                      </Select>
                     </div>
                     <div className="col-12 col-sm-12 col-md-6">
                       <Select
@@ -539,10 +550,17 @@ export const FormCitasDeServicio = () => {
                         {...getFieldProps("kilometrajeAuto")}
                         onChange={(e: SyntheticEvent<HTMLInputElement>) => {
                           const rawInput = (e.target as HTMLInputElement).value;
-                          const numericValue = parseInt(rawInput.replace(/\D/g, "") || "0", 10);
+                          const numericValue = parseInt(
+                            rawInput.replace(/\D/g, "") || "0",
+                            10,
+                          );
                           setFieldValue("kilometrajeAuto", numericValue);
                         }}
-                        value={formatKilometraje(values.kilometrajeAuto)}
+                        value={
+                          values.kilometrajeAuto && values.kilometrajeAuto !== 0
+                            ? formatKilometraje(values.kilometrajeAuto)
+                            : ""
+                        }
                         label="Kilometraje actual del vehículo"
                         isFloating={true}
                         type="text"
@@ -574,28 +592,33 @@ export const FormCitasDeServicio = () => {
                         </span>
                       )}
                     </div>
-{selectedService === 0 && (
-                       <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
-                         <Select
-                           {...getFieldProps("kilometrajeServicio")}
-                           label="Servicio que necesitas"
-                           isFloating={true}
-                           onChange={(e: SyntheticEvent<HTMLSelectElement>) => {
-                             const value = parseInt((e.target as HTMLSelectElement).value, 10);
-                             setFieldValue("kilometrajeServicio", value || 0);
-                           }}
-                         >
-                           <option value="">
-                             Selecciona el servicio que necesitas
-                           </option>
-                           <option value="15000">15,000 km ó 1 año</option>
-                           <option value="30000">30,000 km o 2 años</option>
-                           <option value="45000">45,000 km o 3 años</option>
-                           <option value="60000">60,000 km o 4 años</option>
-                           <option value="75000">Superior a 60,000 km o 4 años</option>
-                         </Select>
-                       </div>
-                     )}
+                    {selectedService === 0 && (
+                      <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
+                        <Select
+                          {...getFieldProps("kilometrajeServicio")}
+                          label="Servicio que necesitas"
+                          isFloating={true}
+                          onChange={(e: SyntheticEvent<HTMLSelectElement>) => {
+                            const value = parseInt(
+                              (e.target as HTMLSelectElement).value,
+                              10,
+                            );
+                            setFieldValue("kilometrajeServicio", value || 0);
+                          }}
+                        >
+                          <option value="">
+                            Selecciona el servicio que necesitas
+                          </option>
+                          <option value="15000">15,000 km ó 1 año</option>
+                          <option value="30000">30,000 km o 2 años</option>
+                          <option value="45000">45,000 km o 3 años</option>
+                          <option value="60000">60,000 km o 4 años</option>
+                          <option value="75000">
+                            Superior a 60,000 km o 4 años
+                          </option>
+                        </Select>
+                      </div>
+                    )}
                   </div>
                   {!completedTabs.includes(1) && (
                     <div className="col-12 text-center pt-5">
@@ -759,11 +782,11 @@ export const FormCitasDeServicio = () => {
                         <option value="2026-06-01/09:00">09:00</option>
                         <option value="2026-06-01/10:00">10:00</option>
                       </optgroup>
-                      <optgroup label="2026-06-02">
+                      <optgroup label="02-junio-26">
                         <option value="2026-06-02/11:00">11:00</option>
                         <option value="2026-06-02/12:00">12:00</option>
                       </optgroup>
-                      <optgroup label="2026-06-03">
+                      <optgroup label="03-junio-26">
                         <option value="2026-06-03/09:00">09:00</option>
                         <option value="2026-06-03/12:00">12:00</option>
                       </optgroup>

@@ -21,7 +21,7 @@ export const formatNumberWithCommas = (value: string | number): string => {
 };
 
 export const formatKilometraje = (value: string | number): string => {
-  if (!value) return "";
+  if (!value || value === 0 || null) return "";
   const cleanValue = value.toString().replace(/\D/g, "");
   return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
