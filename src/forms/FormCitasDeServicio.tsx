@@ -14,6 +14,8 @@ import {
 } from "@volkswagen-onehub/components-core";
 
 import { useFormik } from "formik";
+import { useApi } from "../hooks/useApi";
+import { useDropdowns } from "../hooks/useDropdowns";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { globalValidationSchema } from "./schemas/validationFormCitasDeServicio";
 import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
@@ -26,6 +28,16 @@ import {
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
 import type { SummaryData } from "../interfaces/SummaryData.interface";
+interface LocationItem {
+  id: string;
+  name: string;
+}
+
+interface DealerItem {
+  idConcesionario: string;
+  name: string;
+}
+
 import api from "../services/api";
 import {
   CheckmarkCircleFilled,
@@ -302,6 +314,22 @@ export const FormCitasDeServicio = () => {
       icon: AccesoriosIcon,
     },
   ];
+
+  // 1. Usamos tu nuevo hook, pasándole los valores actuales del formulario
+  const { estados, ciudades, concesionarios } = useDropdowns(
+    values.estado,
+    values.ciudad,
+  );
+
+  // 2. Pequeños efectos de Formik para limpiar los campos hijos si el padre cambia
+  useEffect(() => {
+    setFieldValue("ciudad", "");
+    setFieldValue("idConcesionario", "");
+  }, [values.estado, setFieldValue]);
+
+  useEffect(() => {
+    setFieldValue("idConcesionario", "");
+  }, [values.ciudad, setFieldValue]);
 
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
   if (showSummary && summaryData) {
@@ -676,9 +704,16 @@ export const FormCitasDeServicio = () => {
                           : "default"
                       }
                     >
-                      <option value="">Estado</option>
+                      {/* <option value="">Estado</option>
                       <option value="Ciudad de México">Ciudad de México</option>
-                      <option value="CDMX">CDMX</option>
+                      <option value="CDMX">CDMX</option> */}
+
+                      <option value="">Selecciona un estado</option>
+                      {estados.map((est) => (
+                        <option key={est.id} value={est.id}>
+                          {est.name}
+                        </option>
+                      ))}
                     </Select>
                   </div>
                   <div className="col-12 col-sm-4 col-md-4">
@@ -707,10 +742,16 @@ export const FormCitasDeServicio = () => {
                       }
                       disabled={!values.estado}
                     >
-                      <option value="">Ciudad</option>
+                      {/* <option value="">Ciudad</option>
                       <option value="Iztapalapa">Iztapalapa</option>
                       <option value="Polanco">Polanco</option>
-                      <option value="Coyoacán">Coyoacán</option>
+                      <option value="Coyoacán">Coyoacán</option> */}
+                      <option value="">Selecciona una ciudad</option>
+                      {ciudades.map((ciu) => (
+                        <option key={ciu.id} value={ciu.id}>
+                          {ciu.name}
+                        </option>
+                      ))}
                     </Select>
                   </div>
                   <div className="col-12 col-sm-4 col-md-4">
@@ -735,9 +776,18 @@ export const FormCitasDeServicio = () => {
                       }
                       disabled={!values.ciudad}
                     >
-                      <option value="">distribuidor*</option>
+                      {/* <option value="">distribuidor*</option>
                       <option value="VW-COY-001">VW-COY-001</option>
-                      <option value="VW Ola Polanco">VW Ola Polanco</option>
+                      <option value="VW Ola Polanco">VW Ola Polanco</option> */}
+                      <option value="">Selecciona un concesionario</option>
+                      {concesionarios.map((dealer) => (
+                        <option
+                          key={dealer.idConcesionario}
+                          value={dealer.idConcesionario}
+                        >
+                          {dealer.name}
+                        </option>
+                      ))}
                     </Select>
                   </div>
                   <div className="col-12 col-sm-6 col-md-6">
