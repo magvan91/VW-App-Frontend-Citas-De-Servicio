@@ -576,7 +576,7 @@ export const FormCitasDeServicio = () => {
                       />
 
                       {/* Nodo DOM inyectado dinámicamente solo si existe un valor */}
-                      {values.kilometrajeAuto && (
+                      {values.kilometrajeAuto > 0 && (
                         <span
                           className="position-absolute"
                           style={{
