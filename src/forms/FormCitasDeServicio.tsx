@@ -14,7 +14,6 @@ import {
 } from "@volkswagen-onehub/components-core";
 
 import { useFormik } from "formik";
-import { useApi } from "../hooks/useApi";
 import { useDropdowns } from "../hooks/useDropdowns";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { globalValidationSchema } from "./schemas/validationFormCitasDeServicio";
@@ -28,15 +27,6 @@ import {
 } from "../utils/fieldFormsUtils";
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
 import type { SummaryData } from "../interfaces/SummaryData.interface";
-interface LocationItem {
-  id: string;
-  name: string;
-}
-
-interface DealerItem {
-  idConcesionario: string;
-  name: string;
-}
 
 import api from "../services/api";
 import {
