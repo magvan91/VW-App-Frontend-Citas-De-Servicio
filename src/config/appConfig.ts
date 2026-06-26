@@ -12,12 +12,12 @@ class AppConfig {
       debug: true,
     },
     production: {
-      apiBaseUrl: "https://v1.apartatuvw.com.mx/",
+      apiBaseUrl: "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/",
       name: "production",
       debug: false,
     },
     qa: {
-      apiBaseUrl: "https://qa.apartatuvw.com.mx/",
+      apiBaseUrl: "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/",
       name: "qa",
       debug: true,
     },

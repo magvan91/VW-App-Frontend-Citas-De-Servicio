@@ -8,7 +8,7 @@ import {
 import type { SummaryData } from "../interfaces/SummaryData.interface";
 import checkProfesional from "../assets/images/check-profesional.png";
 import "./SummaryCitasDeServicio.css"; // Importa el archivo CSS para estilos personalizados
-
+import { formatFecha, formatHorario } from "../utils/horarioUtils";
 interface SummaryCitasDeServicioProps {
   showSummary: boolean;
   data: SummaryData;
@@ -98,9 +98,11 @@ export const SummaryCitasDeServicio = ({
                     <Text appearance={TokenTextAppearance.copy100}>
                       Año: {data.anio}
                     </Text>
-                    <Text appearance={TokenTextAppearance.copy100}>
-                      Servicio por kilometraje: {data.kilometrajeServicio}
-                    </Text>
+                    {data.kilometrajeServicio !== 0 && (
+                      <Text appearance={TokenTextAppearance.copy100}>
+                        Servicio por kilometraje: {data.kilometrajeServicio}
+                      </Text>
+                    )}
                   </div>
                 </div>
 
@@ -117,7 +119,7 @@ export const SummaryCitasDeServicio = ({
                     <Text appearance={TokenTextAppearance.copy100}>
                       Fecha y hora de tu cita: <br />
                       {""}
-                      {data.fecha} <br /> {data.horario}
+                      {formatFecha(data.fecha)} — {formatHorario(data.horario)}
                     </Text>
                   </div>
                 </div>
