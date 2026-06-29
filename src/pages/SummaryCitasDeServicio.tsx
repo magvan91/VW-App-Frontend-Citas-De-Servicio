@@ -84,7 +84,8 @@ export const SummaryCitasDeServicio = ({
                     color={TokenTextColor.primary}
                     // textAlign={TextAlignment.center} <-- Eliminar esta línea
                   >
-                    {data.tipoServicio}
+                    {/* {data.tipoServicio} */}
+                    {data.servicioNombreMostrar || data.tipoServicio}
                   </Text>
                 </div>
               </div>

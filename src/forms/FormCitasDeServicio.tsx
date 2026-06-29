@@ -99,17 +99,26 @@ export const FormCitasDeServicio = () => {
         2: "Tinsmithing and Painting",
         3: "Accessory Installation",
       };
+
+      const tituloServicioMap: { [key: number]: string } = {
+        0: "Servicio de mantenimiento",
+        1: "Diagnóstico y reparación",
+        2: "Hojalatería y pintura",
+        3: "Cotización e instalación de accesorios",
+      };
+
       const tipoServicioKey =
         typeof values.tipoServicio === "string"
           ? parseInt(values.tipoServicio, 10)
           : values.tipoServicio;
       const tipoServicioString = servicioMap[tipoServicioKey];
-
+      const tituloServicioString = tituloServicioMap[tipoServicioKey];
       const payload = {
         ...values,
         tipoServicio: tipoServicioString,
         fecha: fechaExtraida,
         horario: horaConFormato,
+        servicioNombreMostrar: tituloServicioString,
       };
 
       try {

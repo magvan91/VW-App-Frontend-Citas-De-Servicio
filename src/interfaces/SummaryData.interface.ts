@@ -17,6 +17,7 @@ export interface SummaryData {
   kilometrajeServicio: number;
   tipoServicio: string;
   comentarios: string;
+  servicioNombreMostrar?: string;
 }
 
 export interface SummarySection {
