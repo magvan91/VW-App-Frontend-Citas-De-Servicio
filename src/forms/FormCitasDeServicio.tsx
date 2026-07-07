@@ -11,6 +11,7 @@ import {
   TokenTextColor,
   Checkbox,
   Tabs,
+  Spinner,
   ButtonNext,
 } from "@volkswagen-onehub/components-core";
 
@@ -61,6 +62,7 @@ export const FormCitasDeServicio = () => {
     validateForm,
     setTouched,
     submitForm,
+    isSubmitting,
   } = useFormik<CitasServicioValues>({
     initialValues: {
       numeroChasis: "",
@@ -377,7 +379,12 @@ export const FormCitasDeServicio = () => {
             ¿En que tipo de servicio estás interesado?
           </Text>
         </div>
-
+        {/* Mostrar mensaje de error si el usuario intentó enviar sin seleccionar un servicio */}
+        {errors.tipoServicio && touched.tipoServicio && (
+          <div className="text-danger mt-2 text-center">
+            {errors.tipoServicio}
+          </div>
+        )}
         {serviceOptions.map((option) => (
           // col-6 para mostrar 2 columnas en celular, col-md-3 para 4 columnas en escritorio
           <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
@@ -1099,8 +1106,16 @@ export const FormCitasDeServicio = () => {
                           type="button"
                           emphasis="primary"
                           onClick={submitForm}
+                          disabled={isSubmitting}
                         >
-                          Agendar Cita
+                          {isSubmitting ? (
+                            <div className="d-flex justify-content-center align-items-center">
+                              <Spinner variant="large" />
+                              <span className="ms-2">Enviando...</span>
+                            </div>
+                          ) : (
+                            "Agendar Cita"
+                          )}
                         </CTA>
                       </div>
                     </div>

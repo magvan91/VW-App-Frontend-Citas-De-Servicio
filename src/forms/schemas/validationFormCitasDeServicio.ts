@@ -5,6 +5,10 @@ export const validationFormCitasDeServicio = [
   //* Paso 0: Datos del vehículo
   //? Preguntar si los restos de los campos de este paso seran obligatorios a pesar de que estos no los son para el API
   Yup.object().shape({
+    tipoServicio: Yup.number()
+      .required("Por favor, selecciona un tipo de servicio")
+      // Si tus IDs de servicio van del 0 al 3, puedes asegurar que no esté vacío
+      .min(0, "Selecciona un servicio válido"),
     numeroChasis: Yup.string()
       .required("Número VIN es obligatorio")
       .length(17, "El VIN debe tener exactamente 17 caracteres")
