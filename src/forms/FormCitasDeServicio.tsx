@@ -13,6 +13,9 @@ import {
   Tabs,
   Spinner,
   ButtonNext,
+  Container,
+  ErrorState,
+  ContainerGutter,
 } from "@volkswagen-onehub/components-core";
 
 import { useFormik } from "formik";
@@ -52,6 +55,8 @@ export const FormCitasDeServicio = () => {
   const [showSummary, setShowSummary] = useState(false); // ESTADO REQUERIDO
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const [tabErrors, setTabErrors] = useState<Record<number, boolean>>({});
+  const servicesSectionRef = useRef<HTMLDivElement>(null);
+  const [hasSubmitError, setHasSubmitError] = useState<boolean>(false);
 
   const {
     values,
@@ -63,6 +68,7 @@ export const FormCitasDeServicio = () => {
     setTouched,
     submitForm,
     isSubmitting,
+    submitCount,
   } = useFormik<CitasServicioValues>({
     initialValues: {
       numeroChasis: "",
@@ -124,19 +130,20 @@ export const FormCitasDeServicio = () => {
       };
 
       try {
+        setHasSubmitError(false);
         const response = await api.post("/api/v1/appointments", payload);
         console.log("Cita agendada exitosamente:", response.data);
+        setShowSummary(true); // Mostrar el resumen después de un envío exitoso
+        setSummaryData(payload); // Guardar los datos para el resumen
       } catch (error) {
         if (error && typeof error === "object" && "response" in error) {
           const axiosError = error as { response: { data: unknown } };
           console.error("Error al agendar cita:", axiosError.response?.data);
         } else {
           console.error("Error al agendar cita:", error);
+          setHasSubmitError(true);
         }
       }
-
-      setSummaryData(payload);
-      setShowSummary(true);
     },
   });
 
@@ -333,6 +340,16 @@ export const FormCitasDeServicio = () => {
     setFieldValue("idConcesionario", "");
   }, [values.ciudad, setFieldValue]);
 
+  useEffect(() => {
+    // Si el usuario intentó enviar y existe un error específico en tipoServicio
+    if (submitCount > 0 && errors.tipoServicio) {
+      servicesSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center", // Deja la sección en el centro de la pantalla
+      });
+    }
+  }, [submitCount, errors.tipoServicio]);
+
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
   if (showSummary && summaryData) {
     // Se asegura de que summaryData exista
@@ -369,90 +386,122 @@ export const FormCitasDeServicio = () => {
         </div>
       </div>
       <div className="row">
+        {/* --- INICIO DE ZONA RESALTADA --- */}
         <div className="col-12">
-          <Text
-            appearance={TokenTextAppearance.headline200}
-            textAlign={TextAlignment.center}
-            tag={TextTag.h3}
-            bold
+          <div
+            ref={servicesSectionRef} // Aquí conectamos el Auto-scroll
+            className="row m-0" // m-0 para no alterar la estructura de Bootstrap
+            style={{
+              border:
+                submitCount > 0 && errors.tipoServicio
+                  ? "2px solid #d93025"
+                  : "2px solid transparent",
+              backgroundColor:
+                submitCount > 0 && errors.tipoServicio
+                  ? "#fce8e6"
+                  : "transparent",
+              padding: "1rem 0",
+              borderRadius: "8px",
+              transition: "all 0.3s ease",
+            }}
           >
-            ¿En que tipo de servicio estás interesado?
-          </Text>
-        </div>
-        {/* Mostrar mensaje de error si el usuario intentó enviar sin seleccionar un servicio */}
-        {errors.tipoServicio && touched.tipoServicio && (
-          <div className="text-danger mt-2 text-center">
-            {errors.tipoServicio}
-          </div>
-        )}
-        {serviceOptions.map((option) => (
-          // col-6 para mostrar 2 columnas en celular, col-md-3 para 4 columnas en escritorio
-          <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
-            <div
-              onClick={() => {
-                const isKilometraje = option.id === 0;
-                setSelectedService(option.id);
-                setFieldValue("tipoServicio", option.id);
-
-                if (isMobile() && targetRef.current) {
-                  // Si es la opción que expande el formulario, esperamos al siguiente frame
-                  window.requestAnimationFrame(() => {
-                    setTimeout(
-                      () => {
-                        targetRef.current?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "end",
-                        });
-                      },
-                      isKilometraje ? 150 : 0,
-                    );
-                  });
-                }
-              }}
-              className="d-flex flex-column align-items-center justify-content-center p-3 rounded h-100 text-center"
-              style={{
-                cursor: "pointer",
-                // Estilos condicionales basados en la selección
-                backgroundColor:
-                  selectedService === option.id ? "#f5f3ed" : "#ffffff",
-                borderColor:
-                  selectedService === option.id ? "#8b7b65" : "#f2f2f2",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                minHeight: "160px",
-                transition: "all 0.2s ease-in-out",
-              }}
-            >
-              <div className="mb-3" style={{ color: "#001e50" }}>
-                <span
-                  style={{ display: "inline-flex", transform: "scale(2.5)" }}
-                >
-                  {/* Verificación de tipo para TSX */}
-                  {typeof option.icon === "string" ? (
-                    <img
-                      src={option.icon}
-                      alt={option.title}
-                      style={{
-                        width: "2.5em", // Mantiene proporción con el texto
-                        height: "2.em",
-                        display: "block",
-                      }}
-                    />
-                  ) : (
-                    // Si no es string, TS sabe que es ReactNode/JSX.Element
-                    option.icon
-                  )}
-                </span>
-              </div>
+            <div className="col-12">
               <Text
-                appearance={TokenTextAppearance.copy200}
+                appearance={TokenTextAppearance.headline200}
                 textAlign={TextAlignment.center}
+                tag={TextTag.h3}
+                bold
               >
-                {option.title}
+                ¿En que tipo de servicio estás interesado?
               </Text>
             </div>
+
+            {/* Mostrar mensaje de error si el usuario intentó enviar sin seleccionar un servicio */}
+            {/* Cambiamos touched por submitCount > 0 para que coincida con el borde */}
+            {submitCount > 0 && errors.tipoServicio && (
+              <div
+                className="text-danger mt-2 text-center"
+                style={{ fontWeight: "bold" }}
+              >
+                {errors.tipoServicio}
+              </div>
+            )}
+
+            {serviceOptions.map((option) => (
+              // col-6 para mostrar 2 columnas en celular, col-md-3 para 4 columnas en escritorio
+              <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
+                <div
+                  onClick={() => {
+                    const isKilometraje = option.id === 0;
+                    setSelectedService(option.id);
+                    setFieldValue("tipoServicio", option.id);
+
+                    if (isMobile() && targetRef.current) {
+                      // Si es la opción que expande el formulario, esperamos al siguiente frame
+                      window.requestAnimationFrame(() => {
+                        setTimeout(
+                          () => {
+                            targetRef.current?.scrollIntoView({
+                              behavior: "smooth",
+                              block: "end",
+                            });
+                          },
+                          isKilometraje ? 150 : 0,
+                        );
+                      });
+                    }
+                  }}
+                  className="d-flex flex-column align-items-center justify-content-center p-3 rounded h-100 text-center"
+                  style={{
+                    cursor: "pointer",
+                    // Estilos condicionales basados en la selección
+                    backgroundColor:
+                      selectedService === option.id ? "#f5f3ed" : "#ffffff",
+                    borderColor:
+                      selectedService === option.id ? "#8b7b65" : "#f2f2f2",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                    minHeight: "160px",
+                    transition: "all 0.2s ease-in-out",
+                  }}
+                >
+                  <div className="mb-3" style={{ color: "#001e50" }}>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        transform: "scale(2.5)",
+                      }}
+                    >
+                      {/* Verificación de tipo para TSX */}
+                      {typeof option.icon === "string" ? (
+                        <img
+                          src={option.icon}
+                          alt={option.title}
+                          style={{
+                            width: "2.5em", // Mantiene proporción con el texto
+                            height: "2.em",
+                            display: "block",
+                          }}
+                        />
+                      ) : (
+                        // Si no es string, TS sabe que es ReactNode/JSX.Element
+                        option.icon
+                      )}
+                    </span>
+                  </div>
+                  <Text
+                    appearance={TokenTextAppearance.copy200}
+                    textAlign={TextAlignment.center}
+                  >
+                    {option.title}
+                  </Text>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+        {/* --- FIN DE ZONA RESALTADA --- */}
+
         {/* <BusinessCustomersPrivate /> */}
         <div></div>
         <div className="col-12">
@@ -733,10 +782,6 @@ export const FormCitasDeServicio = () => {
                           : "default"
                       }
                     >
-                      {/* <option value="">Estado</option>
-                      <option value="Ciudad de México">Ciudad de México</option>
-                      <option value="CDMX">CDMX</option> */}
-
                       <option value="">Selecciona un estado</option>
                       {estados.map((est) => (
                         <option key={est.id} value={est.id}>
@@ -771,10 +816,6 @@ export const FormCitasDeServicio = () => {
                       }
                       disabled={!values.estado}
                     >
-                      {/* <option value="">Ciudad</option>
-                      <option value="Iztapalapa">Iztapalapa</option>
-                      <option value="Polanco">Polanco</option>
-                      <option value="Coyoacán">Coyoacán</option> */}
                       <option value="">Selecciona una ciudad</option>
                       {ciudades.map((ciu) => (
                         <option key={ciu.id} value={ciu.id}>
@@ -805,9 +846,6 @@ export const FormCitasDeServicio = () => {
                       }
                       disabled={!values.ciudad}
                     >
-                      {/* <option value="">distribuidor*</option>
-                      <option value="VW-COY-001">VW-COY-001</option>
-                      <option value="VW Ola Polanco">VW Ola Polanco</option> */}
                       <option value="">Selecciona un concesionario</option>
                       {concesionarios.map((dealer) => (
                         <option
@@ -1099,6 +1137,23 @@ export const FormCitasDeServicio = () => {
                         )}
                       </div>
                     </div>
+                    {hasSubmitError && (
+                      <div className="row">
+                        <div className="col-12 pb-4">
+                          <Container
+                            gutter={ContainerGutter.static200}
+                            wrap="always"
+                          >
+                            <ErrorState
+                              type="404"
+                              title="Algo salió mal, inténtalo más tarde"
+                              description="No pudimos completar tu solicitud en este momento. Por favor, revisa tus datos o intenta enviar el formulario nuevamente."
+                              // Al no pasarle ctaTitle, el componente de VW ya no debería renderizar su propio botón.
+                            />
+                          </Container>
+                        </div>
+                      </div>
+                    )}
                     <div className="row">
                       <div className="col-12 text-center pb-4">
                         <CTA
@@ -1108,12 +1163,18 @@ export const FormCitasDeServicio = () => {
                           onClick={submitForm}
                           disabled={isSubmitting}
                         >
+                          {/* Evaluamos los 3 estados posibles del botón: */}
                           {isSubmitting ? (
+                            // Estado 1: Está cargando (haciendo la petición)
                             <div className="d-flex justify-content-center align-items-center">
                               <Spinner variant="large" />
                               <span className="ms-2">Enviando...</span>
                             </div>
+                          ) : hasSubmitError ? (
+                            // Estado 2: Hubo un error, cambiamos el texto para invitar a reintentar
+                            "Volver a intentar"
                           ) : (
+                            // Estado 3: Estado normal inicial
                             "Agendar Cita"
                           )}
                         </CTA>
