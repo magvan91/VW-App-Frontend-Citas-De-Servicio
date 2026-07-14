@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect,useMemo } from "react";
 import type { SyntheticEvent } from "react";
 import {
   CTA,
@@ -54,7 +54,6 @@ export const FormCitasDeServicio = () => {
   const [showTyco, setShowTyco] = useState(false);
   const [showSummary, setShowSummary] = useState(false); // ESTADO REQUERIDO
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
-  const [tabErrors, setTabErrors] = useState<Record<number, boolean>>({});
   const servicesSectionRef = useRef<HTMLDivElement>(null);
   const [hasSubmitError, setHasSubmitError] = useState<boolean>(false);
 
@@ -147,33 +146,6 @@ export const FormCitasDeServicio = () => {
     },
   });
 
-  // TODO 1. Terminar de agregar el resto de los campos que van a ser obligatorios para cada Tab en el array que esta en el archivo fieldFormUtils. 2. Obtener de manera dinamica el numero actual del tab donde se encuentra el usuario, ya que de momento esta hardcodeado en el indice 0 y una vez que se obtenga realizar los ajustes correspondientes. 3. Crear un useState de tipo array o de tipo objetos (me parece que este tipo es la mejor opción) para saber si algun tab tiene errores ya que el usuario se pudo haber regresado a un Tab y cambiar algun valor a uno no valido en ese caso se debe cambiar el ico del tab por uno de error.
-
-  // useEffect(() => {
-  //   const currentField = nameFieldsRequired[index] || [];
-  //   const totalFields = currentField.length;
-  //   if (totalFields === 0) return;
-  //   let totalSuccess = 0;
-  //   Object.keys(touched).forEach((field) => {
-  //     if (!currentField.includes(field)) {
-  //       if (!errors[field as keyof CitasServicioValues]) {
-  //         totalSuccess += 1;
-  //       }
-  //     }
-  //   });
-  //   //* Si el total de campos correctos es igual al total de campos validados, entonces marcamos el Tab como completado
-  //   if (totalFields === totalSuccess) {
-  //     setTimeout(() => {
-  //       setCompletedTabs((prev) => {
-  //         const nextIndex = index + 1; // 2. Cálculo dinámico del siguiente índice
-  //         if (!prev.includes(nextIndex)) {
-  //           return [...prev, nextIndex];
-  //         }
-  //         return prev;
-  //       });
-  //     }, 0);
-  //   }
-  // }, [touched, errors, index]);
   // Centraliza la validación secuencial compartida entre botón y cabezal
   const validateAndUnlockStep = async (
     currentTab: number,
@@ -213,7 +185,8 @@ export const FormCitasDeServicio = () => {
     return true; // Validación exitosa, paso desbloqueado
   };
 
-  useEffect(() => {
+  // REEMPLAZA TU useEffect POR ESTO:
+  const tabErrors = useMemo(() => {
     const currentErrorsState: Record<number, boolean> = {};
 
     completedTabs.forEach((tab) => {
@@ -229,11 +202,30 @@ export const FormCitasDeServicio = () => {
       }
     });
 
-    // Prevención de re-renders infinitos: actualiza el estado solo si el mapa de errores cambió
-    if (JSON.stringify(currentErrorsState) !== JSON.stringify(tabErrors)) {
-      setTabErrors(currentErrorsState);
-    }
-  }, [errors, completedTabs, tabErrors]);
+    return currentErrorsState;
+  }, [errors, completedTabs]);
+
+  // useEffect(() => {
+  //   const currentErrorsState: Record<number, boolean> = {};
+
+  //   completedTabs.forEach((tab) => {
+  //     const fields = nameFieldsRequired[tab] || [];
+
+  //     // Verifica si existe al menos un error en los campos correspondientes a la pestaña iterada
+  //     const hasError = fields.some(
+  //       (field) => !!errors[field as keyof CitasServicioValues],
+  //     );
+
+  //     if (hasError) {
+  //       currentErrorsState[tab] = true;
+  //     }
+  //   });
+
+  //   // Prevención de re-renders infinitos: actualiza el estado solo si el mapa de errores cambió
+  //   if (JSON.stringify(currentErrorsState) !== JSON.stringify(tabErrors)) {
+  //     setTabErrors(currentErrorsState);
+  //   }
+  // }, [errors, completedTabs, tabErrors]);
 
   const targetRef = useRef<HTMLDivElement | null>(null);
   const handleActionComplete = async (tabIndex: number) => {
