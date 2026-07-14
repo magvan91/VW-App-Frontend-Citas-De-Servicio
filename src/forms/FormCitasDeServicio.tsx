@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect,useMemo } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type { SyntheticEvent } from "react";
 import {
   CTA,
@@ -14,8 +14,8 @@ import {
   Spinner,
   ButtonNext,
   Container,
-  ErrorState,
   ContainerGutter,
+  ToastNotification,
 } from "@volkswagen-onehub/components-core";
 
 import { useFormik } from "formik";
@@ -1136,11 +1136,10 @@ export const FormCitasDeServicio = () => {
                             gutter={ContainerGutter.static200}
                             wrap="always"
                           >
-                            <ErrorState
-                              type="404"
-                              title="Algo salió mal, inténtalo más tarde"
-                              description="No pudimos completar tu solicitud en este momento. Por favor, revisa tus datos o intenta enviar el formulario nuevamente."
-                              // Al no pasarle ctaTitle, el componente de VW ya no debería renderizar su propio botón.
+                            <ToastNotification
+                              show
+                              title="Algo salió mal, inténtalo de nuevo"
+                              appearance="Alert"
                             />
                           </Container>
                         </div>
