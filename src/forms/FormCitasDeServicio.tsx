@@ -134,13 +134,34 @@ export const FormCitasDeServicio = () => {
         console.log("Cita agendada exitosamente:", response.data);
         setShowSummary(true); // Mostrar el resumen después de un envío exitoso
         setSummaryData(payload); // Guardar los datos para el resumen
-      } catch (error) {
-        if (error && typeof error === "object" && "response" in error) {
-          const axiosError = error as { response: { data: unknown } };
-          console.error("Error al agendar cita:", axiosError.response?.data);
+      } catch (error: unknown) {
+        setHasSubmitError(true);
+
+        if (error && typeof error === "object") {
+          if ("response" in error) {
+            // El servidor respondió con un código de error (ej. 400, 422, 500)
+            const axiosError = error as {
+              response: { status: number; data: unknown };
+            };
+            console.error(
+              "Error del servidor al agendar cita:",
+              axiosError.response.status,
+              axiosError.response.data,
+            );
+          } else if ("request" in error) {
+            // La petición se hizo pero no hubo respuesta
+            const axiosError = error as { request: unknown };
+            console.error(
+              "Error de red: No se recibió respuesta del servidor.",
+              axiosError.request,
+            );
+          } else if ("message" in error) {
+            // Error en la configuración de Axios o ejecución del frontend
+            const genericError = error as { message: string };
+            console.error("Error de ejecución:", genericError.message);
+          }
         } else {
-          console.error("Error al agendar cita:", error);
-          setHasSubmitError(true);
+          console.error("Error desconocido:", error);
         }
       }
     },

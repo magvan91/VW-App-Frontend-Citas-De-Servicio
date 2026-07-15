@@ -26,7 +26,7 @@ export const DateRangePicker = ({ value, onChange }: Props) => {
   }, []);
 
   const formatDate = (date?: Date) => {
-    console.log(date);
+    console.log(date); //quitar ya que se evite el renderizado cada que se hace click en un boton de la pagina
     return date
       ? date.toLocaleDateString("es-MX", {
           day: "2-digit",
