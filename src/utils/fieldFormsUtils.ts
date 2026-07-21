@@ -32,7 +32,6 @@ export const isMobile = () => {
   return window.matchMedia("(max-width: 768px)").matches;
 };
 
-// TODO Agregar los campos validos para cada Tab según el indice que le corresponda
 export const nameFieldsRequired = [
   [
     "tipoServicio",

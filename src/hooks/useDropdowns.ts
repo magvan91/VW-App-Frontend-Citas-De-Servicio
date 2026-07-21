@@ -16,8 +16,14 @@ export const useDropdowns = (estadoId: string, ciudadId: string) => {
   const { get } = useApi();
 
   const [estados, setEstados] = useState<LocationItem[]>([]);
-  const [ciudades, setCiudades] = useState<LocationItem[]>([]);
-  const [concesionarios, setConcesionarios] = useState<DealerItem[]>([]);
+  const [ciudadesState, setCiudadesState] = useState<{
+    estadoId: string;
+    items: LocationItem[];
+  }>({ estadoId: "", items: [] });
+  const [concesionariosState, setConcesionariosState] = useState<{
+    ciudadId: string;
+    items: DealerItem[];
+  }>({ ciudadId: "", items: [] });
 
   // Efecto 1: Cargar Estados al inicio
   useEffect(() => {
@@ -35,13 +41,12 @@ export const useDropdowns = (estadoId: string, ciudadId: string) => {
   // Efecto 2: Cargar Ciudades cuando cambia el Estado
   useEffect(() => {
     if (!estadoId) {
-      setCiudades([]);
       return;
     }
     const fetchCiudades = async () => {
       try {
         const response = await get(`/api/v1/states/${estadoId}/cities`);
-        setCiudades(response.data || []);
+        setCiudadesState({ estadoId, items: response.data || [] });
       } catch (error) {
         console.error("Error al cargar ciudades:", error);
       }
@@ -52,13 +57,12 @@ export const useDropdowns = (estadoId: string, ciudadId: string) => {
   // Efecto 3: Cargar Concesionarios cuando cambia la Ciudad
   useEffect(() => {
     if (!ciudadId) {
-      setConcesionarios([]);
       return;
     }
     const fetchDealers = async () => {
       try {
         const response = await get(`/api/v1/cities/${ciudadId}/dealers`);
-        setConcesionarios(response.data || []);
+        setConcesionariosState({ ciudadId, items: response.data || [] });
       } catch (error) {
         console.error("Error al cargar concesionarios:", error);
       }
@@ -69,7 +73,10 @@ export const useDropdowns = (estadoId: string, ciudadId: string) => {
   // Retornamos los arreglos para que el formulario los consuma
   return {
     estados,
-    ciudades,
-    concesionarios,
+    ciudades: ciudadesState.estadoId === estadoId ? ciudadesState.items : [],
+    concesionarios:
+      concesionariosState.ciudadId === ciudadId
+        ? concesionariosState.items
+        : [],
   };
 };
