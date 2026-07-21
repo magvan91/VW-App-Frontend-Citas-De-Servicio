@@ -38,15 +38,14 @@ import {
   onlyLettersAndNumbers,
   onlyLettersWithAcents,
 } from "../utils/fieldFormsUtils";
+import {
+  SERVICE_OPTIONS,
+  getServiceTitleById,
+  getServiceTitleEnglishById,
+} from "../utils/serviceOptions";
 
 import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
 import type { SummaryData } from "../interfaces/SummaryData.interface";
-import type { ServiceOption } from "../interfaces/ServiceOption.interface";
-
-import MantenimientoIcon from "../assets/images/servicioMantenimiento.svg";
-import ReparacionIcon from "../assets/images/diagnosticoReparacion.svg";
-import PinturaIcon from "../assets/images/ojalateriaPintura.svg";
-import AccesoriosIcon from "../assets/images/cotizacionAccesorios.svg";
 
 export const FormCitasDeServicio = () => {
   const [index, setIndex] = useState(0);
@@ -99,26 +98,28 @@ export const FormCitasDeServicio = () => {
       const horaExtraida = values.horario.split("/")[1];
       const horaConFormato = `${horaExtraida}:00.000Z`;
 
-      const servicioMap: { [key: number]: string } = {
-        0: "Maintenance Service",
-        1: "General Repair",
-        2: "Tinsmithing and Painting",
-        3: "Accessory Installation",
-      };
+      // const servicioMap: { [key: number]: string } = {
+      //   0: "Maintenance Service",
+      //   1: "General Repair",
+      //   2: "Tinsmithing and Painting",
+      //   3: "Accessory Installation",
+      // };
 
-      const tituloServicioMap: { [key: number]: string } = {
-        0: "Servicio de mantenimiento",
-        1: "Diagnóstico y reparación",
-        2: "Hojalatería y pintura",
-        3: "Cotización e instalación de accesorios",
-      };
+      // const tituloServicioMap: { [key: number]: string } = {
+      //   0: "Servicio de mantenimiento",
+      //   1: "Diagnóstico y reparación",
+      //   2: "Hojalatería y pintura",
+      //   3: "Cotización e instalación de accesorios",
+      // };
 
       const tipoServicioKey =
         typeof values.tipoServicio === "string"
           ? parseInt(values.tipoServicio, 10)
           : values.tipoServicio;
-      const tipoServicioString = servicioMap[tipoServicioKey];
-      const tituloServicioString = tituloServicioMap[tipoServicioKey];
+      const tipoServicioString =
+        getServiceTitleEnglishById(tipoServicioKey) || "Unknown Service";
+      const tituloServicioString =
+        getServiceTitleById(tipoServicioKey) || "Unknown Service";
       const payload = {
         ...values,
         tipoServicio: tipoServicioString,
@@ -296,33 +297,12 @@ export const FormCitasDeServicio = () => {
     setShowTyco(visibleTyco);
   };
   const [selectedService, setSelectedService] = useState<number | null>(null);
-  const serviceOptions: ServiceOption[] = [
-    {
-      id: 0,
-      title: "Servicio de mantenimiento",
-      icon: MantenimientoIcon,
-    },
-    {
-      id: 1,
-      title: "Diagnóstico y reparación",
-      icon: ReparacionIcon,
-    },
-    {
-      id: 2,
-      title: "Hojalatería y pintura",
-      icon: PinturaIcon,
-    },
-    {
-      id: 3,
-      title: "Cotización e instalación de accesorios",
-      icon: AccesoriosIcon,
-    },
-  ];
 
   // 1. Usamos tu nuevo hook, pasándole los valores actuales del formulario
   const { estados, ciudades, concesionarios } = useDropdowns(
-    values.estado,
-    values.ciudad,
+    parseInt(values.estado),
+    parseInt(values.ciudad),
+    parseInt(values.tipoServicio),
   );
 
   // 2. Pequeños efectos de Formik para limpiar los campos hijos si el padre cambia
@@ -414,7 +394,7 @@ export const FormCitasDeServicio = () => {
                 </div>
               )}
 
-              {serviceOptions.map((option) => (
+              {SERVICE_OPTIONS.map((option) => (
                 // col-6 para mostrar 2 columnas en celular, col-md-3 para 4 columnas en escritorio
                 <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
                   <div

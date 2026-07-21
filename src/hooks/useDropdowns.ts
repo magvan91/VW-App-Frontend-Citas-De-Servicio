@@ -1,74 +1,95 @@
 // ./hooks/useDropdowns.ts
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useApi } from "./useApi";
+import { getServiceTitleEnglishById } from "../utils/serviceOptions";
 
 export interface LocationItem {
-  id: string;
+  id: number;
   name: string;
 }
-
 export interface DealerItem {
   idConcesionario: string;
   name: string;
 }
 
-export const useDropdowns = (estadoId: string, ciudadId: string) => {
+export const useDropdowns = (
+  estadoId: number,
+  ciudadId: number,
+  typeService: number,
+) => {
+  const nameTitleService = useMemo(
+    () => getServiceTitleEnglishById(typeService),
+    [typeService],
+  );
   const { get } = useApi();
 
   const [estados, setEstados] = useState<LocationItem[]>([]);
   const [ciudadesState, setCiudadesState] = useState<{
-    estadoId: string;
+    estadoId: number;
     items: LocationItem[];
-  }>({ estadoId: "", items: [] });
+  }>({ estadoId: 0, items: [] });
   const [concesionariosState, setConcesionariosState] = useState<{
-    ciudadId: string;
+    ciudadId: number;
     items: DealerItem[];
-  }>({ ciudadId: "", items: [] });
+  }>({ ciudadId: 0, items: [] });
 
   // Efecto 1: Cargar Estados al inicio
   useEffect(() => {
+    if (nameTitleService === "undefined" || !nameTitleService) {
+      return;
+    }
     const fetchEstados = async () => {
       try {
-        const response = await get("/api/v1/states");
+        const response = await get(`/api/v1/states`, {
+          params: {
+            service_type: nameTitleService,
+          },
+        });
         setEstados(response.data || []);
       } catch (error) {
         console.error("Error al cargar estados:", error);
       }
     };
     fetchEstados();
-  }, [get]);
+  }, [nameTitleService, get]);
 
   // Efecto 2: Cargar Ciudades cuando cambia el Estado
   useEffect(() => {
-    if (!estadoId) {
+    if (isNaN(estadoId) || nameTitleService === "undefined") {
       return;
     }
     const fetchCiudades = async () => {
       try {
-        const response = await get(`/api/v1/states/${estadoId}/cities`);
+        const response = await get(
+          `/api/v1/states/${estadoId}/cities?service_type=${nameTitleService}`,
+        );
         setCiudadesState({ estadoId, items: response.data || [] });
       } catch (error) {
         console.error("Error al cargar ciudades:", error);
       }
     };
     fetchCiudades();
-  }, [estadoId, get]);
+  }, [estadoId, nameTitleService, get]);
 
   // Efecto 3: Cargar Concesionarios cuando cambia la Ciudad
   useEffect(() => {
-    if (!ciudadId) {
+    if (isNaN(ciudadId) || nameTitleService === "undefined") {
       return;
     }
     const fetchDealers = async () => {
       try {
-        const response = await get(`/api/v1/cities/${ciudadId}/dealers`);
+        const response = await get(`/api/v1/cities/${ciudadId}/dealers`, {
+          params: {
+            service_type: nameTitleService,
+          },
+        });
         setConcesionariosState({ ciudadId, items: response.data || [] });
       } catch (error) {
         console.error("Error al cargar concesionarios:", error);
       }
     };
     fetchDealers();
-  }, [ciudadId, get]);
+  }, [ciudadId, nameTitleService, get]);
 
   // Retornamos los arreglos para que el formulario los consuma
   return {
