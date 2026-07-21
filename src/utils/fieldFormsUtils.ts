@@ -34,7 +34,14 @@ export const isMobile = () => {
 
 // TODO Agregar los campos validos para cada Tab según el indice que le corresponda
 export const nameFieldsRequired = [
-  ["numeroChasis", "anio", "modelo", "kilometrajeAuto", "kilometrajeServicio"],
+  [
+    "tipoServicio",
+    "numeroChasis",
+    "anio",
+    "modelo",
+    "kilometrajeAuto",
+    "kilometrajeServicio",
+  ],
   ["estado", "ciudad", "idConcesionario", "horario"],
   ["nombre", "apePat", "apeMat", "telefonoMovil"],
 ];

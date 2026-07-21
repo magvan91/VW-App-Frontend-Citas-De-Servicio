@@ -1,52 +1,52 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import type { SyntheticEvent } from "react";
 import {
+  ButtonNext,
+  Checkbox,
+  Container,
+  ContainerGutter,
   CTA,
   Select,
+  Spinner,
+  Tabs,
   Text,
   TextAlignment,
   TextInput,
   TextTag,
+  ToastNotification,
   TokenTextAppearance,
   TokenTextColor,
-  Checkbox,
-  Tabs,
-  Spinner,
-  ButtonNext,
-  Container,
-  ContainerGutter,
-  ToastNotification,
 } from "@volkswagen-onehub/components-core";
 
-import { useFormik } from "formik";
-import { useDropdowns } from "../hooks/useDropdowns";
-import { DateRangePicker } from "../components/DateRangePicker";
-import { globalValidationSchema } from "./schemas/validationFormCitasDeServicio";
-import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
-import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
-import {
-  onlyLettersWithAcents,
-  onlyLettersAndNumbers,
-  formatKilometraje,
-  nameFieldsRequired,
-} from "../utils/fieldFormsUtils";
-import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
-import type { SummaryData } from "../interfaces/SummaryData.interface";
-
-import api from "../services/api";
 import {
   CheckmarkCircleFilled,
   CloseCircle,
 } from "@volkswagen-onehub/icons-core";
 
+import { useFormik } from "formik";
+import { globalValidationSchema } from "./schemas/validationFormCitasDeServicio";
+import api from "../services/api";
+
+import { useDropdowns } from "../hooks/useDropdowns";
+import { DateRangePicker } from "../components/DateRangePicker";
+import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
+import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
+import {
+  formatKilometraje,
+  isMobile,
+  nameFieldsRequired,
+  onlyLettersAndNumbers,
+  onlyLettersWithAcents,
+} from "../utils/fieldFormsUtils";
+
+import type { CitasServicioValues } from "../interfaces/CitasServicioValues.interface";
+import type { SummaryData } from "../interfaces/SummaryData.interface";
 import type { ServiceOption } from "../interfaces/ServiceOption.interface";
+
 import MantenimientoIcon from "../assets/images/servicioMantenimiento.svg";
 import ReparacionIcon from "../assets/images/diagnosticoReparacion.svg";
-
 import PinturaIcon from "../assets/images/ojalateriaPintura.svg";
 import AccesoriosIcon from "../assets/images/cotizacionAccesorios.svg";
-
-import { isMobile } from "../utils/fieldFormsUtils";
 
 export const FormCitasDeServicio = () => {
   const [index, setIndex] = useState(0);
@@ -61,13 +61,12 @@ export const FormCitasDeServicio = () => {
     values,
     touched,
     errors,
+    isSubmitting,
     getFieldProps,
     setFieldValue,
     validateForm,
     setTouched,
     submitForm,
-    isSubmitting,
-    submitCount,
   } = useFormik<CitasServicioValues>({
     initialValues: {
       numeroChasis: "",
@@ -206,7 +205,6 @@ export const FormCitasDeServicio = () => {
     return true; // Validación exitosa, paso desbloqueado
   };
 
-  // REEMPLAZA TU useEffect POR ESTO:
   const tabErrors = useMemo(() => {
     const currentErrorsState: Record<number, boolean> = {};
 
@@ -226,28 +224,6 @@ export const FormCitasDeServicio = () => {
     return currentErrorsState;
   }, [errors, completedTabs]);
 
-  // useEffect(() => {
-  //   const currentErrorsState: Record<number, boolean> = {};
-
-  //   completedTabs.forEach((tab) => {
-  //     const fields = nameFieldsRequired[tab] || [];
-
-  //     // Verifica si existe al menos un error en los campos correspondientes a la pestaña iterada
-  //     const hasError = fields.some(
-  //       (field) => !!errors[field as keyof CitasServicioValues],
-  //     );
-
-  //     if (hasError) {
-  //       currentErrorsState[tab] = true;
-  //     }
-  //   });
-
-  //   // Prevención de re-renders infinitos: actualiza el estado solo si el mapa de errores cambió
-  //   if (JSON.stringify(currentErrorsState) !== JSON.stringify(tabErrors)) {
-  //     setTabErrors(currentErrorsState);
-  //   }
-  // }, [errors, completedTabs, tabErrors]);
-
   const targetRef = useRef<HTMLDivElement | null>(null);
   const handleActionComplete = async (tabIndex: number) => {
     //* 1. Forzamos la validación global
@@ -265,6 +241,12 @@ export const FormCitasDeServicio = () => {
     if (hasErrorsInTab) {
       const touchedFields = fieldsInCurrentTab.reduce(
         (acc, curr) => {
+          if (curr === "tipoServicio") {
+            servicesSectionRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "center", // Deja la sección en el centro de la pantalla
+            });
+          }
           if (currentErrors[curr as keyof CitasServicioValues]) {
             acc[curr as keyof CitasServicioValues] = true;
           }
@@ -353,16 +335,6 @@ export const FormCitasDeServicio = () => {
     setFieldValue("idConcesionario", "");
   }, [values.ciudad, setFieldValue]);
 
-  useEffect(() => {
-    // Si el usuario intentó enviar y existe un error específico en tipoServicio
-    if (submitCount > 0 && errors.tipoServicio) {
-      servicesSectionRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "center", // Deja la sección en el centro de la pantalla
-      });
-    }
-  }, [submitCount, errors.tipoServicio]);
-
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
   if (showSummary && summaryData) {
     // Se asegura de que summaryData exista
@@ -399,125 +371,123 @@ export const FormCitasDeServicio = () => {
         </div>
       </div>
       <div className="row">
-        {/* --- INICIO DE ZONA RESALTADA --- */}
-        <div className="col-12">
-          <div
-            ref={servicesSectionRef} // Aquí conectamos el Auto-scroll
-            className="row m-0" // m-0 para no alterar la estructura de Bootstrap
-            style={{
-              border:
-                submitCount > 0 && errors.tipoServicio
-                  ? "2px solid #d93025"
-                  : "2px solid transparent",
-              backgroundColor:
-                submitCount > 0 && errors.tipoServicio
-                  ? "#fce8e6"
-                  : "transparent",
-              padding: "1rem 0",
-              borderRadius: "8px",
-              transition: "all 0.3s ease",
-            }}
-          >
-            <div className="col-12">
-              <Text
-                appearance={TokenTextAppearance.headline200}
-                textAlign={TextAlignment.center}
-                tag={TextTag.h3}
-                bold
-              >
-                ¿En que tipo de servicio estás interesado?
-              </Text>
-            </div>
-
-            {/* Mostrar mensaje de error si el usuario intentó enviar sin seleccionar un servicio */}
-            {/* Cambiamos touched por submitCount > 0 para que coincida con el borde */}
-            {submitCount > 0 && errors.tipoServicio && (
-              <div
-                className="text-danger mt-2 text-center"
-                style={{ fontWeight: "bold" }}
-              >
-                {errors.tipoServicio}
-              </div>
-            )}
-
-            {serviceOptions.map((option) => (
-              // col-6 para mostrar 2 columnas en celular, col-md-3 para 4 columnas en escritorio
-              <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
-                <div
-                  onClick={() => {
-                    const isKilometraje = option.id === 0;
-                    setSelectedService(option.id);
-                    setFieldValue("tipoServicio", option.id);
-
-                    if (isMobile() && targetRef.current) {
-                      // Si es la opción que expande el formulario, esperamos al siguiente frame
-                      window.requestAnimationFrame(() => {
-                        setTimeout(
-                          () => {
-                            targetRef.current?.scrollIntoView({
-                              behavior: "smooth",
-                              block: "end",
-                            });
-                          },
-                          isKilometraje ? 150 : 0,
-                        );
-                      });
-                    }
-                  }}
-                  className="d-flex flex-column align-items-center justify-content-center p-3 rounded h-100 text-center"
-                  style={{
-                    cursor: "pointer",
-                    // Estilos condicionales basados en la selección
-                    backgroundColor:
-                      selectedService === option.id ? "#f5f3ed" : "#ffffff",
-                    borderColor:
-                      selectedService === option.id ? "#8b7b65" : "#f2f2f2",
-                    borderWidth: "1px",
-                    borderStyle: "solid",
-                    minHeight: "160px",
-                    transition: "all 0.2s ease-in-out",
-                  }}
-                >
-                  <div className="mb-3" style={{ color: "#001e50" }}>
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        transform: "scale(2.5)",
-                      }}
-                    >
-                      {/* Verificación de tipo para TSX */}
-                      {typeof option.icon === "string" ? (
-                        <img
-                          src={option.icon}
-                          alt={option.title}
-                          style={{
-                            width: "2.5em", // Mantiene proporción con el texto
-                            height: "2.em",
-                            display: "block",
-                          }}
-                        />
-                      ) : (
-                        // Si no es string, TS sabe que es ReactNode/JSX.Element
-                        option.icon
-                      )}
-                    </span>
-                  </div>
-                  <Text
-                    appearance={TokenTextAppearance.copy200}
-                    textAlign={TextAlignment.center}
-                  >
-                    {option.title}
-                  </Text>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* --- FIN DE ZONA RESALTADA --- */}
-
         {/* <BusinessCustomersPrivate /> */}
-        <div></div>
         <div className="col-12">
+          {/* --- INICIO DE ZONA RESALTADA --- */}
+          <div className="col-12">
+            <div
+              ref={servicesSectionRef} // Aquí conectamos el Auto-scroll
+              className="row m-0" // m-0 para no alterar la estructura de Bootstrap
+              style={{
+                border:
+                  touched.tipoServicio && errors.tipoServicio
+                    ? "2px solid #d93025"
+                    : "2px solid transparent",
+                backgroundColor:
+                  touched.tipoServicio && errors.tipoServicio
+                    ? "#fce8e6"
+                    : "transparent",
+                padding: "1rem 0",
+                borderRadius: "8px",
+                transition: "all 0.3s ease",
+              }}
+            >
+              <div className="col-12">
+                <Text
+                  appearance={TokenTextAppearance.headline200}
+                  textAlign={TextAlignment.center}
+                  tag={TextTag.h3}
+                  bold
+                >
+                  ¿En que tipo de servicio estás interesado?
+                </Text>
+              </div>
+
+              {/* Mostrar mensaje de error si el usuario intentó enviar sin seleccionar un servicio */}
+              {/* Cambiamos touched por submitCount > 0 para que coincida con el borde */}
+              {touched.tipoServicio && errors.tipoServicio && (
+                <div
+                  className="text-danger mt-2 text-center"
+                  style={{ fontWeight: "bold" }}
+                >
+                  {errors.tipoServicio}
+                </div>
+              )}
+
+              {serviceOptions.map((option) => (
+                // col-6 para mostrar 2 columnas en celular, col-md-3 para 4 columnas en escritorio
+                <div key={option.id} className="col-6 col-md-3 mb-3 mt-5">
+                  <div
+                    onClick={() => {
+                      const isKilometraje = option.id === 0;
+                      setSelectedService(option.id);
+                      setFieldValue("tipoServicio", option.id);
+
+                      if (isMobile() && targetRef.current) {
+                        // Si es la opción que expande el formulario, esperamos al siguiente frame
+                        window.requestAnimationFrame(() => {
+                          setTimeout(
+                            () => {
+                              targetRef.current?.scrollIntoView({
+                                behavior: "smooth",
+                                block: "end",
+                              });
+                            },
+                            isKilometraje ? 150 : 0,
+                          );
+                        });
+                      }
+                    }}
+                    className="d-flex flex-column align-items-center justify-content-center p-3 rounded h-100 text-center"
+                    style={{
+                      cursor: "pointer",
+                      // Estilos condicionales basados en la selección
+                      backgroundColor:
+                        selectedService === option.id ? "#f5f3ed" : "#ffffff",
+                      borderColor:
+                        selectedService === option.id ? "#8b7b65" : "#f2f2f2",
+                      borderWidth: "1px",
+                      borderStyle: "solid",
+                      minHeight: "160px",
+                      transition: "all 0.2s ease-in-out",
+                    }}
+                  >
+                    <div className="mb-3" style={{ color: "#001e50" }}>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          transform: "scale(2.5)",
+                        }}
+                      >
+                        {/* Verificación de tipo para TSX */}
+                        {typeof option.icon === "string" ? (
+                          <img
+                            src={option.icon}
+                            alt={option.title}
+                            style={{
+                              width: "2.5em", // Mantiene proporción con el texto
+                              height: "2.em",
+                              display: "block",
+                            }}
+                          />
+                        ) : (
+                          // Si no es string, TS sabe que es ReactNode/JSX.Element
+                          option.icon
+                        )}
+                      </span>
+                    </div>
+                    <Text
+                      appearance={TokenTextAppearance.copy200}
+                      textAlign={TextAlignment.center}
+                    >
+                      {option.title}
+                    </Text>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* --- FIN DE ZONA RESALTADA --- */}
           <Tabs
             defaultIndex={index}
             variant="step navigation"
