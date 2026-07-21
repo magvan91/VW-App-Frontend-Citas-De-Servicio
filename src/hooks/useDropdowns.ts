@@ -12,9 +12,18 @@ export interface DealerItem {
   name: string;
 }
 
+export interface ResponseGetDelaer {
+  idConcesionario: number;
+  name: string;
+  address: string;
+  city_id: number;
+  services: string[];
+}
+
 export const useDropdowns = (
   estadoId: number,
   ciudadId: number,
+  dealerId: number,
   typeService: number,
 ) => {
   const nameTitleService = useMemo(
@@ -24,14 +33,18 @@ export const useDropdowns = (
   const { get } = useApi();
 
   const [estados, setEstados] = useState<LocationItem[]>([]);
+
   const [ciudadesState, setCiudadesState] = useState<{
     estadoId: number;
     items: LocationItem[];
   }>({ estadoId: 0, items: [] });
+
   const [concesionariosState, setConcesionariosState] = useState<{
     ciudadId: number;
     items: DealerItem[];
   }>({ ciudadId: 0, items: [] });
+
+  const [dealer, setDealer] = useState<ResponseGetDelaer | null>();
 
   // Efecto 1: Cargar Estados al inicio
   useEffect(() => {
@@ -51,6 +64,9 @@ export const useDropdowns = (
       }
     };
     fetchEstados();
+    return () => {
+      setEstados([]);
+    };
   }, [nameTitleService, get]);
 
   // Efecto 2: Cargar Ciudades cuando cambia el Estado
@@ -69,6 +85,9 @@ export const useDropdowns = (
       }
     };
     fetchCiudades();
+    return () => {
+      setCiudadesState({ estadoId: 0, items: [] });
+    };
   }, [estadoId, nameTitleService, get]);
 
   // Efecto 3: Cargar Concesionarios cuando cambia la Ciudad
@@ -89,7 +108,34 @@ export const useDropdowns = (
       }
     };
     fetchDealers();
+    return () => {
+      setConcesionariosState({ ciudadId: 0, items: [] });
+    };
   }, [ciudadId, nameTitleService, get]);
+
+  //* Obtener la información del concesionario seleccionado
+  useEffect(() => {
+    if (isNaN(dealerId) || nameTitleService === "undefined") {
+      return;
+    }
+    const fetchDealer = async () => {
+      try {
+        const response = await get(`/api/v1/dealers/${dealerId}`, {
+          params: {
+            service_type: nameTitleService,
+          },
+        });
+        console.log("Dealer data:", response.data);
+        setDealer(response.data);
+      } catch (error) {
+        console.error("Error al cargar concesionarios:", error);
+      }
+    };
+    fetchDealer();
+    return () => {
+      setDealer(null);
+    };
+  }, [dealerId, nameTitleService, get]);
 
   // Retornamos los arreglos para que el formulario los consuma
   return {
@@ -99,5 +145,6 @@ export const useDropdowns = (
       concesionariosState.ciudadId === ciudadId
         ? concesionariosState.items
         : [],
+    dealer,
   };
 };

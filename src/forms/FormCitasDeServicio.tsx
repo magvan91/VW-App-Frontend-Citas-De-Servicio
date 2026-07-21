@@ -98,20 +98,6 @@ export const FormCitasDeServicio = () => {
       const horaExtraida = values.horario.split("/")[1];
       const horaConFormato = `${horaExtraida}:00.000Z`;
 
-      // const servicioMap: { [key: number]: string } = {
-      //   0: "Maintenance Service",
-      //   1: "General Repair",
-      //   2: "Tinsmithing and Painting",
-      //   3: "Accessory Installation",
-      // };
-
-      // const tituloServicioMap: { [key: number]: string } = {
-      //   0: "Servicio de mantenimiento",
-      //   1: "Diagnóstico y reparación",
-      //   2: "Hojalatería y pintura",
-      //   3: "Cotización e instalación de accesorios",
-      // };
-
       const tipoServicioKey =
         typeof values.tipoServicio === "string"
           ? parseInt(values.tipoServicio, 10)
@@ -299,11 +285,27 @@ export const FormCitasDeServicio = () => {
   const [selectedService, setSelectedService] = useState<number | null>(null);
 
   // 1. Usamos tu nuevo hook, pasándole los valores actuales del formulario
-  const { estados, ciudades, concesionarios } = useDropdowns(
+  const { estados, ciudades, concesionarios, dealer } = useDropdowns(
     parseInt(values.estado),
     parseInt(values.ciudad),
+    parseInt(values.idConcesionario),
     parseInt(values.tipoServicio),
   );
+
+  useEffect(() => {
+    if (!dealer || !dealer.services) return;
+    const newSelectedServiceName = getServiceTitleEnglishById(
+      parseInt(values.tipoServicio),
+    );
+    if (
+      newSelectedServiceName &&
+      !dealer.services.includes(newSelectedServiceName)
+    ) {
+      setFieldValue("estado", "");
+      setFieldValue("ciudad", "");
+      setFieldValue("idConcesionario", "");
+    }
+  }, [values.tipoServicio, setFieldValue, dealer]);
 
   // 2. Pequeños efectos de Formik para limpiar los campos hijos si el padre cambia
   useEffect(() => {
