@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { DayPicker, type DateRange } from "react-day-picker";
 import { es } from "date-fns/locale";
 import { addDays, format } from "date-fns";
@@ -10,10 +10,21 @@ type Props = {
   onChange: (range: DateRange | undefined) => void;
 };
 
+const formatDate = (date?: Date) => {
+  if (!date) return "";
+  return date.toLocaleDateString("es-MX", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 export const DateRangePicker = ({ value, onChange }: Props) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const minDate = addDays(new Date(), 3);
+
+  const minDate = useMemo(() => addDays(new Date(), 3), []);
+  const maxDate = useMemo(() => addDays(new Date(), 60), []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -25,16 +36,15 @@ export const DateRangePicker = ({ value, onChange }: Props) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const formatDate = (date?: Date) => {
-    console.log(date); //quitar ya que se evite el renderizado cada que se hace click en un boton de la pagina
-    return date
-      ? date.toLocaleDateString("es-MX", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        })
-      : "";
-  };
+  //* Solo recalcula el texto formateado si `value` realmente cambia
+  const displayValue = useMemo(() => {
+    if (!value?.from || !value?.to) return "";
+    return `${formatDate(value.from)} - ${formatDate(value.to)}`;
+  }, [value]);
+
+  const toggleOpen = useCallback(() => {
+    setOpen((prev) => !prev);
+  }, []);
 
   return (
     <label className="label-div-input-fake-calendar">
@@ -47,12 +57,8 @@ export const DateRangePicker = ({ value, onChange }: Props) => {
           className="input-fake-calendar"
           type="text"
           readOnly
-          onClick={() => setOpen(!open)}
-          value={
-            value?.from && value?.to
-              ? `${formatDate(value.from)} - ${formatDate(value.to)}`
-              : ""
-          }
+          onClick={toggleOpen}
+          value={displayValue}
           placeholder="Selecciona un rango de fechas.*"
         />
 
@@ -75,7 +81,7 @@ export const DateRangePicker = ({ value, onChange }: Props) => {
               onSelect={onChange}
               locale={es}
               startMonth={minDate}
-              endMonth={addDays(new Date(), 60)}
+              endMonth={maxDate}
               disabled={{ before: minDate }}
             />
           </div>
