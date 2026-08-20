@@ -8,7 +8,7 @@ export interface LocationItem {
   name: string;
 }
 export interface DealerItem {
-  idConcesionario: string;
+  id: string;
   name: string;
 }
 
@@ -46,18 +46,16 @@ export const useDropdowns = (
 
   const [dealer, setDealer] = useState<ResponseGetDelaer | null>();
 
-  // Efecto 1: Cargar Estados al inicio
+  //* Efecto 1: Cargar Estados al inicio
   useEffect(() => {
     if (nameTitleService === "undefined" || !nameTitleService) {
       return;
     }
     const fetchEstados = async () => {
       try {
-        const response = await get(`/api/v1/states`, {
-          params: {
-            service_type: nameTitleService,
-          },
-        });
+        const response = await get(
+          `/api/v1/states?service_type=${nameTitleService}`,
+        );
         setEstados(response.data || []);
       } catch (error) {
         console.error("Error al cargar estados:", error);
@@ -69,7 +67,7 @@ export const useDropdowns = (
     };
   }, [nameTitleService, get]);
 
-  // Efecto 2: Cargar Ciudades cuando cambia el Estado
+  //* Efecto 2: Cargar Ciudades cuando cambia el Estado
   useEffect(() => {
     if (isNaN(estadoId) || nameTitleService === "undefined") {
       return;
@@ -90,18 +88,16 @@ export const useDropdowns = (
     };
   }, [estadoId, nameTitleService, get]);
 
-  // Efecto 3: Cargar Concesionarios cuando cambia la Ciudad
+  //* Efecto 3: Cargar Concesionarios cuando cambia la Ciudad
   useEffect(() => {
     if (isNaN(ciudadId) || nameTitleService === "undefined") {
       return;
     }
     const fetchDealers = async () => {
       try {
-        const response = await get(`/api/v1/cities/${ciudadId}/dealers`, {
-          params: {
-            service_type: nameTitleService,
-          },
-        });
+        const response = await get(
+          `/api/v1/cities/${ciudadId}/dealers?service_type=${nameTitleService}`,
+        );
         setConcesionariosState({ ciudadId, items: response.data || [] });
       } catch (error) {
         console.error("Error al cargar concesionarios:", error);
@@ -120,11 +116,7 @@ export const useDropdowns = (
     }
     const fetchDealer = async () => {
       try {
-        const response = await get(`/api/v1/dealers/${dealerId}`, {
-          params: {
-            service_type: nameTitleService,
-          },
-        });
+        const response = await get(`/api/v1/dealers/${dealerId}`);
         console.log("Dealer data:", response.data);
         setDealer(response.data);
       } catch (error) {
@@ -137,7 +129,7 @@ export const useDropdowns = (
     };
   }, [dealerId, nameTitleService, get]);
 
-  // Retornamos los arreglos para que el formulario los consuma
+  //* Retornamos los arreglos para que el formulario los consuma
   return {
     estados,
     ciudades: ciudadesState.estadoId === estadoId ? ciudadesState.items : [],

@@ -813,10 +813,7 @@ export const FormCitasDeServicio = () => {
                     >
                       <option value="">Selecciona un concesionario</option>
                       {concesionarios.map((dealer) => (
-                        <option
-                          key={dealer.idConcesionario}
-                          value={dealer.idConcesionario}
-                        >
+                        <option key={dealer.id} value={dealer.id}>
                           {dealer.name}
                         </option>
                       ))}
