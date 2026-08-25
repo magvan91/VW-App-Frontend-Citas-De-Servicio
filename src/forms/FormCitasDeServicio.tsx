@@ -725,154 +725,205 @@ export const FormCitasDeServicio = () => {
                 </Text>
               ),
               content: (
-                <div className="row g-3">
-                  <div className="col-12 col-sm-4 col-md-4">
-                    <Select
-                      {...getFieldProps("estado")}
-                      required
-                      isFloating={true}
-                      label="Selecciona un estado"
-                      message={
-                        touched.estado && !values.estado
-                          ? "Selecciona un estado"
-                          : ""
-                      }
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-expect-error
-                      appearance={
-                        touched.estado
-                          ? errors.estado
-                            ? "error"
-                            : "success"
-                          : "default"
-                      }
+                <div className="row">
+                  {/* Comionezan selects locations dealers */}
+                  <div
+                    className={`row g-3 col-12 col-sm-12 ${dealer?.address ? "col-md-6 col-lg-6" : "col-md-12 col-lg-12"} `}
+                  >
+                    <div
+                      className={`col-12 col-sm-12 ${dealer?.address ? "col-md-12 col-lg-12" : "col-md-4 col-lg-4"}`}
                     >
-                      <option value="">Selecciona un estado</option>
-                      {estados.map((est) => (
-                        <option key={est.id} value={est.id}>
-                          {est.name}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="col-12 col-sm-4 col-md-4">
-                    <Select
-                      {...getFieldProps("ciudad")}
-                      required
-                      isFloating={true}
-                      label={
-                        values.estado === "CDMX"
-                          ? "Selecciona una alcaldía"
-                          : "Selecciona una ciudad"
-                      }
-                      message={
-                        touched.ciudad && !values.ciudad
-                          ? "Selecciona una ciudad"
-                          : ""
-                      }
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-expect-error
-                      appearance={
-                        touched.ciudad
-                          ? errors.ciudad
-                            ? "error"
-                            : "success"
-                          : "default"
-                      }
-                      disabled={!values.estado}
+                      <Select
+                        {...getFieldProps("estado")}
+                        required
+                        isFloating={true}
+                        label="Selecciona un estado"
+                        message={
+                          touched.estado && !values.estado
+                            ? "Selecciona un estado"
+                            : ""
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        appearance={
+                          touched.estado
+                            ? errors.estado
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                      >
+                        <option value="">Selecciona un estado</option>
+                        {estados.map((est) => (
+                          <option key={est.id} value={est.id}>
+                            {est.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div
+                      className={`col-12 col-sm-12 ${dealer?.address ? "col-md-12 col-lg-12" : "col-md-4 col-lg-4"}`}
                     >
-                      <option value="">Selecciona una ciudad</option>
-                      {ciudades.map((ciu) => (
-                        <option key={ciu.id} value={ciu.id}>
-                          {ciu.name}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="col-12 col-sm-4 col-md-4">
-                    <Select
-                      {...getFieldProps("idConcesionario")}
-                      required
-                      isFloating={true}
-                      label="Selecciona un distribuidor"
-                      message={
-                        touched.idConcesionario && !values.idConcesionario
-                          ? "Selecciona un distribuidor"
-                          : ""
-                      }
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-expect-error
-                      appearance={
-                        touched.idConcesionario
-                          ? errors.idConcesionario
-                            ? "error"
-                            : "success"
-                          : "default"
-                      }
-                      disabled={!values.ciudad}
+                      <Select
+                        {...getFieldProps("ciudad")}
+                        required
+                        isFloating={true}
+                        label={
+                          values.estado === "CDMX"
+                            ? "Selecciona una alcaldía"
+                            : "Selecciona una ciudad"
+                        }
+                        message={
+                          touched.ciudad && !values.ciudad
+                            ? "Selecciona una ciudad"
+                            : ""
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        appearance={
+                          touched.ciudad
+                            ? errors.ciudad
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                        disabled={!values.estado}
+                      >
+                        <option value="">Selecciona una ciudad</option>
+                        {ciudades.map((ciu) => (
+                          <option key={ciu.id} value={ciu.id}>
+                            {ciu.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div
+                      className={`col-12 col-sm-12 ${dealer?.address ? "col-md-12 col-lg-12" : "col-md-4 col-lg-4"}`}
                     >
-                      <option value="">Selecciona un concesionario</option>
-                      {concesionarios.map((dealer) => (
-                        <option key={dealer.id} value={dealer.id}>
-                          {dealer.name}
-                        </option>
-                      ))}
-                    </Select>
+                      <Select
+                        {...getFieldProps("idConcesionario")}
+                        required
+                        isFloating={true}
+                        label="Selecciona un distribuidor"
+                        message={
+                          touched.idConcesionario && !values.idConcesionario
+                            ? "Selecciona un distribuidor"
+                            : ""
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        appearance={
+                          touched.idConcesionario
+                            ? errors.idConcesionario
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                        disabled={!values.ciudad}
+                      >
+                        <option value="">Selecciona un concesionario</option>
+                        {concesionarios.map((dealer) => (
+                          <option key={dealer.id} value={dealer.id}>
+                            {dealer.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
                   </div>
-                  <div className="col-12 col-sm-6 col-md-6">
-                    <DateRangePicker
-                      value={
-                        values.dates
-                          ? { from: values.dates[0], to: values.dates[1] }
-                          : undefined
-                      }
-                      onChange={(range) =>
-                        setFieldValue(
-                          "dates",
-                          range ? [range.from, range.to] : null,
-                        )
-                      }
-                    />
+                  {/* Fin selects locations */}
+                  <div
+                    className={` mt-3 mt-sm-3 mt-md-0 mt-lg-0 col-12 col-sm-12 col-md-6 col-lg-6 ${dealer?.address ? "" : "d-none"} `}
+                  >
+                    <div className="col-12">
+                      <b>
+                        Nota: Propuesta para Tom, el mapa es de posición
+                        solamente, la idea sería cargar la url del iframe en la
+                        DB para evitar usar el API de Google Maps, ya que genera
+                        un costo por consulta y por pintar el mapa y como serán
+                        direcciones fijas/estáticas, es decir, no se construirán
+                        de manera dinámica como lo hace Uber, nos parece una
+                        buena solución trabajarlo de esta manera.
+                      </b>
+                    </div>
+                    <div className="col-12">
+                      {dealer?.address && (
+                        <address>
+                          <Text
+                            appearance={TokenTextAppearance.copy200}
+                            color={TokenTextColor.primary}
+                            tag={TextTag.span}
+                          >
+                            {dealer.address}
+                          </Text>
+                        </address>
+                      )}
+                    </div>
+                    <div className="col-12">
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3764.3271265511185!2d-99.18496979999999!3d19.3549832!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ffeb596b4797%3A0xb3a79b71de81d223!2sAv.%20Insurgentes%20Sur%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX!5e0!3m2!1ses-419!2smx!4v1787681133283!5m2!1ses-419!2smx"
+                        width={isMobile() ? "500" : "630"}
+                        height="250"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                      ></iframe>
+                    </div>
                   </div>
-                  <div className="col-12 col-sm-6 col-md-6">
-                    <Select
-                      required
-                      {...getFieldProps("horario")}
-                      isFloating={true}
-                      label="Selecciona un horario"
-                      message={
-                        touched.horario && !values.horario
-                          ? "Selecciona un distribuidor"
-                          : ""
-                      }
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-expect-error
-                      appearance={
-                        touched.horario
-                          ? errors.horario
-                            ? "error"
-                            : "success"
-                          : "default"
-                      }
-                      disabled={!values.dates}
-                    >
-                      <option value="">Selecciona un horario</option>
-                      <optgroup label="01-septiembre-26">
-                        <option value="2026-06-01/09:00">09:00</option>
-                        <option value="2026-06-01/10:00">10:00</option>
-                      </optgroup>
-                      <optgroup label="02-junio-26">
-                        <option value="2026-06-02/11:00">11:00</option>
-                        <option value="2026-06-02/12:00">12:00</option>
-                      </optgroup>
-                      <optgroup label="03-junio-26">
-                        <option value="2026-06-03/09:00">09:00</option>
-                        <option value="2026-06-03/12:00">12:00</option>
-                      </optgroup>
-                    </Select>
+                  <div className="row g-3 mt-3">
+                    <div className="col-12 col-sm-12 col-md-6 col-lg-6">
+                      <DateRangePicker
+                        value={
+                          values.dates
+                            ? { from: values.dates[0], to: values.dates[1] }
+                            : undefined
+                        }
+                        onChange={(range) =>
+                          setFieldValue(
+                            "dates",
+                            range ? [range.from, range.to] : null,
+                          )
+                        }
+                      />
+                    </div>
+                    <div className="col-12 col-sm-12 col-md-6 col-lg-6">
+                      <Select
+                        required
+                        {...getFieldProps("horario")}
+                        isFloating={true}
+                        label="Selecciona un horario"
+                        message={
+                          touched.horario && !values.horario
+                            ? "Selecciona un distribuidor"
+                            : ""
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        appearance={
+                          touched.horario
+                            ? errors.horario
+                              ? "error"
+                              : "success"
+                            : "default"
+                        }
+                        disabled={!values.dates}
+                      >
+                        <option value="">Selecciona un horario</option>
+                        <optgroup label="01-Diciembre-26">
+                          <option value="2026-06-01/09:00">09:00</option>
+                          <option value="2026-06-01/10:00">10:00</option>
+                        </optgroup>
+                        <optgroup label="02-Diciembre-26">
+                          <option value="2026-06-02/11:00">11:00</option>
+                          <option value="2026-06-02/12:00">12:00</option>
+                        </optgroup>
+                        <optgroup label="03-Diciembre-26">
+                          <option value="2026-06-03/09:00">09:00</option>
+                          <option value="2026-06-03/12:00">12:00</option>
+                        </optgroup>
+                      </Select>
+                    </div>
                   </div>
                   {!completedTabs.includes(2) && (
-                    <div className="col-12 text-center">
+                    <div className="col-12 text-center mt-3">
                       <ButtonNext
                         onClick={() => handleActionComplete(1)}
                         tag="button"
