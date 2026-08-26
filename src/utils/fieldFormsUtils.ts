@@ -41,6 +41,6 @@ export const nameFieldsRequired = [
     "kilometrajeAuto",
     "kilometrajeServicio",
   ],
-  ["estado", "ciudad", "idConcesionario", "horario"],
+  ["estado", "ciudad", "dealer_id", "horario"],
   ["nombre", "apePat", "apeMat", "telefonoMovil"],
 ];

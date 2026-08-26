@@ -73,7 +73,7 @@ export const FormCitasDeServicio = () => {
       modelo: "",
       kilometrajeAuto: 0,
       kilometrajeServicio: 0,
-      idConcesionario: "",
+      dealer_id: "",
       estado: "",
       ciudad: "",
       dates: null,
@@ -288,7 +288,7 @@ export const FormCitasDeServicio = () => {
   const { estados, ciudades, concesionarios, dealer } = useDropdowns(
     parseInt(values.estado),
     parseInt(values.ciudad),
-    parseInt(values.idConcesionario),
+    parseInt(values.dealer_id),
     parseInt(values.tipoServicio),
   );
 
@@ -303,18 +303,18 @@ export const FormCitasDeServicio = () => {
     ) {
       setFieldValue("estado", "");
       setFieldValue("ciudad", "");
-      setFieldValue("idConcesionario", "");
+      setFieldValue("dealer_id", "");
     }
   }, [values.tipoServicio, setFieldValue, dealer]);
 
   // 2. Pequeños efectos de Formik para limpiar los campos hijos si el padre cambia
   useEffect(() => {
     setFieldValue("ciudad", "");
-    setFieldValue("idConcesionario", "");
+    setFieldValue("dealer_id", "");
   }, [values.estado, setFieldValue]);
 
   useEffect(() => {
-    setFieldValue("idConcesionario", "");
+    setFieldValue("dealer_id", "");
   }, [values.ciudad, setFieldValue]);
 
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
@@ -801,20 +801,20 @@ export const FormCitasDeServicio = () => {
                       className={`col-12 col-sm-12 ${dealer?.address ? "col-md-12 col-lg-12" : "col-md-4 col-lg-4"}`}
                     >
                       <Select
-                        {...getFieldProps("idConcesionario")}
+                        {...getFieldProps("dealer_id")}
                         required
                         isFloating={true}
                         label="Selecciona un distribuidor"
                         message={
-                          touched.idConcesionario && !values.idConcesionario
+                          touched.dealer_id && !values.dealer_id
                             ? "Selecciona un distribuidor"
                             : ""
                         }
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-expect-error
                         appearance={
-                          touched.idConcesionario
-                            ? errors.idConcesionario
+                          touched.dealer_id
+                            ? errors.dealer_id
                               ? "error"
                               : "success"
                             : "default"

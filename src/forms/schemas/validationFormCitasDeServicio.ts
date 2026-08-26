@@ -44,7 +44,7 @@ export const validationFormCitasDeServicio = [
   Yup.object().shape({
     estado: Yup.string().required("Selecciona un estado"),
     ciudad: Yup.string().required("Selecciona una ciudad"),
-    idConcesionario: Yup.string().required("Selecciona un distribuidor"),
+    dealer_id: Yup.string().required("Selecciona un distribuidor"),
     horario: Yup.string()
       .required("Selecciona un horario")
       .matches(

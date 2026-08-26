@@ -13,7 +13,7 @@ export interface DealerItem {
 }
 
 export interface ResponseGetDelaer {
-  idConcesionario: number;
+  id: number;
   name: string;
   address: string;
   city_id: number;

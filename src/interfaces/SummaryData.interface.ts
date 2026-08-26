@@ -9,7 +9,7 @@ export interface SummaryData {
   email: string;
   estado: string;
   ciudad: string;
-  idConcesionario: string;
+  dealer_id: string;
   marca: string;
   modelo: string;
   anio: number;
@@ -51,7 +51,7 @@ export const summarySections: SummarySection[] = [
   {
     title: "Concesionario",
     data: [
-      { label: "ID Concesionario", value: "idConcesionario" },
+      { label: "ID Concesionario", value: "dealer_id" },
       { label: "Estado", value: "estado" },
       { label: "Ciudad", value: "ciudad" },
     ],

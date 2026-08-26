@@ -9,7 +9,7 @@ export interface CitasServicioValues {
   email: string;
   estado: string;
   ciudad: string;
-  idConcesionario: string;
+  dealer_id: string;
   marca: string;
   modelo: string;
   anio: number;
