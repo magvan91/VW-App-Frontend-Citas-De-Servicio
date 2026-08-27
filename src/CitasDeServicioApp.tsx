@@ -4,7 +4,7 @@ import { PageFormCitasDeServicio } from "./pages/PageFormCitasDeServicio";
 export const CitasDeServicioApp = () => {
   return (
     <>
-      <ThemeProvider variant="v26" theme="main">
+      <ThemeProvider theme={"main"}>
         <PageFormCitasDeServicio />
       </ThemeProvider>
     </>

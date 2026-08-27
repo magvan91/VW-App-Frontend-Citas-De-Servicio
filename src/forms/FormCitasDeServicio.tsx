@@ -4,7 +4,6 @@ import {
   ButtonNext,
   Checkbox,
   Container,
-  ContainerGutter,
   CTA,
   Select,
   Spinner,
@@ -1153,10 +1152,7 @@ export const FormCitasDeServicio = () => {
                     {hasSubmitError && (
                       <div className="row">
                         <div className="col-12 pb-4">
-                          <Container
-                            gutter={ContainerGutter.static200}
-                            wrap="always"
-                          >
+                          <Container gutter="static200" wrap="always">
                             <ToastNotification
                               show
                               title="Algo salió mal, inténtalo de nuevo"

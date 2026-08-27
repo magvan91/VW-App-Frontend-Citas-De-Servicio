@@ -13,8 +13,8 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@volkswagen-onehub/components-core": "69.153.0",
-    "@volkswagen-onehub/icons-core": "69.144.1",
+    "@volkswagen-onehub/components-core": "70.0.0",
+    "@volkswagen-onehub/icons-core": "70.0.2",
     "axios": "^1.13.5",
     "date-fns": "^4.1.0",
     "formik": "^2.4.9",
