@@ -16,6 +16,7 @@ export interface ResponseGetDelaer {
   id: number;
   name: string;
   address: string;
+  map_url: string;
   city_id: number;
   services: string[];
 }

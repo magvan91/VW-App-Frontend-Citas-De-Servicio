@@ -831,19 +831,8 @@ export const FormCitasDeServicio = () => {
                   </div>
                   {/* Fin selects locations */}
                   <div
-                    className={` mt-3 mt-sm-3 mt-md-0 mt-lg-0 col-12 col-sm-12 col-md-6 col-lg-6 ${dealer?.address ? "" : "d-none"} `}
+                    className={` mt-3 mt-sm-3 mt-md-0 mt-lg-0 col-12 col-sm-12 col-md-6 col-lg-6 ${dealer?.address && dealer?.map_url ? "" : "d-none"} `}
                   >
-                    <div className="col-12">
-                      <b>
-                        Nota: Propuesta para Tom, el mapa es de posición
-                        solamente, la idea sería cargar la url del iframe en la
-                        DB para evitar usar el API de Google Maps, ya que genera
-                        un costo por consulta y por pintar el mapa y como serán
-                        direcciones fijas/estáticas, es decir, no se construirán
-                        de manera dinámica como lo hace Uber, nos parece una
-                        buena solución trabajarlo de esta manera.
-                      </b>
-                    </div>
                     <div className="col-12">
                       {dealer?.address && (
                         <address>
@@ -859,7 +848,7 @@ export const FormCitasDeServicio = () => {
                     </div>
                     <div className="col-12">
                       <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3764.3271265511185!2d-99.18496979999999!3d19.3549832!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ffeb596b4797%3A0xb3a79b71de81d223!2sAv.%20Insurgentes%20Sur%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX!5e0!3m2!1ses-419!2smx!4v1787681133283!5m2!1ses-419!2smx"
+                        src={dealer?.map_url || ""}
                         width={isMobile() ? "500" : "630"}
                         height="250"
                         style={{ border: 0 }}
