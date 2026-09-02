@@ -847,13 +847,13 @@ export const FormCitasDeServicio = () => {
                       )}
                     </div>
                     <div className="col-12">
-                      <iframe
-                        src={dealer?.map_url || ""}
-                        width={isMobile() ? "500" : "630"}
-                        height="250"
-                        style={{ border: 0 }}
-                        loading="lazy"
-                      ></iframe>
+                      <div className="ratio ratio-16x9">
+                        <iframe
+                          src={dealer?.map_url || ""}
+                          style={{ border: 0 }}
+                          loading="lazy"
+                        ></iframe>
+                      </div>
                     </div>
                   </div>
                   <div className="row g-3 mt-3">
