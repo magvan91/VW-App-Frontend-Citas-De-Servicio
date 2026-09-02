@@ -846,15 +846,18 @@ export const FormCitasDeServicio = () => {
                         </address>
                       )}
                     </div>
-                    <div className="col-12">
-                      <div className="ratio ratio-16x9">
-                        <iframe
-                          src={dealer?.map_url || ""}
-                          style={{ border: 0 }}
-                          loading="lazy"
-                        ></iframe>
+                    {dealer?.map_url && (
+                      <div className="col-12">
+                        <div className="ratio ratio-16x9">
+                          <iframe
+                            src={dealer?.map_url || ""}
+                            style={{ border: 0 }}
+                            loading="lazy"
+                            allow="fullscreen"
+                          ></iframe>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                   <div className="row g-3 mt-3">
                     <div className="col-12 col-sm-12 col-md-6 col-lg-6">
