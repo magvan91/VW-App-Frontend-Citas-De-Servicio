@@ -1,6 +1,6 @@
 export const onlyLettersWithAcents = (word: string): string => {
-  //* Se agrega \u00C0-\u00FF para incluir acentos y ñ
-  const filteredValue = word.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, "");
+  //* Se agregan diacríticos y acentos sueltos (\u0300-\u036F´¨^) para no interrumpir el teclado en Mac
+  const filteredValue = word.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, "");
   return filteredValue;
 };
 

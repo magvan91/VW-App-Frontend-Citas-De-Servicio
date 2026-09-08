@@ -290,7 +290,20 @@ export const FormCitasDeServicio = () => {
     parseInt(values.dealer_id),
     parseInt(values.tipoServicio),
   );
-
+  // Evaluamos si el usuario ha tocado AL MENOS UN campo de cada pestaña
+  const isTab1Touched =
+    touched.numeroChasis ||
+    touched.anio ||
+    touched.modelo ||
+    touched.kilometrajeAuto;
+  const isTab2Touched = touched.estado || touched.ciudad || touched.horario;
+  const isTab3Touched =
+    touched.nombre ||
+    touched.apePat ||
+    touched.apeMat ||
+    touched.telefonoMovil ||
+    touched.email ||
+    touched.aceptaAviso;
   useEffect(() => {
     if (!dealer || !dealer.services) return;
     const newSelectedServiceName = getServiceTitleEnglishById(
@@ -403,7 +416,10 @@ export const FormCitasDeServicio = () => {
                       const isKilometraje = option.id === 0;
                       setSelectedService(option.id);
                       setFieldValue("tipoServicio", option.id);
-
+                      // NUEVO: Limpiar el campo si selecciona un servicio diferente
+                      if (!isKilometraje) {
+                        setFieldValue("kilometrajeServicio", 0); // O "" dependiendo del initialValue
+                      }
                       if (isMobile() && targetRef.current) {
                         // Si es la opción que expande el formulario, esperamos al siguiente frame
                         window.requestAnimationFrame(() => {
@@ -503,7 +519,7 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Datos del vehículo{" "}
-                  {tabErrors[0] ? (
+                  {tabErrors[0] && isTab1Touched ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
                       <CloseCircle variant="default" />
                     </span>
@@ -631,7 +647,7 @@ export const FormCitasDeServicio = () => {
                             ? formatKilometraje(values.kilometrajeAuto)
                             : ""
                         }
-                        label="Kilometraje actual del vehículo"
+                        label="Kilometraje aproximado del vehículo"
                         isFloating={true}
                         type="text"
                         inputMode="numeric"
@@ -679,7 +695,7 @@ export const FormCitasDeServicio = () => {
                           <option value="">
                             Selecciona el servicio que necesitas
                           </option>
-                          <option value="15000">15,000 km ó 1 año</option>
+                          <option value="15000">15,000 km o 1 año</option>
                           <option value="30000">30,000 km o 2 años</option>
                           <option value="45000">45,000 km o 3 años</option>
                           <option value="60000">60,000 km o 4 años</option>
@@ -712,7 +728,7 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Búsqueda de Distribuidores{" "}
-                  {tabErrors[1] ? (
+                  {tabErrors[1] && isTab2Touched ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
                       <CloseCircle variant="default" />
                     </span>
@@ -883,7 +899,7 @@ export const FormCitasDeServicio = () => {
                         label="Selecciona un horario"
                         message={
                           touched.horario && !values.horario
-                            ? "Selecciona un distribuidor"
+                            ? "Selecciona un horario"
                             : ""
                         }
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -934,11 +950,11 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Tus datos de contacto{" "}
-                  {tabErrors[2] && (
+                  {tabErrors[2] && isTab3Touched ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
                       <CloseCircle variant="default" />
                     </span>
-                  )}
+                  ) : null}
                 </Text>
               ),
               content: (

@@ -33,9 +33,12 @@ export const validationFormCitasDeServicio = [
       .required("Ingresa el kilometraje")
       .min(0, "El kilometraje no puede ser negativo"),
     // kilometrajeServicio: Yup.string().required("Selecciona el servicio"),
-    kilometrajeServicio: Yup.string().when("tipoServicio", {
-      is: 0,
-      then: (schema) => schema.required("Selecciona el servicio que necesitas"),
+    kilometrajeServicio: Yup.number().when("tipoServicio", {
+      is: 0, // 0 corresponde a "Servicio de mantenimiento"
+      then: (schema) =>
+        schema
+          .required("Por favor, selecciona el servicio que necesitas")
+          .min(1, "Selecciona una opción válida"),
       otherwise: (schema) => schema.notRequired(),
     }),
   }),
@@ -58,7 +61,7 @@ export const validationFormCitasDeServicio = [
     nombre: Yup.string()
       .required("Nombre obligatorio")
       .matches(
-        /^[A-Za-zñÑáéíóúÁÉÍÓÚüÜ\s]+$/,
+        /^[a-zA-Z\u00C0-\u00FF\s]+$/,
         "El nombre solo puede contener letras y espacios",
       )
       .min(3, "Deben ser mínimo 3 caracteres"),
