@@ -243,6 +243,14 @@ export const FormCitasDeServicio = () => {
 
       // Mezclamos los campos tocados previos con los nuevos para no borrar el estado
       setTouched({ ...touched, ...touchedFields });
+
+      // CORRECCIÓN: Esto debe ir AQUÍ ADENTRO, antes del return
+      // Registramos que el usuario intentó avanzar en esta pestaña y falló
+      if (!attemptedTabs.includes(tabIndex)) {
+        setAttemptedTabs((prev) => [...prev, tabIndex]);
+        console.log("setAttemptedTabs", [...attemptedTabs, tabIndex]); // Opcional para depurar
+      }
+
       return;
     }
 
@@ -290,20 +298,7 @@ export const FormCitasDeServicio = () => {
     parseInt(values.dealer_id),
     parseInt(values.tipoServicio),
   );
-  // Evaluamos si el usuario ha tocado AL MENOS UN campo de cada pestaña
-  const isTab1Touched =
-    touched.numeroChasis ||
-    touched.anio ||
-    touched.modelo ||
-    touched.kilometrajeAuto;
-  const isTab2Touched = touched.estado || touched.ciudad || touched.horario;
-  const isTab3Touched =
-    touched.nombre ||
-    touched.apePat ||
-    touched.apeMat ||
-    touched.telefonoMovil ||
-    touched.email ||
-    touched.aceptaAviso;
+
   useEffect(() => {
     if (!dealer || !dealer.services) return;
     const newSelectedServiceName = getServiceTitleEnglishById(
@@ -328,6 +323,8 @@ export const FormCitasDeServicio = () => {
   useEffect(() => {
     setFieldValue("dealer_id", "");
   }, [values.ciudad, setFieldValue]);
+  // Almacenará los índices de las pestañas donde el usuario intentó avanzar pero había errores
+  const [attemptedTabs, setAttemptedTabs] = useState<number[]>([]);
 
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
   if (showSummary && summaryData) {
@@ -519,7 +516,7 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Datos del vehículo{" "}
-                  {tabErrors[0] && isTab1Touched ? (
+                  {tabErrors[0] && attemptedTabs.includes(0) ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
                       <CloseCircle variant="default" />
                     </span>
@@ -728,7 +725,7 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Búsqueda de Distribuidores{" "}
-                  {tabErrors[1] && isTab2Touched ? (
+                  {tabErrors[1] && attemptedTabs.includes(1) ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
                       <CloseCircle variant="default" />
                     </span>
@@ -950,7 +947,7 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Tus datos de contacto{" "}
-                  {tabErrors[2] && isTab3Touched ? (
+                  {tabErrors[2] && attemptedTabs.includes(2) ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
                       <CloseCircle variant="default" />
                     </span>

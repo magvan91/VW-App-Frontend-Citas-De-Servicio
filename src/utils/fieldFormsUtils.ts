@@ -1,6 +1,10 @@
 export const onlyLettersWithAcents = (word: string): string => {
-  //* Se agregan diacríticos y acentos sueltos (\u0300-\u036F´¨^) para no interrumpir el teclado en Mac
-  const filteredValue = word.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, "");
+  //* Se mueve \u0300-\u036F al inicio de la clase (después del ^)
+  //* para evitar el error "no-misleading-character-class" de ESLint.
+  const filteredValue = word.replace(
+    /[^\u0300-\u036F´¨^a-zA-Z\u00C0-\u00FF\s]/g,
+    "",
+  );
   return filteredValue;
 };
 
