@@ -267,15 +267,25 @@ export const FormCitasDeServicio = () => {
       setIndex(tabIndex + 1);
     }
   };
-
   //* Función que llama al fieldFormsUtils onlyLetters
   const handleOnlyLettersWithAccentsChange = (
     e: React.SyntheticEvent<HTMLInputElement>,
   ) => {
     const target = e.target as HTMLInputElement;
     const { name, value } = target;
-    const cleanValue = onlyLettersWithAcents(value);
-    setFieldValue(name, cleanValue);
+
+    // Accedemos al evento nativo del navegador para ver si Mac está componiendo
+    const nativeEvent = e.nativeEvent as InputEvent;
+
+    // Si está componiendo (isComposing) o el input se encuentra en un estado intermedio de IME
+    if (nativeEvent.isComposing) {
+      // Guardamos el valor intermedio en Formik para no romper el menú de Mac
+      setFieldValue(name, value);
+    } else {
+      // Si terminó de componer o es escritura normal, limpiamos el texto de inmediato
+      const cleanValue = onlyLettersWithAcents(value);
+      setFieldValue(name, cleanValue);
+    }
   };
   const handleOnlyLettersAndNumbers = (
     e: React.SyntheticEvent<HTMLInputElement>,

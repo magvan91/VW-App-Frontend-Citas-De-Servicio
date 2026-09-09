@@ -1,11 +1,6 @@
 export const onlyLettersWithAcents = (word: string): string => {
-  //* Se mueve \u0300-\u036F al inicio de la clase (después del ^)
-  //* para evitar el error "no-misleading-character-class" de ESLint.
-  const filteredValue = word.replace(
-    /[^\u0300-\u036F´¨^a-zA-Z\u00C0-\u00FF\s]/g,
-    "",
-  );
-  return filteredValue;
+  // El modificador 'u' es vital para que \p{L} funcione correctamente
+  return word.replace(/[^\p{L}\s]/gu, "");
 };
 
 export const onlyLettersAndNumbers = (word: string): string => {
