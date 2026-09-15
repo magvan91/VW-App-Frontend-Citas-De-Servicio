@@ -347,6 +347,22 @@ export const FormCitasDeServicio = () => {
     );
   }
 
+  // 1. Arreglo de opciones de servicio
+  const opcionesMantenimiento = [
+    { value: 15000, label: "15,000 km o 1 año" },
+    { value: 30000, label: "30,000 km o 2 años" },
+    { value: 45000, label: "45,000 km o 3 años" },
+    { value: 60000, label: "60,000 km o 4 años" },
+    { value: 75000, label: "Superior a 60,000 km o 4 años" },
+  ];
+
+  // 2. Filtramos dinámicamente basándonos en el valor de Formik
+  const kilometrajeActual = values.kilometrajeAuto || 0;
+  const opcionesFiltradas = opcionesMantenimiento.filter(
+    (opcion) =>
+      opcion.value === 75000 || kilometrajeActual < opcion.value + 1100,
+  );
+
   return (
     <div className="container">
       <div className="row">
@@ -647,7 +663,23 @@ export const FormCitasDeServicio = () => {
                             rawInput.replace(/\D/g, "") || "0",
                             10,
                           );
+                          // 1. Actualizamos el kilometraje del auto
                           setFieldValue("kilometrajeAuto", numericValue);
+
+                          // 2. NUEVO: Validación de limpieza automática
+                          // Verificamos si ya hay un servicio seleccionado y si no es el comodín de 75,000
+                          if (
+                            values.kilometrajeServicio &&
+                            values.kilometrajeServicio !== 75000
+                          ) {
+                            // Si el nuevo kilometraje supera la tolerancia (valor del servicio + 1100), limpiamos el dropdown
+                            if (
+                              numericValue >=
+                              values.kilometrajeServicio + 1100
+                            ) {
+                              setFieldValue("kilometrajeServicio", ""); // Esto devolverá el select a "Selecciona el servicio..."
+                            }
+                          }
                         }}
                         value={
                           values.kilometrajeAuto && values.kilometrajeAuto !== 0
@@ -702,13 +734,12 @@ export const FormCitasDeServicio = () => {
                           <option value="">
                             Selecciona el servicio que necesitas
                           </option>
-                          <option value="15000">15,000 km o 1 año</option>
-                          <option value="30000">30,000 km o 2 años</option>
-                          <option value="45000">45,000 km o 3 años</option>
-                          <option value="60000">60,000 km o 4 años</option>
-                          <option value="75000">
-                            Superior a 60,000 km o 4 años
-                          </option>
+                          {/* 3. Mapeamos únicamente las opciones válidas */}
+                          {opcionesFiltradas.map((opcion) => (
+                            <option key={opcion.value} value={opcion.value}>
+                              {opcion.label}
+                            </option>
+                          ))}
                         </Select>
                       </div>
                     )}
