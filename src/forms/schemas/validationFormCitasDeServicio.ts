@@ -93,10 +93,6 @@ export const validationFormCitasDeServicio = [
       [true],
       "Debes aceptar la transferencia",
     ),
-    tyco: Yup.boolean().oneOf(
-      [true],
-      "Debes aceptar los términos y condiciones",
-    ),
   }),
 ];
 

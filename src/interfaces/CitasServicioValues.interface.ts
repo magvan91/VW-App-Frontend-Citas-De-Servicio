@@ -19,6 +19,5 @@ export interface CitasServicioValues {
   comentarios: string;
   aceptaAviso: boolean;
   opt_in_transferencia_datos: boolean;
-  tyco: boolean;
   dates: [Date, Date] | null;
 }

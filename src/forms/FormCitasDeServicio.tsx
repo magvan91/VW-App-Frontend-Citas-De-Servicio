@@ -86,7 +86,6 @@ export const FormCitasDeServicio = () => {
       comentarios: "",
       aceptaAviso: false,
       opt_in_transferencia_datos: false,
-      tyco: false,
       tipoServicio: "",
       marca: "Volkswagen",
     },
@@ -1175,33 +1174,6 @@ export const FormCitasDeServicio = () => {
                               {errors.opt_in_transferencia_datos}
                             </div>
                           )}
-                      </div>
-                      <div className="col-12 mb-3">
-                        <Checkbox
-                          {...getFieldProps("tyco")}
-                          appearance={
-                            touched.tyco
-                              ? errors.tyco
-                                ? "error"
-                                : "success"
-                              : "default"
-                          }
-                        />
-                        He leído y acepto los términos y condiciones{" "}
-                        <CTA
-                          tag="button"
-                          type="button"
-                          emphasis="tertiary"
-                          title="Términos y condiciones"
-                          onClick={() => handleShowTyco(true)}
-                        >
-                          Apartado.
-                        </CTA>
-                        {touched.tyco && errors.tyco && (
-                          <div className="text-danger small mt-1">
-                            {errors.tyco}
-                          </div>
-                        )}
                       </div>
                     </div>
                     {hasSubmitError && (
