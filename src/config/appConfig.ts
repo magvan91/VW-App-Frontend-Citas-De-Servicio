@@ -7,7 +7,8 @@ declare global {
 class AppConfig {
   private environments = {
     development: {
-      apiBaseUrl: "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/",
+      apiBaseUrl:
+        "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/api/v1/",
       name: "development",
       debug: true,
     },

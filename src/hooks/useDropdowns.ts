@@ -54,9 +54,7 @@ export const useDropdowns = (
     }
     const fetchEstados = async () => {
       try {
-        const response = await get(
-          `/api/v1/states?service_type=${nameTitleService}`,
-        );
+        const response = await get(`states?service_type=${nameTitleService}`);
         setEstados(response.data || []);
       } catch (error) {
         console.error("Error al cargar estados:", error);
@@ -76,7 +74,7 @@ export const useDropdowns = (
     const fetchCiudades = async () => {
       try {
         const response = await get(
-          `/api/v1/states/${estadoId}/cities?service_type=${nameTitleService}`,
+          `states/${estadoId}/cities?service_type=${nameTitleService}`,
         );
         setCiudadesState({ estadoId, items: response.data || [] });
       } catch (error) {
@@ -97,7 +95,7 @@ export const useDropdowns = (
     const fetchDealers = async () => {
       try {
         const response = await get(
-          `/api/v1/cities/${ciudadId}/dealers?service_type=${nameTitleService}`,
+          `cities/${ciudadId}/dealers?service_type=${nameTitleService}`,
         );
         setConcesionariosState({ ciudadId, items: response.data || [] });
       } catch (error) {
@@ -117,7 +115,7 @@ export const useDropdowns = (
     }
     const fetchDealer = async () => {
       try {
-        const response = await get(`/api/v1/dealers/${dealerId}`);
+        const response = await get(`dealers/${dealerId}`);
         console.log("Dealer data:", response.data);
         setDealer(response.data);
       } catch (error) {

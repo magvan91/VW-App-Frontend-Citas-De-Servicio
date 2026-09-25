@@ -27,6 +27,7 @@ import { globalValidationSchema } from "./schemas/validationFormCitasDeServicio"
 import api from "../services/api";
 
 import { useDropdowns } from "../hooks/useDropdowns";
+import { useVehiculosCatalogos } from "../hooks/useVehiculosCatalogos"; // O donde hayas ubicado el hook
 import { DateRangePicker } from "../components/DateRangePicker";
 import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
 import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
@@ -54,6 +55,9 @@ export const FormCitasDeServicio = () => {
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const servicesSectionRef = useRef<HTMLDivElement>(null);
   const [hasSubmitError, setHasSubmitError] = useState<boolean>(false);
+  const [anioSeleccionado, setAnioSeleccionado] = useState<string>("");
+  const { years, vehicles, loadingYears, loadingVehicles } =
+    useVehiculosCatalogos(anioSeleccionado);
 
   const {
     values,
@@ -541,11 +545,14 @@ export const FormCitasDeServicio = () => {
               title: (
                 <Text>
                   Datos del vehículo{" "}
-                  {tabErrors[0] && attemptedTabs.includes(0) ? (
+                  {tabErrors[0] &&
+                  (attemptedTabs.includes(0) ||
+                    touched.anio ||
+                    touched.modelo) ? (
                     <span style={{ color: "red", fontWeight: "bold" }}>
                       <CloseCircle variant="default" />
                     </span>
-                  ) : completedTabs.includes(1) ? (
+                  ) : !tabErrors[0] && completedTabs.includes(1) ? (
                     <i>
                       <CheckmarkCircleFilled variant="default" />
                     </i>
@@ -587,70 +594,113 @@ export const FormCitasDeServicio = () => {
                       )}
                     </div>
 
-                    <div className="col-12 col-sm-12 col-md-6">
+                    {/* --- SELECTOR DE AÑO --- */}
+                    <div className="col-12 col-sm-12 col-md-6 position-relative">
                       <Select
                         {...getFieldProps("anio")}
                         required
                         isFloating={true}
                         label="Año del vehículo"
-                        message={
-                          touched.anio && !values.anio
-                            ? "Selecciona el año del vehículo"
-                            : ""
-                        }
-                        onChange={(e: SyntheticEvent<HTMLSelectElement>) => {
-                          const value = parseInt(
-                            (e.target as HTMLSelectElement).value,
-                            10,
-                          );
-                          setFieldValue("anio", value);
+                        disabled={loadingYears}
+                        onChange={(
+                          e: React.SyntheticEvent<HTMLSelectElement>,
+                        ) => {
+                          const val = (e.target as HTMLSelectElement).value;
+                          setAnioSeleccionado(val);
+                          setFieldValue("anio", val); // Enviamos el valor directamente (string/número)
+                          setFieldValue("modelo", ""); // Limpiamos el modelo si cambian el año
                         }}
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        appearance={
-                          touched.anio
-                            ? errors.anio
-                              ? "error"
-                              : "success"
-                            : "default"
-                        }
+                        {...(touched.anio
+                          ? errors.anio
+                            ? {
+                                appearance: "error",
+                                message: "Selecciona el año del vehículo",
+                              }
+                            : { appearance: "success", message: "" }
+                          : {})}
                       >
                         <option value="">
                           Selecciona el año de tu vehículo
                         </option>
-                        <option value="2026">2026</option>
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
+                        {loadingYears ? (
+                          <option value="" disabled>
+                            Cargando años...
+                          </option>
+                        ) : (
+                          years.map((yearOption) => (
+                            <option key={yearOption} value={yearOption}>
+                              {yearOption}
+                            </option>
+                          ))
+                        )}
                       </Select>
+
+                      {/* Spinner flotante opcional para el selector de años */}
+                      {loadingYears && (
+                        <div
+                          className="position-absolute"
+                          style={{
+                            right: "35px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            zIndex: 5,
+                          }}
+                        >
+                          <Spinner variant="default" />
+                        </div>
+                      )}
                     </div>
-                    <div className="col-12 col-sm-12 col-md-6">
+                    {/* --- SELECTOR DE VEHÍCULO / MODELO --- */}
+                    <div className="col-12 col-sm-12 col-md-6 position-relative">
                       <Select
                         {...getFieldProps("modelo")}
                         required
                         isFloating={true}
                         label="Vehículo"
-                        message={
-                          touched.modelo && !values.modelo
-                            ? "Selecciona el módelo de tu vehículo"
-                            : ""
-                        }
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        appearance={
-                          touched.modelo
-                            ? errors.modelo
-                              ? "error"
-                              : "success"
-                            : "default"
-                        }
+                        disabled={!anioSeleccionado || loadingVehicles}
+                        onChange={(
+                          e: React.SyntheticEvent<HTMLSelectElement>,
+                        ) => {
+                          const val = (e.target as HTMLSelectElement).value;
+                          setFieldValue("modelo", val); // Enviamos el NOMBRE del vehículo, no un ID
+                        }}
+                        {...(touched.modelo
+                          ? errors.modelo
+                            ? {
+                                appearance: "error",
+                                message: "Selecciona el modelo de tu vehículo",
+                              }
+                            : { appearance: "success", message: "" }
+                          : {})}
                       >
                         <option value="">Selecciona tu vehículo</option>
-                        <option value="Polo">Polo</option>
-                        <option value="Jetta">Jetta</option>
-                        <option value="Virtus">Virtus</option>
-                        <option value="Tiguan">Tiguan</option>
+                        {loadingVehicles ? (
+                          <option value="" disabled>
+                            Cargando vehículos...
+                          </option>
+                        ) : (
+                          vehicles.map((vehiculoName) => (
+                            <option key={vehiculoName} value={vehiculoName}>
+                              {vehiculoName}
+                            </option>
+                          ))
+                        )}
                       </Select>
+
+                      {/* Spinner flotante mientras carga los modelos del año seleccionado */}
+                      {loadingVehicles && (
+                        <div
+                          className="position-absolute"
+                          style={{
+                            right: "35px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            zIndex: 5,
+                          }}
+                        >
+                          <Spinner variant="default" />
+                        </div>
+                      )}
                     </div>
 
                     <div className="col-12 col-md-6 position-relative">
