@@ -20,4 +20,5 @@ export interface CitasServicioValues {
   aceptaAviso: boolean;
   opt_in_transferencia_datos: boolean;
   dates: [Date, Date] | null;
+  schedule_request_uuid?: string;
 }

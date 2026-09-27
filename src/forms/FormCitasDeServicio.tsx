@@ -31,6 +31,7 @@ import { useVehiculosCatalogos } from "../hooks/useVehiculosCatalogos"; // O don
 import { DateRangePicker } from "../components/DateRangePicker";
 import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
 import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
+import { useHorariosDisponibles } from "../hooks/useHorariosDisponibles";
 import {
   formatKilometraje,
   isMobile,
@@ -96,38 +97,70 @@ export const FormCitasDeServicio = () => {
     validationSchema: globalValidationSchema, // Asignación directa y limpia
 
     onSubmit: async (values) => {
-      const fechaExtraida = values.horario.split("/")[0];
-      const horaExtraida = values.horario.split("/")[1];
-      const horaConFormato = `${horaExtraida}:00.000Z`;
+      // Separar fecha y hora desde "YYYY-MM-DD/HH:mm"
+      let fechaExtraida = values.fecha;
+      let horaLimpia = "";
+      if (values.horario && values.horario.includes("/")) {
+        const partes = values.horario.split("/");
+        fechaExtraida = partes[0];
+        horaLimpia = partes[1];
+      } else {
+        horaLimpia = values.horario;
+      }
 
       const tipoServicioKey =
         typeof values.tipoServicio === "string"
           ? parseInt(values.tipoServicio, 10)
           : values.tipoServicio;
       const tipoServicioString =
-        getServiceTitleEnglishById(tipoServicioKey) || "Unknown Service";
+        getServiceTitleEnglishById(tipoServicioKey) || "Maintenance Service";
       const tituloServicioString =
         getServiceTitleById(tipoServicioKey) || "Unknown Service";
-      const payload = {
-        ...values,
-        tipoServicio: tipoServicioString,
+
+      const uuidCita = values.schedule_request_uuid || "";
+
+      // PAYLOAD ESTRICTO API: solo lo que el backend espera, con los tipos correctos
+      const payloadApi = {
+        nombre: values.nombre,
+        apePat: values.apePat,
+        apeMat: values.apeMat,
+        numeroChasis: values.numeroChasis,
         fecha: fechaExtraida,
-        horario: horaConFormato,
+        horario: horaLimpia,
+        telefonoMovil: values.telefonoMovil,
+        email: values.email,
+        estado: parseInt(String(values.estado), 10) || 0,
+        ciudad: parseInt(String(values.ciudad), 10) || 0,
+        dealer_id: parseInt(String(values.dealer_id), 10) || 0,
+        marca: values.marca || "Volkswagen",
+        modelo: values.modelo,
+        anio: parseInt(String(values.anio), 10) || 0,
+        kilometrajeAuto: Number(values.kilometrajeAuto),
+        kilometrajeServicio: Number(values.kilometrajeServicio || 0),
+        tipoServicio: tipoServicioString,
+        comentarios: values.comentarios || "",
+        schedule_request_uuid: uuidCita,
+      };
+
+      // PAYLOAD UI: para la pantalla de resumen (SummaryData pide estado/ciudad/dealer_id como string)
+      const payloadSummary: SummaryData = {
+        ...payloadApi,
+        estado: String(payloadApi.estado),
+        ciudad: String(payloadApi.ciudad),
+        dealer_id: String(payloadApi.dealer_id),
         servicioNombreMostrar: tituloServicioString,
       };
 
       try {
         setHasSubmitError(false);
-        const response = await api.post("/api/v1/appointments", payload);
+        const response = await api.post("appointments", payloadApi);
         console.log("Cita agendada exitosamente:", response.data);
-        setShowSummary(true); // Mostrar el resumen después de un envío exitoso
-        setSummaryData(payload); // Guardar los datos para el resumen
+        setShowSummary(true);
+        setSummaryData(payloadSummary);
       } catch (error: unknown) {
         setHasSubmitError(true);
-
         if (error && typeof error === "object") {
           if ("response" in error) {
-            // El servidor respondió con un código de error (ej. 400, 422, 500)
             const axiosError = error as {
               response: { status: number; data: unknown };
             };
@@ -137,14 +170,12 @@ export const FormCitasDeServicio = () => {
               axiosError.response.data,
             );
           } else if ("request" in error) {
-            // La petición se hizo pero no hubo respuesta
             const axiosError = error as { request: unknown };
             console.error(
               "Error de red: No se recibió respuesta del servidor.",
               axiosError.request,
             );
           } else if ("message" in error) {
-            // Error en la configuración de Axios o ejecución del frontend
             const genericError = error as { message: string };
             console.error("Error de ejecución:", genericError.message);
           }
@@ -154,7 +185,24 @@ export const FormCitasDeServicio = () => {
       }
     },
   });
+  const {
+    availableDates,
+    loadingHorarios,
+    error502Msg,
+    warningMsg,
+    requestUuid,
+    dataSource,
+  } = useHorariosDisponibles(
+    values.dealer_id,
+    values.dates,
+    values.tipoServicio,
+  );
 
+  useEffect(() => {
+    if (requestUuid) {
+      setFieldValue("schedule_request_uuid", requestUuid);
+    }
+  }, [requestUuid, setFieldValue]);
   // Centraliza la validación secuencial compartida entre botón y cabezal
   const validateAndUnlockStep = async (
     currentTab: number,
@@ -957,37 +1005,91 @@ export const FormCitasDeServicio = () => {
                       </div>
 
                       {/* Horarios */}
-                      <div className="col-12 col-sm-6">
+                      <div className="col-12 col-sm-6 position-relative">
                         <Select
                           required
                           {...getFieldProps("horario")}
                           isFloating={true}
                           label="Selecciona un horario"
-                          disabled={!values.dates}
+                          disabled={
+                            !values.dates || loadingHorarios || !!error502Msg
+                          }
                           {...(touched.horario
                             ? errors.horario
                               ? {
                                   appearance: "error",
                                   message: "Selecciona un horario",
                                 }
-                              : { appearance: "success", message: "" } // <- Agregamos message: "" aquí
+                              : { appearance: "success", message: "" }
                             : {})}
                         >
                           <option value="">Selecciona un horario</option>
-                          <optgroup label="01-Diciembre-26">
-                            <option value="2026-06-01/09:00">09:00</option>
-                            <option value="2026-06-01/10:00">10:00</option>
-                          </optgroup>
-                          <optgroup label="02-Diciembre-26">
-                            <option value="2026-06-02/11:00">11:00</option>
-                            <option value="2026-06-02/12:00">12:00</option>
-                          </optgroup>
-                          <optgroup label="03-Diciembre-26">
-                            <option value="2026-06-03/09:00">09:00</option>
-                            <option value="2026-06-03/12:00">12:00</option>
-                          </optgroup>
+                          {Object.entries(availableDates).map(
+                            ([fecha, horas]) => (
+                              <optgroup
+                                key={fecha}
+                                label={new Date(
+                                  `${fecha}T00:00:00`,
+                                ).toLocaleDateString("es-MX", {
+                                  day: "2-digit",
+                                  month: "long",
+                                  year: "numeric",
+                                })}
+                              >
+                                {horas.map((hora) => (
+                                  <option
+                                    key={`${fecha}/${hora}`}
+                                    value={`${fecha}/${hora}`}
+                                  >
+                                    {hora}
+                                  </option>
+                                ))}
+                              </optgroup>
+                            ),
+                          )}
                         </Select>
+
+                        {loadingHorarios && (
+                          <div
+                            className="position-absolute"
+                            style={{
+                              right: "35px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              zIndex: 5,
+                            }}
+                          >
+                            <Spinner variant="default" />
+                          </div>
+                        )}
                       </div>
+
+                      {/* Mensajes del endpoint de horarios */}
+                      {error502Msg && (
+                        <div className="col-12">
+                          <div className="text-danger small mt-1">
+                            {error502Msg}
+                          </div>
+                        </div>
+                      )}
+                      {warningMsg && (
+                        <div className="col-12">
+                          <div className="text-warning small mt-1">
+                            {warningMsg}
+                          </div>
+                        </div>
+                      )}
+                      {dataSource && (
+                        <div className="col-12">
+                          <Text
+                            appearance={TokenTextAppearance.copy200}
+                            color={TokenTextColor.tertiary}
+                            tag={TextTag.span}
+                          >
+                            Fuente de horarios (debug): {dataSource}
+                          </Text>
+                        </div>
+                      )}
                     </div>
                   </div>
 
