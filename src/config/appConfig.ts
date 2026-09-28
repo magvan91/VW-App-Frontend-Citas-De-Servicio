@@ -19,7 +19,8 @@ class AppConfig {
       debug: false,
     },
     qa: {
-      apiBaseUrl: "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/",
+      apiBaseUrl:
+        "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/api/v1/",
       name: "qa",
       debug: true,
     },
