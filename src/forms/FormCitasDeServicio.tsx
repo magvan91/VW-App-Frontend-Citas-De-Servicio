@@ -32,6 +32,7 @@ import { DateRangePicker } from "../components/DateRangePicker";
 import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
 import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
 import { useHorariosDisponibles } from "../hooks/useHorariosDisponibles";
+
 import {
   formatKilometraje,
   isMobile,
@@ -203,6 +204,22 @@ export const FormCitasDeServicio = () => {
       setFieldValue("schedule_request_uuid", requestUuid);
     }
   }, [requestUuid, setFieldValue]);
+
+  // Si cambia el distribuidor o el rango de fechas, el horario elegido
+  // anteriormente ya no corresponde a la nueva búsqueda: lo limpiamos.
+  useEffect(() => {
+    setFieldValue("horario", "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values.dealer_id, values.dates]);
+
+  // Si el API de horarios falla (502) o no hay servicio disponible,
+  // cualquier horario que hubiera quedado seleccionado deja de ser válido.
+  useEffect(() => {
+    if (error502Msg) {
+      setFieldValue("horario", "");
+    }
+  }, [error502Msg, setFieldValue]);
+
   // Centraliza la validación secuencial compartida entre botón y cabezal
   const validateAndUnlockStep = async (
     currentTab: number,
@@ -305,12 +322,11 @@ export const FormCitasDeServicio = () => {
       return;
     }
 
-    //* 5. Si no hay errores en el tab actual, avanzamos de forma segura
-    const nextIndex = tabIndex + 1;
-    if (!completedTabs.includes(nextIndex)) {
-      setCompletedTabs((prev) => [...prev, nextIndex]);
-    }
-    // Llama a la lógica centralizada
+    //* 5. Si no hay errores en el tab actual, delegamos el desbloqueo a
+    // validateAndUnlockStep, que es la única fuente de verdad que debe
+    // marcar completedTabs (antes se marcaba aquí también, antes de
+    // confirmar el éxito real, lo cual dejaba tabs "completos" de forma
+    // prematura).
     const success = await validateAndUnlockStep(tabIndex);
 
     // Si fue exitoso, avanzamos visualmente al siguiente tab
@@ -353,7 +369,15 @@ export const FormCitasDeServicio = () => {
   const [selectedService, setSelectedService] = useState<number | null>(null);
 
   // 1. Usamos tu nuevo hook, pasándole los valores actuales del formulario
-  const { estados, ciudades, concesionarios, dealer } = useDropdowns(
+  const {
+    estados,
+    loadingEstados,
+    ciudades,
+    loadingCiudades,
+    concesionarios,
+    loadingConcesionarios,
+    dealer,
+  } = useDropdowns(
     parseInt(values.estado),
     parseInt(values.ciudad),
     parseInt(values.dealer_id),
@@ -569,12 +593,19 @@ export const FormCitasDeServicio = () => {
             }}
             // 2. Interceptar el salto nativo
             onBeforeChange={(proposedIndex) => {
-              // Permitir salto libre hacia atrás si el tab ya fue validado
-              if (completedTabs.includes(proposedIndex)) {
+              // Retroceder siempre se permite libremente (no invalida datos)
+              if (proposedIndex < index) {
                 return true;
               }
 
-              // Si el usuario da clic al siguiente paso secuencial (el naranja)
+              // Avanzar un paso: SIEMPRE revalidamos el estado actual.
+              // Ya NO confiamos en completedTabs.includes(proposedIndex)
+              // para saltos hacia adelante: un tab pudo quedar marcado
+              // como "completo" con datos que después cambiaron (p. ej.
+              // el usuario regresó, cambió de distribuidor y el horario
+              // quedó vacío o el API de horarios falló con 502). Confiar
+              // en ese estado viejo era lo que permitía avanzar sin
+              // horario válido.
               if (proposedIndex === index + 1) {
                 // Ejecutamos tu función de validación (la misma del botón)
                 handleActionComplete(index);
@@ -880,13 +911,13 @@ export const FormCitasDeServicio = () => {
                   <div className="col-12 col-md-6">
                     <div className="row g-3">
                       {/* Estado */}
-                      <div className="col-12">
+                      <div className="col-12 position-relative">
                         <Select
                           {...getFieldProps("estado")}
                           required
                           isFloating={true}
                           label="Selecciona un estado"
-                          disabled={false}
+                          disabled={loadingEstados}
                           {...(touched.estado
                             ? errors.estado
                               ? {
@@ -897,16 +928,35 @@ export const FormCitasDeServicio = () => {
                             : {})}
                         >
                           <option value="">Selecciona un estado</option>
-                          {estados.map((est) => (
-                            <option key={est.id} value={est.id}>
-                              {est.name}
+                          {loadingEstados ? (
+                            <option value="" disabled>
+                              Cargando estados...
                             </option>
-                          ))}
+                          ) : (
+                            estados.map((est) => (
+                              <option key={est.id} value={est.id}>
+                                {est.name}
+                              </option>
+                            ))
+                          )}
                         </Select>
+                        {loadingEstados && (
+                          <div
+                            className="position-absolute"
+                            style={{
+                              right: "35px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              zIndex: 5,
+                            }}
+                          >
+                            <Spinner variant="default" />
+                          </div>
+                        )}
                       </div>
 
                       {/* Ciudad */}
-                      <div className="col-12">
+                      <div className="col-12 position-relative">
                         <Select
                           {...getFieldProps("ciudad")}
                           required
@@ -916,7 +966,7 @@ export const FormCitasDeServicio = () => {
                               ? "Selecciona una alcaldía"
                               : "Selecciona una ciudad"
                           }
-                          disabled={!values.estado}
+                          disabled={!values.estado || loadingCiudades}
                           {...(touched.ciudad
                             ? errors.ciudad
                               ? {
@@ -927,22 +977,41 @@ export const FormCitasDeServicio = () => {
                             : {})}
                         >
                           <option value="">Selecciona una ciudad</option>
-                          {ciudades.map((ciu) => (
-                            <option key={ciu.id} value={ciu.id}>
-                              {ciu.name}
+                          {loadingCiudades ? (
+                            <option value="" disabled>
+                              Cargando ciudades...
                             </option>
-                          ))}
+                          ) : (
+                            ciudades.map((ciu) => (
+                              <option key={ciu.id} value={ciu.id}>
+                                {ciu.name}
+                              </option>
+                            ))
+                          )}
                         </Select>
+                        {loadingCiudades && (
+                          <div
+                            className="position-absolute"
+                            style={{
+                              right: "35px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              zIndex: 5,
+                            }}
+                          >
+                            <Spinner variant="default" />
+                          </div>
+                        )}
                       </div>
 
                       {/* Distribuidor */}
-                      <div className="col-12">
+                      <div className="col-12 position-relative">
                         <Select
                           {...getFieldProps("dealer_id")}
                           required
                           isFloating={true}
                           label="Selecciona un distribuidor"
-                          disabled={!values.ciudad}
+                          disabled={!values.ciudad || loadingConcesionarios}
                           {...(touched.dealer_id
                             ? errors.dealer_id
                               ? {
@@ -953,12 +1022,31 @@ export const FormCitasDeServicio = () => {
                             : {})}
                         >
                           <option value="">Selecciona un concesionario</option>
-                          {concesionarios.map((dealer) => (
-                            <option key={dealer.id} value={dealer.id}>
-                              {dealer.name}
+                          {loadingConcesionarios ? (
+                            <option value="" disabled>
+                              Cargando distribuidores...
                             </option>
-                          ))}
+                          ) : (
+                            concesionarios.map((dealer) => (
+                              <option key={dealer.id} value={dealer.id}>
+                                {dealer.name}
+                              </option>
+                            ))
+                          )}
                         </Select>
+                        {loadingConcesionarios && (
+                          <div
+                            className="position-absolute"
+                            style={{
+                              right: "35px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              zIndex: 5,
+                            }}
+                          >
+                            <Spinner variant="default" />
+                          </div>
+                        )}
                       </div>
 
                       {/* Dirección del Distribuidor */}

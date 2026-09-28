@@ -20,7 +20,6 @@ export interface ResponseGetDelaer {
   city_id: number;
   services: string[];
 }
-
 export const useDropdowns = (
   estadoId: number,
   ciudadId: number,
@@ -34,16 +33,20 @@ export const useDropdowns = (
   const { get } = useApi();
 
   const [estados, setEstados] = useState<LocationItem[]>([]);
+  const [loadingEstados, setLoadingEstados] = useState<boolean>(false);
 
   const [ciudadesState, setCiudadesState] = useState<{
     estadoId: number;
     items: LocationItem[];
   }>({ estadoId: 0, items: [] });
+  const [loadingCiudades, setLoadingCiudades] = useState<boolean>(false);
 
   const [concesionariosState, setConcesionariosState] = useState<{
     ciudadId: number;
     items: DealerItem[];
   }>({ ciudadId: 0, items: [] });
+  const [loadingConcesionarios, setLoadingConcesionarios] =
+    useState<boolean>(false);
 
   const [dealer, setDealer] = useState<ResponseGetDelaer | null>();
 
@@ -53,11 +56,14 @@ export const useDropdowns = (
       return;
     }
     const fetchEstados = async () => {
+      setLoadingEstados(true);
       try {
         const response = await get(`states?service_type=${nameTitleService}`);
         setEstados(response.data || []);
       } catch (error) {
         console.error("Error al cargar estados:", error);
+      } finally {
+        setLoadingEstados(false);
       }
     };
     fetchEstados();
@@ -72,6 +78,7 @@ export const useDropdowns = (
       return;
     }
     const fetchCiudades = async () => {
+      setLoadingCiudades(true);
       try {
         const response = await get(
           `states/${estadoId}/cities?service_type=${nameTitleService}`,
@@ -79,6 +86,8 @@ export const useDropdowns = (
         setCiudadesState({ estadoId, items: response.data || [] });
       } catch (error) {
         console.error("Error al cargar ciudades:", error);
+      } finally {
+        setLoadingCiudades(false);
       }
     };
     fetchCiudades();
@@ -93,6 +102,7 @@ export const useDropdowns = (
       return;
     }
     const fetchDealers = async () => {
+      setLoadingConcesionarios(true);
       try {
         const response = await get(
           `cities/${ciudadId}/dealers?service_type=${nameTitleService}`,
@@ -100,6 +110,8 @@ export const useDropdowns = (
         setConcesionariosState({ ciudadId, items: response.data || [] });
       } catch (error) {
         console.error("Error al cargar concesionarios:", error);
+      } finally {
+        setLoadingConcesionarios(false);
       }
     };
     fetchDealers();
@@ -116,7 +128,6 @@ export const useDropdowns = (
     const fetchDealer = async () => {
       try {
         const response = await get(`dealers/${dealerId}`);
-        console.log("Dealer data:", response.data);
         setDealer(response.data);
       } catch (error) {
         console.error("Error al cargar concesionarios:", error);
@@ -128,14 +139,16 @@ export const useDropdowns = (
     };
   }, [dealerId, nameTitleService, get]);
 
-  //* Retornamos los arreglos para que el formulario los consuma
   return {
     estados,
+    loadingEstados,
     ciudades: ciudadesState.estadoId === estadoId ? ciudadesState.items : [],
+    loadingCiudades,
     concesionarios:
       concesionariosState.ciudadId === ciudadId
         ? concesionariosState.items
         : [],
+    loadingConcesionarios,
     dealer,
   };
 };
