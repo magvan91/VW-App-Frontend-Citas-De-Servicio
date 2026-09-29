@@ -26,7 +26,7 @@ export const SERVICE_OPTIONS: ServiceOption[] = [
   {
     id: 3,
     title: "Cotización e instalación de accesorios",
-    titleEnglish: "Accessory Installation",
+    titleEnglish: "Accessories Installation",
     icon: AccesoriosIcon,
   },
 ];
