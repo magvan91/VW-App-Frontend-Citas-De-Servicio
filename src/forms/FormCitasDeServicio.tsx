@@ -61,6 +61,12 @@ export const FormCitasDeServicio = () => {
   const { years, vehicles, loadingYears, loadingVehicles } =
     useVehiculosCatalogos(anioSeleccionado);
 
+  // ESTADOS MOVIDOS AL INICIO Y REFERENCIAS DE MONTAJE
+  const [attemptedTabs, setAttemptedTabs] = useState<number[]>([]);
+  const isEstadoMounted = useRef(false);
+  const isCiudadMounted = useRef(false);
+  const isHorarioMounted = useRef(false);
+
   const {
     values,
     touched,
@@ -186,6 +192,10 @@ export const FormCitasDeServicio = () => {
       }
     },
   });
+
+  const datesString = JSON.stringify(values.dates);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedDates = useMemo(() => values.dates, [datesString]);
   const {
     availableDates,
     loadingHorarios,
@@ -195,7 +205,7 @@ export const FormCitasDeServicio = () => {
     dataSource,
   } = useHorariosDisponibles(
     values.dealer_id,
-    values.dates,
+    memoizedDates, // Usamos la versión memoizada
     values.tipoServicio,
   );
 
@@ -208,12 +218,16 @@ export const FormCitasDeServicio = () => {
   // Si cambia el distribuidor o el rango de fechas, el horario elegido
   // anteriormente ya no corresponde a la nueva búsqueda: lo limpiamos.
   useEffect(() => {
-    setFieldValue("horario", "");
+    if (isHorarioMounted.current) {
+      setFieldValue("horario", "");
+    } else {
+      isHorarioMounted.current = true;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values.dealer_id, values.dates]);
+  }, [values.dealer_id, datesString]); // Dependencia estable
 
   // Si el API de horarios falla (502) o no hay servicio disponible,
-  // cualquier horario que hubiera quedado seleccionado deja de ser válido.
+
   useEffect(() => {
     if (error502Msg) {
       setFieldValue("horario", "");
@@ -366,7 +380,6 @@ export const FormCitasDeServicio = () => {
   const handleShowTyco = (visibleTyco: boolean): void => {
     setShowTyco(visibleTyco);
   };
-  const [selectedService, setSelectedService] = useState<number | null>(null);
 
   // 1. Usamos tu nuevo hook, pasándole los valores actuales del formulario
   const {
@@ -387,7 +400,7 @@ export const FormCitasDeServicio = () => {
   useEffect(() => {
     if (!dealer || !dealer.services) return;
     const newSelectedServiceName = getServiceTitleEnglishById(
-      parseInt(values.tipoServicio),
+      parseInt(String(values.tipoServicio)),
     );
     if (
       newSelectedServiceName &&
@@ -401,15 +414,21 @@ export const FormCitasDeServicio = () => {
 
   // 2. Pequeños efectos de Formik para limpiar los campos hijos si el padre cambia
   useEffect(() => {
-    setFieldValue("ciudad", "");
-    setFieldValue("dealer_id", "");
+    if (isEstadoMounted.current) {
+      setFieldValue("ciudad", "");
+      setFieldValue("dealer_id", "");
+    } else {
+      isEstadoMounted.current = true;
+    }
   }, [values.estado, setFieldValue]);
 
   useEffect(() => {
-    setFieldValue("dealer_id", "");
+    if (isCiudadMounted.current) {
+      setFieldValue("dealer_id", "");
+    } else {
+      isCiudadMounted.current = true;
+    }
   }, [values.ciudad, setFieldValue]);
-  // Almacenará los índices de las pestañas donde el usuario intentó avanzar pero había errores
-  const [attemptedTabs, setAttemptedTabs] = useState<number[]>([]);
 
   // CONTROL DE FLUJO CONDICIONAL EN EL RENDER
   if (showSummary && summaryData) {
@@ -512,7 +531,6 @@ export const FormCitasDeServicio = () => {
                   <div
                     onClick={() => {
                       const isKilometraje = option.id === 0;
-                      setSelectedService(option.id);
                       setFieldValue("tipoServicio", option.id);
                       // NUEVO: Limpiar el campo si selecciona un servicio diferente
                       if (!isKilometraje) {
@@ -536,11 +554,15 @@ export const FormCitasDeServicio = () => {
                     className="d-flex flex-column align-items-center justify-content-center p-3 rounded h-100 text-center"
                     style={{
                       cursor: "pointer",
-                      // Estilos condicionales basados en la selección
+                      // Estilos condicionales basados en la selección de Formik
                       backgroundColor:
-                        selectedService === option.id ? "#f5f3ed" : "#ffffff",
+                        Number(values.tipoServicio) === option.id
+                          ? "#f5f3ed"
+                          : "#ffffff",
                       borderColor:
-                        selectedService === option.id ? "#8b7b65" : "#f2f2f2",
+                        Number(values.tipoServicio) === option.id
+                          ? "#8b7b65"
+                          : "#f2f2f2",
                       borderWidth: "1px",
                       borderStyle: "solid",
                       minHeight: "160px",
@@ -648,7 +670,7 @@ export const FormCitasDeServicio = () => {
                 >
                   <div className="row g-3">
                     <div
-                      className={`col-12 ${selectedService === 0 ? "col-md-12" : "col-md-6"}`}
+                      className={`col-12 ${Number(values.tipoServicio) === 0 ? "col-md-12" : "col-md-6"}`}
                     >
                       <TextInput
                         {...getFieldProps("numeroChasis")}
@@ -845,7 +867,7 @@ export const FormCitasDeServicio = () => {
                         </span>
                       )}
                     </div>
-                    {selectedService === 0 && (
+                    {Number(values.tipoServicio) === 0 && (
                       <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
                         <Select
                           {...getFieldProps("kilometrajeServicio")}
