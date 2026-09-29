@@ -556,10 +556,12 @@ export const FormCitasDeServicio = () => {
                       cursor: "pointer",
                       // Estilos condicionales basados en la selección de Formik
                       backgroundColor:
+                        values.tipoServicio !== "" &&
                         Number(values.tipoServicio) === option.id
                           ? "#f5f3ed"
                           : "#ffffff",
                       borderColor:
+                        values.tipoServicio !== "" &&
                         Number(values.tipoServicio) === option.id
                           ? "#8b7b65"
                           : "#f2f2f2",
@@ -670,7 +672,7 @@ export const FormCitasDeServicio = () => {
                 >
                   <div className="row g-3">
                     <div
-                      className={`col-12 ${Number(values.tipoServicio) === 0 ? "col-md-12" : "col-md-6"}`}
+                      className={`col-12 ${values.tipoServicio !== "" && Number(values.tipoServicio) === 0 ? "col-md-12" : "col-md-6"}`}
                     >
                       <TextInput
                         {...getFieldProps("numeroChasis")}
@@ -867,32 +869,35 @@ export const FormCitasDeServicio = () => {
                         </span>
                       )}
                     </div>
-                    {Number(values.tipoServicio) === 0 && (
-                      <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
-                        <Select
-                          {...getFieldProps("kilometrajeServicio")}
-                          label="Servicio que necesitas"
-                          isFloating={true}
-                          onChange={(e: SyntheticEvent<HTMLSelectElement>) => {
-                            const value = parseInt(
-                              (e.target as HTMLSelectElement).value,
-                              10,
-                            );
-                            setFieldValue("kilometrajeServicio", value || 0);
-                          }}
-                        >
-                          <option value="">
-                            Selecciona el servicio que necesitas
-                          </option>
-                          {/* 3. Mapeamos únicamente las opciones válidas */}
-                          {opcionesFiltradas.map((opcion) => (
-                            <option key={opcion.value} value={opcion.value}>
-                              {opcion.label}
+                    {values.tipoServicio !== "" &&
+                      Number(values.tipoServicio) === 0 && (
+                        <div className="col-12 col-sm-12 col-md-6 pt-sm-0">
+                          <Select
+                            {...getFieldProps("kilometrajeServicio")}
+                            label="Servicio que necesitas"
+                            isFloating={true}
+                            onChange={(
+                              e: SyntheticEvent<HTMLSelectElement>,
+                            ) => {
+                              const value = parseInt(
+                                (e.target as HTMLSelectElement).value,
+                                10,
+                              );
+                              setFieldValue("kilometrajeServicio", value || 0);
+                            }}
+                          >
+                            <option value="">
+                              Selecciona el servicio que necesitas
                             </option>
-                          ))}
-                        </Select>
-                      </div>
-                    )}
+                            {/* 3. Mapeamos únicamente las opciones válidas */}
+                            {opcionesFiltradas.map((opcion) => (
+                              <option key={opcion.value} value={opcion.value}>
+                                {opcion.label}
+                              </option>
+                            ))}
+                          </Select>
+                        </div>
+                      )}
                   </div>
                   {!completedTabs.includes(1) && (
                     <div className="col-12 text-center pt-5">
