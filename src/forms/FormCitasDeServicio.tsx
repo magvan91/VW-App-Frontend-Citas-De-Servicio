@@ -215,8 +215,8 @@ export const FormCitasDeServicio = () => {
     }
   }, [requestUuid, setFieldValue]);
 
-  // Si cambia el distribuidor o el rango de fechas, el horario elegido
-  // anteriormente ya no corresponde a la nueva búsqueda: lo limpiamos.
+  // Si cambia el distribuidor, el rango de fechas, o el TIPO DE SERVICIO,
+  // el horario elegido anteriormente ya no corresponde: lo limpiamos.
   useEffect(() => {
     if (isHorarioMounted.current) {
       setFieldValue("horario", "");
@@ -224,7 +224,7 @@ export const FormCitasDeServicio = () => {
       isHorarioMounted.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values.dealer_id, datesString]); // Dependencia estable
+  }, [values.dealer_id, datesString, values.tipoServicio]); // <- AQUÍ AGREGAMOS values.tipoServicio
 
   // Si el API de horarios falla (502) o no hay servicio disponible,
 
