@@ -66,7 +66,7 @@ export const validationFormCitasDeServicio = [
       )
       .min(3, "Deben ser mínimo 3 caracteres"),
     apePat: Yup.string()
-      .required("El apellido apellido paterno")
+      .required("El apellido paterno")
       .matches(
         /^[A-Za-zñÑáéíóúÁÉÍÓÚüÜ\s]+$/,
         "El apellido paterno solo puede contener letras y espacios",

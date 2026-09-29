@@ -1173,9 +1173,7 @@ export const FormCitasDeServicio = () => {
                             appearance={TokenTextAppearance.copy200}
                             color={TokenTextColor.tertiary}
                             tag={TextTag.span}
-                          >
-                            Fuente de horarios (debug): {dataSource}
-                          </Text>
+                          ></Text>
                         </div>
                       )}
                     </div>
