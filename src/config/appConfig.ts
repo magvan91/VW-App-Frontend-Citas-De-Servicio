@@ -37,8 +37,7 @@ class AppConfig {
     if (
       hostname === "localhost" ||
       hostname === "localhost:5173" ||
-      hostname ===
-        "https://magvan91.github.io/VW-App-Frontend-Citas-De-Servicio/"
+      hostname === "magvan91.github.io"
     ) {
       return "development";
     }
