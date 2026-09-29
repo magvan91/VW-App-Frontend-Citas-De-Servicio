@@ -33,7 +33,7 @@ class AppConfig {
   private detectEnvironment(): string {
     // Método 1: Por URL
     const hostname = window.location.hostname;
-
+    console.log("Hostname:", hostname);
     if (
       hostname === "localhost" ||
       hostname === "localhost:5173" ||
