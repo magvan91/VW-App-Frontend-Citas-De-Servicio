@@ -13,14 +13,12 @@ class AppConfig {
       debug: true,
     },
     production: {
-      apiBaseUrl:
-        "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/api/v1/",
+      apiBaseUrl: "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev",
       name: "production",
       debug: false,
     },
     qa: {
-      apiBaseUrl:
-        "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/api/v1/",
+      apiBaseUrl: "https://kr5dntm011.execute-api.us-west-2.amazonaws.com/dev/",
       name: "qa",
       debug: true,
     },
@@ -36,7 +34,12 @@ class AppConfig {
     // Método 1: Por URL
     const hostname = window.location.hostname;
 
-    if (hostname === "localhost" || hostname === "localhost:5173") {
+    if (
+      hostname === "localhost" ||
+      hostname === "localhost:5173" ||
+      hostname ===
+        "https://magvan91.github.io/VW-App-Frontend-Citas-De-Servicio/"
+    ) {
       return "development";
     }
 
