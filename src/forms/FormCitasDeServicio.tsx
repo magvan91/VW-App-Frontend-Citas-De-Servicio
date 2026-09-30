@@ -292,6 +292,31 @@ export const FormCitasDeServicio = () => {
     return currentErrorsState;
   }, [errors, completedTabs]);
 
+  // NUEVO: Efecto para manejo de Regresión de Datos (Edge Case)
+  // Si el usuario retrocede y borra un campo obligatorio, invalidamos
+  // el progreso de las pestañas posteriores. Esto obligará a que el botón
+  // "Siguiente" vuelva a aparecer en la parte inferior para re-validar el paso.
+  useEffect(() => {
+    setCompletedTabs((prev) => {
+      let invalidIndex = -1;
+
+      // Detectamos cuál es la primera pestaña en la secuencia que se rompió
+      if (tabErrors[0]) invalidIndex = 0;
+      else if (tabErrors[1]) invalidIndex = 1;
+
+      if (invalidIndex !== -1) {
+        // Recortamos el arreglo para conservar solo el progreso hasta la pestaña que falló
+        const nextCompleted = prev.filter((tab) => tab <= invalidIndex);
+
+        // Solo disparamos la actualización si realmente hubo un recorte (evita bucles infinitos)
+        if (nextCompleted.length !== prev.length) {
+          return nextCompleted;
+        }
+      }
+      return prev;
+    });
+  }, [tabErrors]);
+
   const targetRef = useRef<HTMLDivElement | null>(null);
   const handleActionComplete = async (tabIndex: number) => {
     //* 1. Forzamos la validación global
@@ -868,6 +893,13 @@ export const FormCitasDeServicio = () => {
                           km
                         </span>
                       )}
+
+                      {/* NUEVO: Mensaje de error obligatorio manejado por Formik y Yup */}
+                      {touched.kilometrajeAuto && errors.kilometrajeAuto && (
+                        <div className="text-danger small mt-1">
+                          {errors.kilometrajeAuto}
+                        </div>
+                      )}
                     </div>
                     {values.tipoServicio !== "" &&
                       Number(values.tipoServicio) === 0 && (
@@ -885,6 +917,15 @@ export const FormCitasDeServicio = () => {
                               );
                               setFieldValue("kilometrajeServicio", value || 0);
                             }}
+                            {...(touched.kilometrajeServicio
+                              ? errors.kilometrajeServicio
+                                ? {
+                                    appearance: "error",
+                                    message:
+                                      errors.kilometrajeServicio as string,
+                                  }
+                                : { appearance: "success", message: "" }
+                              : {})}
                           >
                             <option value="">
                               Selecciona el servicio que necesitas
@@ -1361,7 +1402,7 @@ export const FormCitasDeServicio = () => {
                   <div className="col-12 col-sm-6">
                     <TextInput
                       {...getFieldProps("email")}
-                      label="Correo"
+                      label="Correo electrónico"
                       isFloating={true}
                       type="email"
                       required

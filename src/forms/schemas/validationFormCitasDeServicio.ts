@@ -31,7 +31,7 @@ export const validationFormCitasDeServicio = [
     modelo: Yup.string().required("Selecciona el modelo"),
     kilometrajeAuto: Yup.number()
       .required("Ingresa el kilometraje")
-      .min(0, "El kilometraje no puede ser negativo"),
+      .min(1, "El campo de kilometraje no puede estar vacío"),
     // kilometrajeServicio: Yup.string().required("Selecciona el servicio"),
     kilometrajeServicio: Yup.number().when("tipoServicio", {
       is: 0, // 0 corresponde a "Servicio de mantenimiento"
@@ -84,14 +84,14 @@ export const validationFormCitasDeServicio = [
       .matches(/^\d{10}$/, "Sólo números (10 digitos)"),
     email: Yup.string()
       .email("Proporciona una dirección de correo valida")
-      .required("El correo es obligatorio"),
+      .required("El correo electrónico es obligatorio"),
     aceptaAviso: Yup.boolean().oneOf(
       [true],
       "Debes aceptar el aviso de privacidad",
     ),
     opt_in_transferencia_datos: Yup.boolean().oneOf(
       [true],
-      "Debes aceptar la transferencia",
+      "Debes aceptar la transferencia de datos al concesionario",
     ),
   }),
 ];
