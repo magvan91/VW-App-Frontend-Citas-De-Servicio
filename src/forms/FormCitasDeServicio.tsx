@@ -317,6 +317,19 @@ export const FormCitasDeServicio = () => {
     });
   }, [tabErrors]);
 
+  const tab1HasError = !!tabErrors[1];
+
+  // Si el paso 1 ya estaba completado (el paso 2 desbloqueado) y vuelve a
+  // tener errores (p. ej. se limpió el horario por cambiar distribuidor,
+  // fechas o tipo de servicio), lo marcamos como "intentado" para que se
+  // muestre el icono de error en el tab.
+  useEffect(() => {
+    if (tab1HasError && completedTabs.includes(2)) {
+      setAttemptedTabs((prev) => (prev.includes(1) ? prev : [...prev, 1]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab1HasError]);
+
   const targetRef = useRef<HTMLDivElement | null>(null);
   const handleActionComplete = async (tabIndex: number) => {
     //* 1. Forzamos la validación global
