@@ -21,13 +21,19 @@ export const useHorariosDisponibles = (
     if (
       !dealerId ||
       !dates ||
-      dates.length < 2 ||
+      !dates[0] ||
+      !dates[1] ||
       tipoServicioKey === undefined ||
       tipoServicioKey === ""
     ) {
       setAvailableDates({});
+      setError502Msg("");
+      setWarningMsg("");
+      setLoadingHorarios(false);
       return;
     }
+
+    let cancelled = false;
 
     const fetchSchedules = async () => {
       setLoadingHorarios(true);
@@ -47,7 +53,6 @@ export const useHorariosDisponibles = (
             ? servicioMap[parseInt(tipoServicioKey, 10)]
             : servicioMap[tipoServicioKey];
 
-        // Conversión correcta de Date -> "YYYY-MM-DD" (antes fallaba con .split en un Date)
         const fechaInicial = dates[0].toISOString().split("T")[0];
         const fechaFinal = dates[1].toISOString().split("T")[0];
 
@@ -59,6 +64,8 @@ export const useHorariosDisponibles = (
         };
 
         const response = await post("/schedules/availability", payload);
+        if (cancelled) return;
+
         const data = response.data;
 
         setAvailableDates(data.dates || {});
@@ -69,6 +76,8 @@ export const useHorariosDisponibles = (
           setWarningMsg(data.warning);
         }
       } catch (error: unknown) {
+        if (cancelled) return;
+
         console.error("Error al obtener horarios:", error);
 
         const response = (
@@ -94,11 +103,14 @@ export const useHorariosDisponibles = (
         }
         setAvailableDates({});
       } finally {
-        setLoadingHorarios(false);
+        if (!cancelled) setLoadingHorarios(false);
       }
     };
 
     fetchSchedules();
+    return () => {
+      cancelled = true;
+    };
   }, [dealerId, dates, tipoServicioKey, post]);
 
   return {

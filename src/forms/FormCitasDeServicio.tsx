@@ -1159,6 +1159,7 @@ export const FormCitasDeServicio = () => {
                       {/* Fechas */}
                       <div className="col-12 col-sm-6">
                         <DateRangePicker
+                          disabled={loadingHorarios}
                           value={
                             values.dates
                               ? { from: values.dates[0], to: values.dates[1] }
@@ -1167,7 +1168,9 @@ export const FormCitasDeServicio = () => {
                           onChange={(range) =>
                             setFieldValue(
                               "dates",
-                              range ? [range.from, range.to] : null,
+                              range?.from && range?.to
+                                ? [range.from, range.to]
+                                : null,
                             )
                           }
                         />
