@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useApi } from "./useApi";
+import { format } from "date-fns";
 
 export const useHorariosDisponibles = (
   dealerId: number | string,
@@ -53,8 +54,8 @@ export const useHorariosDisponibles = (
             ? servicioMap[parseInt(tipoServicioKey, 10)]
             : servicioMap[tipoServicioKey];
 
-        const fechaInicial = dates[0].toISOString().split("T")[0];
-        const fechaFinal = dates[1].toISOString().split("T")[0];
+        const fechaInicial = format(dates[0], "yyyy-MM-dd");
+        const fechaFinal = format(dates[1], "yyyy-MM-dd");
 
         const payload = {
           dealer_id: parseInt(String(dealerId), 10),

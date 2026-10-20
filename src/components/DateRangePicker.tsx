@@ -4,16 +4,13 @@ import { es } from "date-fns/locale";
 import { addDays, format, isSameDay } from "date-fns";
 import "react-day-picker/dist/style.css";
 import "./../styles.css";
+
 type Props = {
   value?: DateRange;
   onChange: (range: DateRange | undefined) => void;
   disabled?: boolean;
+  showError?: boolean; // el usuario intentó avanzar sin elegir rango
 };
-
-const isCompleteRange = (
-  range?: DateRange,
-): range is { from: Date; to: Date } =>
-  !!range?.from && !!range?.to && !isSameDay(range.from, range.to);
 
 const formatDate = (date?: Date) => {
   if (!date) return "";
@@ -24,13 +21,19 @@ const formatDate = (date?: Date) => {
   });
 };
 
+const isCompleteRange = (
+  range?: DateRange,
+): range is { from: Date; to: Date } =>
+  !!range?.from && !!range?.to && !isSameDay(range.from, range.to);
+
 export const DateRangePicker = ({
   value,
   onChange,
   disabled = false,
+  showError = false,
 }: Props) => {
   const [open, setOpen] = useState(false);
-  // Borrador interno: puede tener solo "from". Al padre solo le llegan rangos completos.
+  // Borrador interno: al padre solo le llegan rangos completos
   const [draft, setDraft] = useState<DateRange | undefined>(value);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -47,7 +50,11 @@ export const DateRangePicker = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Error A: eligió un solo día
   const isIncomplete = !!draft?.from && !isCompleteRange(draft);
+  // Error B: intentó avanzar sin elegir nada (viene del formulario)
+  const isMissing = showError && !draft?.from;
+  const hasError = isIncomplete || isMissing;
 
   const displayValue = useMemo(() => {
     if (!draft?.from) return "";
@@ -59,9 +66,9 @@ export const DateRangePicker = ({
     setDraft(range);
     if (isCompleteRange(range)) {
       setOpen(false);
-      onChange({ from: range.from, to: range.to }); // 2 días distintos → petición
+      onChange({ from: range.from, to: range.to }); // rango válido → petición
     } else if (value) {
-      onChange(undefined); // 1 solo día → limpia, sin petición
+      onChange(undefined); // rango incompleto → limpia, sin petición
     }
   };
 
@@ -75,11 +82,11 @@ export const DateRangePicker = ({
       <label className="label-div-input-fake-calendar">
         <div
           ref={ref}
-          className="div-input-fake-calendar"
+          className={`div-input-fake-calendar${hasError ? " div-input-fake-calendar--error" : ""}`}
           style={{ position: "relative" }}
         >
           <input
-            className="input-fake-calendar"
+            className={`input-fake-calendar${hasError ? " input-fake-calendar--error" : ""}`}
             type="text"
             readOnly
             disabled={disabled}
@@ -92,14 +99,7 @@ export const DateRangePicker = ({
           />
 
           {open && !disabled && (
-            <div
-              style={{
-                position: "absolute",
-                zIndex: 10,
-                background: "white",
-                padding: "10px",
-              }}
-            >
+            <div className="date-range-popover">
               <DayPicker
                 mode="range"
                 min={1}
@@ -120,11 +120,15 @@ export const DateRangePicker = ({
       </label>
 
       {isIncomplete && (
-        <small
-          role="alert"
-          style={{ color: "#d93025", display: "block", marginTop: 4 }}
-        >
-          Selecciona también la fecha final: se requiere un rango de fechas.
+        <small role="alert" className="field-error-message">
+          Selecciona también la fecha final: se requiere un rango de mínimo dos
+          fechas.
+        </small>
+      )}
+
+      {isMissing && (
+        <small role="alert" className="field-error-message">
+          Es necesario elegir un rango de fechas
         </small>
       )}
     </>

@@ -28,7 +28,7 @@ import api from "../services/api";
 
 import { useDropdowns } from "../hooks/useDropdowns";
 import { useVehiculosCatalogos } from "../hooks/useVehiculosCatalogos"; // O donde hayas ubicado el hook
-import { DateRangePicker } from "../components/DateRangePicker";
+import { DatePicker } from "../components/DatePicker";
 import { SummaryCitasDeServicio } from "../pages/SummaryCitasDeServicio"; // IMPORTACIÓN REQUERIDA
 import { TycCitasDeServicio } from "../modals/TycCitasDeServicio";
 import { useHorariosDisponibles } from "../hooks/useHorariosDisponibles";
@@ -1156,23 +1156,14 @@ export const FormCitasDeServicio = () => {
                         )}
                       </div>
 
-                      {/* Fechas */}
+                      {/* Fecha */}
                       <div className="col-12 col-sm-6">
-                        <DateRangePicker
-                          disabled={loadingHorarios}
-                          value={
-                            values.dates
-                              ? { from: values.dates[0], to: values.dates[1] }
-                              : undefined
+                        <DatePicker
+                          value={values.dates ? values.dates[0] : undefined}
+                          onChange={(date) =>
+                            setFieldValue("dates", date ? [date, date] : null)
                           }
-                          onChange={(range) =>
-                            setFieldValue(
-                              "dates",
-                              range?.from && range?.to
-                                ? [range.from, range.to]
-                                : null,
-                            )
-                          }
+                          isMissing={!values.dates && !!touched.horario}
                         />
                       </div>
 

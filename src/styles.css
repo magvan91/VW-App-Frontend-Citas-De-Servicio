@@ -1295,3 +1295,52 @@ data-styled.g239[id="StyledSkipLinkTargetWrapper-TTkYZ"] {
   scroll-margin-bottom: 20px; /* Da aire al final del scroll */
 }
 
+/* Borde en error: reemplaza el box-shadow gris por uno rojo (mismo patrón que tu CSS) */
+.div-input-fake-calendar--error {
+  color:rgb(185, 5, 39);
+  box-shadow: /* color computado del Select en error */ 0px 0px 0px 2px;
+}
+
+/* Mensaje de error */
+.field-error-message {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-family-text, vw-text, Helvetica, Arial, sans-serif);
+  font-size: 12px; /* ajusta con el valor computado */
+  line-height: 16px; /* ajusta con el valor computado */
+  color:#E4002C;
+}
+
+/* Calendario como tarjeta */
+.date-range-popover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  margin-top: 4px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-width: calc(100vw - 32px);
+  --rdp-accent-color: #001e50;
+  --rdp-accent-background-color: #e6ebf5;
+}
+
+.date-range-popover .rdp-button_next,
+.date-range-popover .rdp-button_previous {
+  color: #001e50;
+}
+
+
+
+.label-div-input-fake-calendar--error {
+  border-radius: 8px;
+  box-shadow: rgb(185, 5, 39) 0px 0px 0px 3px;
+}
+
+.label-div-input-fake-calendar--success {
+  border-radius: 8px;
+  box-shadow: rgb(2, 125, 53) 0px 0px 0px 3px;
+}
