@@ -836,29 +836,29 @@
     "@rolldown/pluginutils" "1.0.0-rc.2"
     "@swc/core" "^1.15.11"
 
-"@volkswagen-onehub/components-core@70.0.0":
-  version "70.0.0"
-  resolved "https://npm.pkg.github.com/download/@volkswagen-onehub/components-core/70.0.0/2628d4d6d2ded5e90e42fc71fae352787dc62a32#2628d4d6d2ded5e90e42fc71fae352787dc62a32"
-  integrity sha512-zhBkD9+kReHaSBpJE6P9A5Z3IgzB1l9TWPTdq93Fif8p49QT5UdNJi23TbhQR2Gpz5iaopoEtq9LZ1dj3z2ShA==
+"@volkswagen-onehub/components-core@70.11.2":
+  version "70.11.2"
+  resolved "https://npm.pkg.github.com/download/@volkswagen-onehub/components-core/70.11.2/89d760eca52675b879befa4882bc3bc6fd950b6b#89d760eca52675b879befa4882bc3bc6fd950b6b"
+  integrity sha512-SLLeVXfq/7hxeoHv1LqgvXKGj++iR05KlbkLpYzd7WF7CjGDsfQ0eCfTcfs1aLdV2ANTrXLh8H6o76XpBUyStg==
   dependencies:
     "@react-hook/throttle" "^2.2.0"
-    "@volkswagen-onehub/icons-core" "^70.0.0"
-    "@volkswagen-onehub/tokens" "^70.0.0"
+    "@volkswagen-onehub/icons-core" "70.11.2"
+    "@volkswagen-onehub/tokens" "70.11.1"
     lazysizes "5.3.2"
-    markdown-to-jsx "^9.7.15"
+    markdown-to-jsx "^9.10.3"
     react-focus-lock "^2.4.1"
     react-transition-group "^4.4.2"
     styled-normalize "^8.0.0"
 
-"@volkswagen-onehub/icons-core@70.0.2", "@volkswagen-onehub/icons-core@^70.0.0":
-  version "70.0.2"
-  resolved "https://npm.pkg.github.com/download/@volkswagen-onehub/icons-core/70.0.2/85451fc82ccf7b36459c09f999fcf1b1f9877c73#85451fc82ccf7b36459c09f999fcf1b1f9877c73"
-  integrity sha512-fwa9vIZZNQeaEDezO+mkzsx08JzIdztZpCbUiU092qOy/Bqj8EbBxtXpjwjPQpkjRcf5g7wuvmnzplVqHRiEiQ==
+"@volkswagen-onehub/icons-core@70.11.2":
+  version "70.11.2"
+  resolved "https://npm.pkg.github.com/download/@volkswagen-onehub/icons-core/70.11.2/b94b20e958d7a4ae1125c914f3de14677c0e8c5e#b94b20e958d7a4ae1125c914f3de14677c0e8c5e"
+  integrity sha512-HKpgMpxlKjfFL+QWVVn/JDHwkjDXZcP+e//W0mfdGej7VL+3dVNkugFCyiAl7F6VDCvph5vT14LAi5ARQgjQJg==
 
-"@volkswagen-onehub/tokens@^70.0.0":
-  version "70.3.0"
-  resolved "https://npm.pkg.github.com/download/@volkswagen-onehub/tokens/70.3.0/a9bcfae397b8a6da5ce1d11e45aa28691d2a0234#a9bcfae397b8a6da5ce1d11e45aa28691d2a0234"
-  integrity sha512-7srL56gtP5n4YfE1THpEalbX4igjTfLAZUW6WRaXEU50vO7Zo8rqzn3uin6+rfLhXdmbEv0dUE4+yRUk7UUnvg==
+"@volkswagen-onehub/tokens@70.11.1":
+  version "70.11.1"
+  resolved "https://npm.pkg.github.com/download/@volkswagen-onehub/tokens/70.11.1/4d562f0f1189d11a3f6c7ba018ce0adaa2a96ea6#4d562f0f1189d11a3f6c7ba018ce0adaa2a96ea6"
+  integrity sha512-fZ+BUT4UhPyi9ZiLX8pl7HU/6ye57I/H1k8ctEGLpdF5YlzQPnsaUnbAmA6uZqU62/nqT0JfoWDZUJF5c9QWkw==
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
@@ -1787,10 +1787,10 @@ make-dir@^3.0.2:
   dependencies:
     semver "^6.0.0"
 
-markdown-to-jsx@^9.7.15:
-  version "9.8.2"
-  resolved "https://registry.yarnpkg.com/markdown-to-jsx/-/markdown-to-jsx-9.8.2.tgz#d5b01e9fbfa0fb32ff8228d44e28d299d5848259"
-  integrity sha512-rWUuxKB5NsuJmSfUOuXkQ0O5qk0J/Lr3Lk6dzxKoKQI/jeHYlsVfz3zJdMLAhI46hHoXDYERWhtBOiqtWDZ4LA==
+markdown-to-jsx@^9.10.3:
+  version "9.10.3"
+  resolved "https://registry.yarnpkg.com/markdown-to-jsx/-/markdown-to-jsx-9.10.3.tgz#c02428e43c1fe642b74e0cd68c1088d4bf01c92e"
+  integrity sha512-J5/NCmNYQ0ExsnThzvF3F1fSzNYLgROcW2diUqRqoIoiyhoy8DSI06jLuMYk0c86SQd/FiVYJrV6tIgci9S2tQ==
 
 math-intrinsics@^1.1.0:
   version "1.1.0"
