@@ -59,7 +59,13 @@ export const useDropdowns = (
       setLoadingEstados(true);
       try {
         const response = await get(`states?service_type=${nameTitleService}`);
-        setEstados(response.data || []);
+
+        // --- INICIO MODIFICACIÓN TEMPORAL ---
+        const estadosFiltrados = (response.data || []).filter(
+          (est: LocationItem) => est.name.toLowerCase().includes("hidalgo"),
+        );
+        setEstados(estadosFiltrados);
+        // --- FIN MODIFICACIÓN TEMPORAL ---
       } catch (error) {
         console.error("Error al cargar estados:", error);
       } finally {
@@ -83,7 +89,13 @@ export const useDropdowns = (
         const response = await get(
           `states/${estadoId}/cities?service_type=${nameTitleService}`,
         );
-        setCiudadesState({ estadoId, items: response.data || [] });
+
+        // --- INICIO MODIFICACIÓN TEMPORAL ---
+        const ciudadesFiltradas = (response.data || []).filter(
+          (ciu: LocationItem) => ciu.name.toLowerCase().includes("pachuca"),
+        );
+        setCiudadesState({ estadoId, items: ciudadesFiltradas });
+        // --- FIN MODIFICACIÓN TEMPORAL ---
       } catch (error) {
         console.error("Error al cargar ciudades:", error);
       } finally {
@@ -107,7 +119,13 @@ export const useDropdowns = (
         const response = await get(
           `cities/${ciudadId}/dealers?service_type=${nameTitleService}`,
         );
-        setConcesionariosState({ ciudadId, items: response.data || [] });
+
+        // --- INICIO MODIFICACIÓN TEMPORAL ---
+        const dealersFiltrados = (response.data || []).filter(
+          (dealer: DealerItem) => dealer.name.toLowerCase().includes("pachuca"),
+        );
+        setConcesionariosState({ ciudadId, items: dealersFiltrados });
+        // --- FIN MODIFICACIÓN TEMPORAL ---
       } catch (error) {
         console.error("Error al cargar concesionarios:", error);
       } finally {
