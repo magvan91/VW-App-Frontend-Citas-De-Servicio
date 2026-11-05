@@ -435,6 +435,29 @@ export const FormCitasDeServicio = () => {
     parseInt(values.tipoServicio),
   );
 
+  // --- INICIO MODIFICACIÓN TEMPORAL: Auto-selección en cascada ---
+  // Seleccionar automáticamente el estado (Hidalgo) cuando cargue
+  useEffect(() => {
+    if (estados.length === 1 && !values.estado) {
+      setFieldValue("estado", String(estados[0].id));
+    }
+  }, [estados, values.estado, setFieldValue]);
+
+  // Seleccionar automáticamente la ciudad (Pachuca) cuando cargue tras el estado
+  useEffect(() => {
+    if (ciudades.length === 1 && !values.ciudad) {
+      setFieldValue("ciudad", String(ciudades[0].id));
+    }
+  }, [ciudades, values.ciudad, setFieldValue]);
+
+  // Seleccionar automáticamente el concesionario cuando cargue tras la ciudad
+  useEffect(() => {
+    if (concesionarios.length === 1 && !values.dealer_id) {
+      setFieldValue("dealer_id", String(concesionarios[0].id));
+    }
+  }, [concesionarios, values.dealer_id, setFieldValue]);
+  // --- FIN MODIFICACIÓN TEMPORAL ---
+
   useEffect(() => {
     if (!dealer || !dealer.services) return;
     const newSelectedServiceName = getServiceTitleEnglishById(
