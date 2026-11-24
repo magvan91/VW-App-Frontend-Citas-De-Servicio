@@ -22,7 +22,8 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm ci --legacy-peer-deps
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
           npm run build
 
       - name: Configurar credenciales de AWS
