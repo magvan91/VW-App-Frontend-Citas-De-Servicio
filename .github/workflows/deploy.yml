@@ -19,6 +19,8 @@ jobs:
           node-version: "20"
 
       - name: Instalar dependencias y compilar
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm ci --legacy-peer-deps
           npm run build
